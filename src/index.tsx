@@ -12,6 +12,8 @@ import stats from './routes/stats'
 
 // 페이지 템플릿 임포트
 import { adminLoginPage, operatorLoginPage } from './views/pages'
+import { guestbookPage } from './views/guestbook'
+import { operatorDashboardPage } from './views/operator-dashboard'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -95,6 +97,16 @@ app.get('/admin', (c) => {
 // 운영자 로그인 페이지
 app.get('/operator', (c) => {
   return c.html(operatorLoginPage)
+})
+
+// 방명록 작성 페이지
+app.get('/guestbook', (c) => {
+  return c.html(guestbookPage)
+})
+
+// 운영자 대시보드
+app.get('/dashboard/operator', (c) => {
+  return c.html(operatorDashboardPage)
 })
 
 // 404 에러 핸들링
