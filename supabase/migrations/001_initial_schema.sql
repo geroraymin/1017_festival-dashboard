@@ -40,8 +40,8 @@ CREATE TABLE IF NOT EXISTS participants (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     booth_id UUID REFERENCES booths(id) ON DELETE SET NULL,
     name TEXT NOT NULL,
-    gender TEXT CHECK (gender IN ('남성', '여성', '기타')),
-    grade TEXT CHECK (grade IN ('초등', '중등', '고등', '기타')),
+    gender TEXT CHECK (gender IN ('남성', '여성')),
+    grade TEXT CHECK (grade IN ('유아', '초등', '중등', '고등', '성인', '기타')),
     date_of_birth DATE,
     has_consented BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMPTZ DEFAULT NOW()

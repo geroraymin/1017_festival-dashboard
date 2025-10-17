@@ -1,5 +1,5 @@
 /**
- * 방명록 작성 폼 페이지
+ * 방명록 작성 폼 페이지 (한 페이지에 한 질문씩)
  */
 
 export const guestbookPage = `
@@ -12,6 +12,9 @@ export const guestbookPage = `
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        body, html {
+            overflow-x: hidden;
+        }
         .step-indicator {
             transition: all 0.3s ease;
         }
@@ -28,10 +31,19 @@ export const guestbookPage = `
             color: #9ca3af;
         }
         .form-section {
-            display: none;
+            display: none !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            visibility: hidden;
         }
         .form-section.active {
-            display: block;
+            display: flex !important;
+            position: relative;
+            opacity: 1;
+            visibility: visible;
             animation: fadeIn 0.3s ease;
         }
         @keyframes fadeIn {
@@ -50,6 +62,21 @@ export const guestbookPage = `
             border-color: #667eea;
             background: #f0f4ff;
         }
+        .progress-bar {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+        .main-card {
+            position: relative;
+            min-height: 500px;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen p-4">
@@ -63,44 +90,27 @@ export const guestbookPage = `
             <p class="text-gray-600" id="boothName">부스명을 불러오는 중...</p>
         </div>
 
-        <!-- 단계 표시기 -->
-        <div class="flex justify-between mb-8 px-4">
-            <div class="flex flex-col items-center flex-1">
-                <div class="step-indicator step-active w-12 h-12 rounded-full flex items-center justify-center font-bold mb-2" id="step1">
-                    1
-                </div>
-                <span class="text-sm text-gray-600">개인정보 동의</span>
+        <!-- 진행률 바 -->
+        <div class="mb-6">
+            <div class="flex justify-between text-sm text-gray-600 mb-2">
+                <span id="stepText">1 / 6 단계</span>
+                <span id="stepPercent">17%</span>
             </div>
-            <div class="flex-1 flex items-start justify-center pt-6">
-                <div class="h-1 bg-gray-300 w-full" id="progress1"></div>
-            </div>
-            <div class="flex flex-col items-center flex-1">
-                <div class="step-indicator step-inactive w-12 h-12 rounded-full flex items-center justify-center font-bold mb-2" id="step2">
-                    2
-                </div>
-                <span class="text-sm text-gray-600">정보 입력</span>
-            </div>
-            <div class="flex-1 flex items-start justify-center pt-6">
-                <div class="h-1 bg-gray-300 w-full" id="progress2"></div>
-            </div>
-            <div class="flex flex-col items-center flex-1">
-                <div class="step-indicator step-inactive w-12 h-12 rounded-full flex items-center justify-center font-bold mb-2" id="step3">
-                    3
-                </div>
-                <span class="text-sm text-gray-600">완료</span>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 17%"></div>
             </div>
         </div>
 
         <!-- 메인 카드 -->
-        <div class="bg-white rounded-2xl shadow-xl p-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 main-card flex flex-col">
             <!-- Step 1: 개인정보 수집 동의 -->
-            <div id="section1" class="form-section active">
+            <div id="section1" class="form-section active flex-1 flex flex-col">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">
                     <i class="fas fa-shield-alt text-purple-600 mr-2"></i>
                     개인정보 수집 및 활용 동의
                 </h2>
                 
-                <div class="bg-gray-50 p-6 rounded-lg mb-6 max-h-96 overflow-y-auto">
+                <div class="bg-gray-50 p-6 rounded-lg mb-6 flex-1 overflow-y-auto">
                     <h3 class="font-semibold text-gray-800 mb-3">1. 수집하는 개인정보 항목</h3>
                     <p class="text-gray-600 mb-4">이름, 성별, 교급, 생년월일</p>
 
@@ -133,107 +143,187 @@ export const guestbookPage = `
                     개인정보 수집 및 활용에 동의해주세요.
                 </div>
 
-                <button onclick="goToStep2()" class="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <button onclick="goToStep(2)" class="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
                     다음 단계
                     <i class="fas fa-arrow-right ml-2"></i>
                 </button>
             </div>
 
-            <!-- Step 2: 정보 입력 -->
-            <div id="section2" class="form-section">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                    <i class="fas fa-user-edit text-purple-600 mr-2"></i>
-                    참가자 정보 입력
-                </h2>
-
-                <form id="participantForm" class="space-y-6">
-                    <!-- 이름 -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-id-card mr-2"></i>이름 <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="name" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            placeholder="홍길동">
+            <!-- Step 2: 이름 -->
+            <div id="section2" class="form-section flex-1 flex flex-col justify-center">
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4">
+                        <i class="fas fa-id-card text-purple-600 text-5xl"></i>
                     </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">이름을 알려주세요</h2>
+                    <p class="text-gray-600">본인의 실명을 입력해주세요</p>
+                </div>
 
-                    <!-- 성별 -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-3">
-                            <i class="fas fa-venus-mars mr-2"></i>성별 <span class="text-red-500">*</span>
-                        </label>
-                        <div class="grid grid-cols-3 gap-3">
-                            <label class="radio-card">
-                                <input type="radio" name="gender" value="남성" required class="hidden">
-                                <div class="p-4 border-2 border-gray-200 rounded-lg text-center">
-                                    <i class="fas fa-mars text-2xl text-blue-500 mb-2"></i>
-                                    <div class="font-medium">남성</div>
-                                </div>
-                            </label>
-                            <label class="radio-card">
-                                <input type="radio" name="gender" value="여성" required class="hidden">
-                                <div class="p-4 border-2 border-gray-200 rounded-lg text-center">
-                                    <i class="fas fa-venus text-2xl text-pink-500 mb-2"></i>
-                                    <div class="font-medium">여성</div>
-                                </div>
-                            </label>
-                            <label class="radio-card">
-                                <input type="radio" name="gender" value="기타" required class="hidden">
-                                <div class="p-4 border-2 border-gray-200 rounded-lg text-center">
-                                    <i class="fas fa-genderless text-2xl text-gray-500 mb-2"></i>
-                                    <div class="font-medium">기타</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- 교급 -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-graduation-cap mr-2"></i>교급 <span class="text-red-500">*</span>
-                        </label>
-                        <select id="grade" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                            <option value="">선택해주세요</option>
-                            <option value="초등">초등학생</option>
-                            <option value="중등">중학생</option>
-                            <option value="고등">고등학생</option>
-                            <option value="기타">기타</option>
-                        </select>
-                    </div>
-
-                    <!-- 생년월일 -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-calendar-alt mr-2"></i>생년월일 <span class="text-red-500">*</span>
-                        </label>
-                        <input type="date" id="dateOfBirth" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            max="">
-                    </div>
-
-                    <div id="formError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+                <div class="mb-8">
+                    <input type="text" id="name" 
+                        class="w-full px-6 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="예: 홍길동"
+                        autocomplete="off">
+                    <div id="nameError" class="hidden mt-3 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center">
                         <i class="fas fa-exclamation-circle mr-2"></i>
-                        <span id="formErrorText"></span>
+                        이름을 입력해주세요.
                     </div>
+                </div>
 
-                    <div class="flex gap-3">
-                        <button type="button" onclick="goToStep1()"
-                            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-xl transition">
-                            <i class="fas fa-arrow-left mr-2"></i>
-                            이전
-                        </button>
-                        <button type="submit"
-                            class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
-                            제출하기
-                            <i class="fas fa-check ml-2"></i>
-                        </button>
-                    </div>
-                </form>
+                <div class="flex gap-3">
+                    <button onclick="goToStep(1)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-xl transition">
+                        <i class="fas fa-arrow-left mr-2"></i>이전
+                    </button>
+                    <button onclick="goToStep(3)" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                        다음 <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
             </div>
 
-            <!-- Step 3: 완료 -->
-            <div id="section3" class="form-section text-center">
+            <!-- Step 3: 성별 -->
+            <div id="section3" class="form-section flex-1 flex flex-col justify-center">
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4">
+                        <i class="fas fa-venus-mars text-purple-600 text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">성별을 선택해주세요</h2>
+                    <p class="text-gray-600">통계 자료로 활용됩니다</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-8 max-w-md mx-auto">
+                    <label class="radio-card">
+                        <input type="radio" name="gender" value="남성" class="hidden">
+                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center">
+                            <i class="fas fa-mars text-5xl text-blue-500 mb-3"></i>
+                            <div class="font-semibold text-lg">남성</div>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="gender" value="여성" class="hidden">
+                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center">
+                            <i class="fas fa-venus text-5xl text-pink-500 mb-3"></i>
+                            <div class="font-semibold text-lg">여성</div>
+                        </div>
+                    </label>
+                </div>
+
+                <div id="genderError" class="hidden mb-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    성별을 선택해주세요.
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="goToStep(2)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-xl transition">
+                        <i class="fas fa-arrow-left mr-2"></i>이전
+                    </button>
+                    <button onclick="goToStep(4)" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                        다음 <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: 교급 -->
+            <div id="section4" class="form-section flex-1 flex flex-col justify-center">
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4">
+                        <i class="fas fa-graduation-cap text-purple-600 text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">학교급을 선택해주세요</h2>
+                    <p class="text-gray-600">현재 재학 중이신 학교급을 선택해주세요</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <label class="radio-card">
+                        <input type="radio" name="grade" value="유아" class="hidden">
+                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center">
+                            <i class="fas fa-baby text-5xl text-yellow-500 mb-3"></i>
+                            <div class="font-semibold text-lg">유아</div>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="grade" value="초등" class="hidden">
+                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center">
+                            <i class="fas fa-child text-5xl text-green-500 mb-3"></i>
+                            <div class="font-semibold text-lg">초등학생</div>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="grade" value="중등" class="hidden">
+                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center">
+                            <i class="fas fa-user-graduate text-5xl text-blue-500 mb-3"></i>
+                            <div class="font-semibold text-lg">중학생</div>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="grade" value="고등" class="hidden">
+                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center">
+                            <i class="fas fa-graduation-cap text-5xl text-purple-500 mb-3"></i>
+                            <div class="font-semibold text-lg">고등학생</div>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="grade" value="성인" class="hidden">
+                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center">
+                            <i class="fas fa-user-tie text-5xl text-indigo-500 mb-3"></i>
+                            <div class="font-semibold text-lg">성인</div>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="grade" value="기타" class="hidden">
+                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center">
+                            <i class="fas fa-user text-5xl text-gray-500 mb-3"></i>
+                            <div class="font-semibold text-lg">기타</div>
+                        </div>
+                    </label>
+                </div>
+
+                <div id="gradeError" class="hidden mb-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    학교급을 선택해주세요.
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="goToStep(3)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-xl transition">
+                        <i class="fas fa-arrow-left mr-2"></i>이전
+                    </button>
+                    <button onclick="goToStep(5)" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                        다음 <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 5: 생년월일 -->
+            <div id="section5" class="form-section flex-1 flex flex-col justify-center">
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4">
+                        <i class="fas fa-calendar-alt text-purple-600 text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">생년월일을 입력해주세요</h2>
+                    <p class="text-gray-600">통계 자료로 활용됩니다</p>
+                </div>
+
+                <div class="mb-8">
+                    <input type="date" id="dateOfBirth" 
+                        class="w-full px-6 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        max="">
+                    <div id="dateError" class="hidden mt-3 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        생년월일을 선택해주세요.
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="goToStep(4)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-xl transition">
+                        <i class="fas fa-arrow-left mr-2"></i>이전
+                    </button>
+                    <button onclick="submitForm()" id="submitBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                        제출하기 <i class="fas fa-check ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 6: 완료 -->
+            <div id="section6" class="form-section flex-1 flex flex-col justify-center text-center">
                 <div class="mb-6">
                     <div class="inline-block p-6 bg-green-100 rounded-full mb-4">
                         <i class="fas fa-check-circle text-green-600 text-6xl"></i>
@@ -249,7 +339,7 @@ export const guestbookPage = `
                     즐거운 시간 되세요!
                 </p>
 
-                <div class="bg-purple-50 p-6 rounded-lg mb-6">
+                <div class="bg-purple-50 p-6 rounded-lg">
                     <p class="text-sm text-gray-600">
                         <i class="fas fa-info-circle text-purple-600 mr-2"></i>
                         3초 후 자동으로 페이지가 이동됩니다.
@@ -273,6 +363,14 @@ export const guestbookPage = `
         // 오늘 날짜를 max로 설정
         document.getElementById('dateOfBirth').max = new Date().toISOString().split('T')[0]
 
+        // 사용자 입력 데이터 저장
+        const formData = {
+            name: '',
+            gender: '',
+            grade: '',
+            dateOfBirth: ''
+        }
+
         // 부스 정보 로드
         async function loadBoothInfo() {
             try {
@@ -288,31 +386,57 @@ export const guestbookPage = `
 
         loadBoothInfo()
 
+        // 진행률 업데이트
+        function updateProgress(step) {
+            const percent = Math.round((step / 6) * 100)
+            document.getElementById('stepText').textContent = \`\${step} / 6 단계\`
+            document.getElementById('stepPercent').textContent = \`\${percent}%\`
+            document.getElementById('progressFill').style.width = \`\${percent}%\`
+        }
+
         // Step 전환 함수
-        function goToStep1() {
-            showSection('section1')
-            updateStepIndicator(1)
-        }
-
-        function goToStep2() {
-            const consent = document.getElementById('consent').checked
-            if (!consent) {
-                document.getElementById('consentError').classList.remove('hidden')
-                return
+        function goToStep(step) {
+            // 유효성 검증
+            if (step === 2) {
+                // Step 1 → 2: 동의 체크
+                const consent = document.getElementById('consent').checked
+                if (!consent) {
+                    document.getElementById('consentError').classList.remove('hidden')
+                    return
+                }
+                document.getElementById('consentError').classList.add('hidden')
+            } else if (step === 3) {
+                // Step 2 → 3: 이름 입력
+                const name = document.getElementById('name').value.trim()
+                if (!name) {
+                    document.getElementById('nameError').classList.remove('hidden')
+                    return
+                }
+                formData.name = name
+                document.getElementById('nameError').classList.add('hidden')
+            } else if (step === 4) {
+                // Step 3 → 4: 성별 선택
+                const gender = document.querySelector('input[name="gender"]:checked')?.value
+                if (!gender) {
+                    document.getElementById('genderError').classList.remove('hidden')
+                    return
+                }
+                formData.gender = gender
+                document.getElementById('genderError').classList.add('hidden')
+            } else if (step === 5) {
+                // Step 4 → 5: 교급 선택
+                const grade = document.querySelector('input[name="grade"]:checked')?.value
+                if (!grade) {
+                    document.getElementById('gradeError').classList.remove('hidden')
+                    return
+                }
+                formData.grade = grade
+                document.getElementById('gradeError').classList.add('hidden')
             }
-            document.getElementById('consentError').classList.add('hidden')
-            showSection('section2')
-            updateStepIndicator(2)
-        }
 
-        function goToStep3() {
-            showSection('section3')
-            updateStepIndicator(3)
-            
-            // 3초 후 메인으로 이동
-            setTimeout(() => {
-                window.location.href = '/'
-            }, 3000)
+            // Section 전환
+            showSection(\`section\${step}\`)
+            updateProgress(step)
         }
 
         function showSection(sectionId) {
@@ -322,65 +446,18 @@ export const guestbookPage = `
             document.getElementById(sectionId).classList.add('active')
         }
 
-        function updateStepIndicator(step) {
-            // Reset all steps
-            for (let i = 1; i <= 3; i++) {
-                const stepEl = document.getElementById(\`step\${i}\`)
-                stepEl.classList.remove('step-active', 'step-completed', 'step-inactive')
-                
-                if (i < step) {
-                    stepEl.classList.add('step-completed')
-                    stepEl.innerHTML = '<i class="fas fa-check"></i>'
-                } else if (i === step) {
-                    stepEl.classList.add('step-active')
-                    stepEl.textContent = i
-                } else {
-                    stepEl.classList.add('step-inactive')
-                    stepEl.textContent = i
-                }
-            }
-
-            // Update progress bars
-            const progress1 = document.getElementById('progress1')
-            const progress2 = document.getElementById('progress2')
-            
-            if (step >= 2) {
-                progress1.classList.remove('bg-gray-300')
-                progress1.classList.add('bg-green-500')
-            } else {
-                progress1.classList.add('bg-gray-300')
-                progress1.classList.remove('bg-green-500')
-            }
-
-            if (step >= 3) {
-                progress2.classList.remove('bg-gray-300')
-                progress2.classList.add('bg-green-500')
-            } else {
-                progress2.classList.add('bg-gray-300')
-                progress2.classList.remove('bg-green-500')
-            }
-        }
-
         // 폼 제출
-        document.getElementById('participantForm').addEventListener('submit', async (e) => {
-            e.preventDefault()
-
-            const name = document.getElementById('name').value
-            const gender = document.querySelector('input[name="gender"]:checked')?.value
-            const grade = document.getElementById('grade').value
+        async function submitForm() {
             const dateOfBirth = document.getElementById('dateOfBirth').value
-
-            // 유효성 검증
-            if (!name || !gender || !grade || !dateOfBirth) {
-                document.getElementById('formErrorText').textContent = '모든 필수 항목을 입력해주세요.'
-                document.getElementById('formError').classList.remove('hidden')
+            if (!dateOfBirth) {
+                document.getElementById('dateError').classList.remove('hidden')
                 return
             }
-
-            document.getElementById('formError').classList.add('hidden')
+            formData.dateOfBirth = dateOfBirth
+            document.getElementById('dateError').classList.add('hidden')
 
             // 제출 버튼 비활성화
-            const submitBtn = e.target.querySelector('button[type="submit"]')
+            const submitBtn = document.getElementById('submitBtn')
             submitBtn.disabled = true
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>제출 중...'
 
@@ -392,10 +469,10 @@ export const guestbookPage = `
                     },
                     body: JSON.stringify({
                         booth_id: boothId,
-                        name,
-                        gender,
-                        grade,
-                        date_of_birth: dateOfBirth,
+                        name: formData.name,
+                        gender: formData.gender,
+                        grade: formData.grade,
+                        date_of_birth: formData.dateOfBirth,
                         has_consented: true
                     })
                 })
@@ -406,17 +483,22 @@ export const guestbookPage = `
                     throw new Error(data.error || '등록에 실패했습니다.')
                 }
 
-                // 성공 - Step 3으로 이동
-                goToStep3()
+                // 성공 - Step 6으로 이동
+                showSection('section6')
+                updateProgress(6)
+                
+                // 3초 후 메인으로 이동
+                setTimeout(() => {
+                    window.location.href = '/'
+                }, 3000)
             } catch (error) {
                 console.error('참가자 등록 실패:', error)
-                document.getElementById('formErrorText').textContent = error.message
-                document.getElementById('formError').classList.remove('hidden')
+                alert('등록에 실패했습니다: ' + error.message)
                 
                 submitBtn.disabled = false
                 submitBtn.innerHTML = '제출하기 <i class="fas fa-check ml-2"></i>'
             }
-        })
+        }
     </script>
 </body>
 </html>
