@@ -10,6 +10,9 @@ import booths from './routes/booths'
 import participants from './routes/participants'
 import stats from './routes/stats'
 
+// 페이지 템플릿 임포트
+import { adminLoginPage, operatorLoginPage } from './views/pages'
+
 const app = new Hono<{ Bindings: Env }>()
 
 // CORS 설정
@@ -82,6 +85,16 @@ app.get('/', (c) => {
     </body>
     </html>
   `)
+})
+
+// 관리자 로그인 페이지
+app.get('/admin', (c) => {
+  return c.html(adminLoginPage)
+})
+
+// 운영자 로그인 페이지
+app.get('/operator', (c) => {
+  return c.html(operatorLoginPage)
 })
 
 // 404 에러 핸들링
