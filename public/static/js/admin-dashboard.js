@@ -199,24 +199,28 @@ async function loadEvents() {
             const row = document.createElement('tr')
             row.className = 'hover:bg-gray-50'
             row.innerHTML = `
-                <td class="px-6 py-4">
+                <td class="px-6 py-4" data-label="행사명">
                     <div class="font-medium text-gray-900">${event.name}</div>
                 </td>
-                <td class="px-6 py-4 text-gray-600">
+                <td class="px-6 py-4 text-gray-600" data-label="기간">
                     ${formatDate(event.start_date)} ~ ${formatDate(event.end_date)}
                 </td>
-                <td class="px-6 py-4 text-gray-600">${boothCount}개</td>
-                <td class="px-6 py-4 text-gray-600">${participantCount}명</td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 text-gray-600" data-label="부스">
+                    ${boothCount}개
+                </td>
+                <td class="px-6 py-4 text-gray-600" data-label="참가자">
+                    ${participantCount}명
+                </td>
+                <td class="px-6 py-4" data-label="상태">
                     <span class="px-3 py-1 text-sm rounded-full ${event.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
                         ${event.is_active ? '활성' : '비활성'}
                     </span>
                 </td>
-                <td class="px-6 py-4">
-                    <button onclick="toggleEvent('${event.id}')" class="text-blue-600 hover:text-blue-800 mr-3">
+                <td class="px-6 py-4" data-label="관리">
+                    <button onclick="toggleEvent('${event.id}')" class="text-blue-600 hover:text-blue-800 mr-3" title="활성화/비활성화">
                         <i class="fas fa-power-off"></i>
                     </button>
-                    <button onclick="deleteEvent('${event.id}')" class="text-red-600 hover:text-red-800">
+                    <button onclick="deleteEvent('${event.id}')" class="text-red-600 hover:text-red-800" title="삭제">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -255,22 +259,24 @@ async function loadBooths() {
             const row = document.createElement('tr')
             row.className = 'hover:bg-gray-50'
             row.innerHTML = `
-                <td class="px-6 py-4">
+                <td class="px-6 py-4" data-label="부스명">
                     <div class="font-medium text-gray-900">${booth.name}</div>
                 </td>
-                <td class="px-6 py-4 text-gray-600">
+                <td class="px-6 py-4 text-gray-600" data-label="행사">
                     ${booth.events?.name || '-'}
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4" data-label="코드">
                     <span class="font-mono bg-indigo-50 text-indigo-700 px-3 py-1 rounded">${booth.booth_code}</span>
                 </td>
-                <td class="px-6 py-4 text-gray-600">${participantCount}명</td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 text-gray-600" data-label="참가자">
+                    ${participantCount}명
+                </td>
+                <td class="px-6 py-4" data-label="상태">
                     <span class="px-3 py-1 text-sm rounded-full ${booth.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
                         ${booth.is_active ? '활성' : '비활성'}
                     </span>
                 </td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4" data-label="관리">
                     <button onclick="regenerateBoothCode('${booth.id}')" class="text-purple-600 hover:text-purple-800 mr-3" title="코드 재발급">
                         <i class="fas fa-sync"></i>
                     </button>
@@ -313,13 +319,13 @@ async function loadParticipants() {
             const row = document.createElement('tr')
             row.className = 'hover:bg-gray-50'
             row.innerHTML = `
-                <td class="px-6 py-4">
+                <td class="px-6 py-4" data-label="이름">
                     <div class="font-medium text-gray-900">${participant.name}</div>
                 </td>
-                <td class="px-6 py-4 text-gray-600">${participant.gender}</td>
-                <td class="px-6 py-4 text-gray-600">${participant.grade}</td>
-                <td class="px-6 py-4 text-gray-600">${participant.booths?.name || '-'}</td>
-                <td class="px-6 py-4 text-gray-600">${formatDateTime(participant.created_at)}</td>
+                <td class="px-6 py-4 text-gray-600" data-label="성별">${participant.gender}</td>
+                <td class="px-6 py-4 text-gray-600" data-label="교급">${participant.grade}</td>
+                <td class="px-6 py-4 text-gray-600" data-label="부스">${participant.booths?.name || '-'}</td>
+                <td class="px-6 py-4 text-gray-600" data-label="등록일시">${formatDateTime(participant.created_at)}</td>
             `
             tbody.appendChild(row)
         })

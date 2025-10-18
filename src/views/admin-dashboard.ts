@@ -37,6 +37,45 @@ export const adminDashboardPage = `
             height: 60px;
             margin-bottom: 0.5rem;
         }
+        
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            /* 테이블을 카드형으로 변환 */
+            .mobile-card-view thead {
+                display: none;
+            }
+            .mobile-card-view tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                background: white;
+                border-radius: 8px;
+                padding: 1rem;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .mobile-card-view td {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid #f3f4f6;
+            }
+            .mobile-card-view td:last-child {
+                border-bottom: none;
+            }
+            .mobile-card-view td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #6b7280;
+            }
+            
+            /* 탭 버튼 작게 */
+            .tab-button {
+                font-size: 0.875rem;
+                padding: 0.75rem 0.5rem;
+            }
+            .tab-button i {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 to-purple-50 min-h-screen">
@@ -149,7 +188,7 @@ export const adminDashboardPage = `
             </div>
 
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <table class="w-full">
+                <table class="w-full mobile-card-view">
                     <thead class="bg-gray-50 border-b">
                         <tr>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">행사명</th>
@@ -184,7 +223,7 @@ export const adminDashboardPage = `
             </div>
 
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <table class="w-full">
+                <table class="w-full mobile-card-view">
                     <thead class="bg-gray-50 border-b">
                         <tr>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">부스명</th>
@@ -219,7 +258,7 @@ export const adminDashboardPage = `
             </div>
 
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <table class="w-full">
+                <table class="w-full mobile-card-view">
                     <thead class="bg-gray-50 border-b">
                         <tr>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">이름</th>
