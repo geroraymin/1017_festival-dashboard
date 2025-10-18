@@ -63,16 +63,28 @@ async function loadOverview() {
         if (eventFilter.options.length === 1) { // "전체 행사"만 있을 때
             data.events.forEach(event => {
                 const option = document.createElement('option')
-                option.value = event.id
-                option.textContent = event.name
+                const eventId = event.id || event.event_id
+                const eventName = event.name || event.event_name
+                option.value = eventId
+                option.textContent = eventName
                 eventFilter.appendChild(option)
             })
+        }
+        
+        // 선택된 값 유지
+        if (selectedEventId) {
+            eventFilter.value = selectedEventId
         }
 
         // 선택된 행사 필터링
         let filteredEvents = data.events
         if (selectedEventId) {
-            filteredEvents = data.events.filter(event => event.id === selectedEventId)
+            filteredEvents = data.events.filter(event => {
+                const eventId = event.id || event.event_id
+                return eventId === selectedEventId
+            })
+            console.log('🔍 선택된 행사 ID:', selectedEventId)
+            console.log('🔍 필터링된 행사:', filteredEvents)
         }
 
         // 총 참가자 계산 (필터링된 행사 기준)
@@ -933,7 +945,10 @@ async function updateChartMode() {
         // 선택된 행사 필터링
         let filteredEvents = data.events
         if (selectedEventId) {
-            filteredEvents = data.events.filter(event => event.id === selectedEventId)
+            filteredEvents = data.events.filter(event => {
+                const eventId = event.id || event.event_id
+                return eventId === selectedEventId
+            })
         }
         
         // 총 참가자 계산
