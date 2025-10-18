@@ -81,15 +81,17 @@ async function loadOverview() {
         console.log('전체 행사 수:', filteredEvents.length)
         
         filteredEvents.forEach((event, eventIndex) => {
-            console.log(`\n행사 ${eventIndex + 1}:`, event.name)
-            console.log('  - 행사 ID:', event.id)
+            console.log(`\n행사 ${eventIndex + 1}:`, event.name || event.event_name)
+            console.log('  - 행사 ID:', event.id || event.event_id)
             console.log('  - 부스 수:', event.booths?.length || 0)
             
             if (event.booths) {
                 event.booths.forEach((booth, boothIndex) => {
-                    const count = booth.participant_count || 0
-                    console.log(`    부스 ${boothIndex + 1}:`, booth.name)
-                    console.log('      - participant_count:', booth.participant_count, '(타입:', typeof booth.participant_count, ')')
+                    // total_participants 또는 participant_count 사용
+                    const count = booth.total_participants || booth.participant_count || 0
+                    console.log(`    부스 ${boothIndex + 1}:`, booth.name || booth.booth_name)
+                    console.log('      - total_participants:', booth.total_participants)
+                    console.log('      - participant_count:', booth.participant_count)
                     console.log('      - 사용할 값:', count)
                     
                     totalParticipants += count
@@ -148,6 +150,9 @@ async function loadOverview() {
         
         console.log('📊 성별 분포:', genderDistribution)
         console.log('📊 교급 분포:', gradeDistribution)
+        
+        console.log('📊 성별 분포:', genderDistribution)
+        console.log('📊 교급 분포:', gradeDistribution)
 
         // 부스별 데이터 수집
         let boothData = []
@@ -155,8 +160,8 @@ async function loadOverview() {
             if (event.booths) {
                 event.booths.forEach(booth => {
                     boothData.push({
-                        name: booth.name,
-                        count: booth.participant_count || 0  // Fallback: undefined면 0
+                        name: booth.name || booth.booth_name,
+                        count: booth.total_participants || booth.participant_count || 0
                     })
                 })
             }
@@ -941,7 +946,8 @@ async function updateChartMode() {
             totalBooths += event.booth_count || 0
             if (event.booths) {
                 event.booths.forEach(booth => {
-                    totalParticipants += booth.participant_count || 0
+                    // total_participants 또는 participant_count 사용
+                    totalParticipants += booth.total_participants || booth.participant_count || 0
                     
                     if (booth.gender_distribution) {
                         genderDistribution.male += booth.gender_distribution.male || 0
@@ -985,8 +991,8 @@ async function updateChartMode() {
             if (event.booths) {
                 event.booths.forEach(booth => {
                     boothData.push({
-                        name: booth.name,
-                        count: booth.participant_count || 0
+                        name: booth.name || booth.booth_name,
+                        count: booth.total_participants || booth.participant_count || 0
                     })
                 })
             }
