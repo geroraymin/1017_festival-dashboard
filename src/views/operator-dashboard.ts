@@ -12,6 +12,43 @@ export const operatorDashboardPage = `
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* 스켈레톤 로더 애니메이션 */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+            border-radius: 8px;
+        }
+        .skeleton-text {
+            height: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .skeleton-title {
+            height: 2rem;
+            width: 60%;
+            margin-bottom: 1rem;
+        }
+        .skeleton-card {
+            height: 120px;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #14b8a6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-teal-50 to-cyan-50 min-h-screen">
     <!-- 헤더 -->
@@ -80,7 +117,7 @@ export const operatorDashboardPage = `
         </div>
 
         <!-- 통계 카드 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="statsCards">
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <div class="flex items-center justify-between mb-4">
                     <i class="fas fa-mars text-3xl text-blue-500"></i>
@@ -111,6 +148,22 @@ export const operatorDashboardPage = `
                     <span class="text-3xl font-bold text-gray-800" id="adultCount">0</span>
                 </div>
                 <h3 class="text-gray-600 font-medium">성인</h3>
+            </div>
+        </div>
+
+        <!-- 로딩 스켈레톤 (초기 상태) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 hidden" id="statsCardsLoading">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="skeleton skeleton-card"></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="skeleton skeleton-card"></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="skeleton skeleton-card"></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="skeleton skeleton-card"></div>
             </div>
         </div>
 
@@ -190,8 +243,20 @@ export const operatorDashboardPage = `
             }
         }
 
+        // 로딩 상태 토글
+        function showLoading() {
+            document.getElementById('statsCards').classList.add('hidden')
+            document.getElementById('statsCardsLoading').classList.remove('hidden')
+        }
+
+        function hideLoading() {
+            document.getElementById('statsCards').classList.remove('hidden')
+            document.getElementById('statsCardsLoading').classList.add('hidden')
+        }
+
         // 통계 로드
         async function loadStats() {
+            showLoading()
             try {
                 const response = await StatsAPI.getBooth(boothId)
                 const stats = response.stats
@@ -211,8 +276,11 @@ export const operatorDashboardPage = `
                 updateGenderChart(stats.gender_distribution)
                 updateGradeChart(stats.grade_distribution)
                 updateTimeChart(stats.hourly_distribution)
+                
+                hideLoading()
             } catch (error) {
                 console.error('통계 로드 실패:', error)
+                hideLoading()
                 alert('통계 데이터를 불러오는데 실패했습니다.')
             }
         }

@@ -28,14 +28,20 @@ auth.post('/admin', async (c) => {
       .single()
 
     if (error || !admin) {
-      return c.json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' }, 401)
+      return c.json({ 
+        error: '아이디 또는 비밀번호가 올바르지 않습니다.',
+        message: '다시 한 번 확인해주세요. 문제가 계속되면 관리자에게 문의하세요.'
+      }, 401)
     }
 
     // 비밀번호 검증
     const isValidPassword = await verifyPassword(password, admin.password_hash)
 
     if (!isValidPassword) {
-      return c.json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' }, 401)
+      return c.json({ 
+        error: '아이디 또는 비밀번호가 올바르지 않습니다.',
+        message: '다시 한 번 확인해주세요. 문제가 계속되면 관리자에게 문의하세요.'
+      }, 401)
     }
 
     // JWT 토큰 생성
@@ -87,7 +93,10 @@ auth.post('/operator', async (c) => {
       .single()
 
     if (error || !booth) {
-      return c.json({ error: '유효하지 않은 부스 코드입니다.' }, 401)
+      return c.json({ 
+        error: '유효하지 않은 부스 코드입니다.',
+        message: '부스 코드를 다시 확인해주세요. 부스가 비활성 상태이거나 코드가 잘못되었을 수 있습니다.'
+      }, 401)
     }
 
     // JWT 토큰 생성

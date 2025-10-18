@@ -17,6 +17,26 @@ export const adminDashboardPage = `
         .tab-content.active { display: block; }
         .modal { display: none; }
         .modal.active { display: flex; }
+        
+        /* 스켈레톤 로더 */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+            border-radius: 8px;
+        }
+        .skeleton-text {
+            height: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .skeleton-row {
+            height: 60px;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 to-purple-50 min-h-screen">
