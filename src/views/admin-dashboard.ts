@@ -223,7 +223,7 @@ export const adminDashboardPage = `
             </div>
 
             <!-- 차트 -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
                         <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
@@ -239,6 +239,15 @@ export const adminDashboardPage = `
                     </h3>
                     <canvas id="overallGradeChart"></canvas>
                 </div>
+            </div>
+
+            <!-- 부스별 참가자 수 차트 -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-store-alt text-pink-500 mr-2"></i>
+                    부스별 참가자 현황
+                </h3>
+                <canvas id="overallBoothChart" style="max-height: 400px;"></canvas>
             </div>
         </div>
 
@@ -569,6 +578,14 @@ export const adminDashboardPage = `
                         교급 분포
                     </h3>
                     <canvas id="chartModeGradeChart" style="max-height: 400px;"></canvas>
+                </div>
+
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-store-alt text-pink-500 mr-2"></i>
+                        부스별 참가자 현황
+                    </h3>
+                    <canvas id="chartModeBoothChart" style="max-height: 500px;"></canvas>
                 </div>
             </div>
         </div>

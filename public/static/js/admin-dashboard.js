@@ -2,7 +2,7 @@
  * 관리자 대시보드 JavaScript
  */
 
-let overallGenderChart, overallGradeChart
+let overallGenderChart, overallGradeChart, overallBoothChart
 let allEvents = []
 let allBooths = []
 let allParticipants = []
@@ -118,8 +118,24 @@ async function loadOverview() {
             })
         })
 
+        // 부스별 데이터 수집
+        let boothData = []
+        filteredEvents.forEach(event => {
+            event.booths.forEach(booth => {
+                boothData.push({
+                    name: booth.name,
+                    count: booth.participant_count
+                })
+            })
+        })
+        // 참가자 수 많은 순으로 정렬
+        boothData.sort((a, b) => b.count - a.count)
+        // 상위 10개만 표시
+        boothData = boothData.slice(0, 10)
+
         updateOverallGenderChart(genderDistribution)
         updateOverallGradeChart(gradeDistribution)
+        updateOverallBoothChart(boothData)
     } catch (error) {
         console.error('통계 개요 로드 실패:', error)
     }
@@ -185,6 +201,95 @@ function updateOverallGradeChart(data) {
                     beginAtZero: true,
                     ticks: {
                         stepSize: 1
+                    }
+                }
+            }
+        }
+    })
+}
+
+// 부스별 차트 업데이트
+function updateOverallBoothChart(boothData) {
+    const ctx = document.getElementById('overallBoothChart')
+    if (!ctx) return
+
+    // 기존 차트 제거
+    if (overallBoothChart) {
+        overallBoothChart.destroy()
+    }
+
+    overallBoothChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: boothData.map(booth => booth.name),
+            datasets: [{
+                label: '참가자 수',
+                data: boothData.map(booth => booth.count),
+                backgroundColor: [
+                    'rgba(236, 72, 153, 0.8)',
+                    'rgba(168, 85, 247, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(139, 92, 246, 0.8)',
+                    'rgba(236, 72, 153, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(249, 115, 22, 0.8)'
+                ],
+                borderColor: [
+                    'rgb(236, 72, 153)',
+                    'rgb(168, 85, 247)',
+                    'rgb(59, 130, 246)',
+                    'rgb(16, 185, 129)',
+                    'rgb(245, 158, 11)',
+                    'rgb(239, 68, 68)',
+                    'rgb(139, 92, 246)',
+                    'rgb(236, 72, 153)',
+                    'rgb(34, 197, 94)',
+                    'rgb(249, 115, 22)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            indexAxis: 'y', // 가로 막대형 차트
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            return '참가자: ' + context.parsed.x + '명'
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
                     }
                 }
             }
@@ -688,6 +793,7 @@ function filterByEvent() {
 let chartModeInterval = null
 let chartModeGenderChart = null
 let chartModeGradeChart = null
+let chartModeBoothChart = null
 
 function enterChartMode() {
     document.getElementById('chartMode').classList.add('active')
@@ -720,6 +826,10 @@ function exitChartMode() {
     if (chartModeGradeChart) {
         chartModeGradeChart.destroy()
         chartModeGradeChart = null
+    }
+    if (chartModeBoothChart) {
+        chartModeBoothChart.destroy()
+        chartModeBoothChart = null
     }
 }
 
@@ -787,9 +897,25 @@ async function updateChartMode() {
             second: '2-digit'
         })
         
+        // 부스별 데이터 수집
+        let boothData = []
+        filteredEvents.forEach(event => {
+            event.booths.forEach(booth => {
+                boothData.push({
+                    name: booth.name,
+                    count: booth.participant_count
+                })
+            })
+        })
+        // 참가자 수 많은 순으로 정렬
+        boothData.sort((a, b) => b.count - a.count)
+        // 상위 10개만 표시
+        boothData = boothData.slice(0, 10)
+        
         // 차트 업데이트
         updateChartModeGenderChart(genderDistribution)
         updateChartModeGradeChart(gradeDistribution)
+        updateChartModeBoothChart(boothData)
     } catch (error) {
         console.error('차트 모드 데이터 업데이트 실패:', error)
     }
@@ -867,6 +993,98 @@ function updateChartModeGradeChart(data) {
                 x: {
                     ticks: {
                         font: { size: 14 }
+                    }
+                }
+            }
+        }
+    })
+}
+
+// 차트 모드 부스 차트
+function updateChartModeBoothChart(boothData) {
+    const ctx = document.getElementById('chartModeBoothChart')
+    if (!ctx) return
+    
+    if (chartModeBoothChart) {
+        chartModeBoothChart.destroy()
+    }
+    
+    chartModeBoothChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: boothData.map(booth => booth.name),
+            datasets: [{
+                label: '참가자 수',
+                data: boothData.map(booth => booth.count),
+                backgroundColor: [
+                    'rgba(236, 72, 153, 0.8)',
+                    'rgba(168, 85, 247, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(139, 92, 246, 0.8)',
+                    'rgba(236, 72, 153, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(249, 115, 22, 0.8)'
+                ],
+                borderColor: [
+                    'rgb(236, 72, 153)',
+                    'rgb(168, 85, 247)',
+                    'rgb(59, 130, 246)',
+                    'rgb(16, 185, 129)',
+                    'rgb(245, 158, 11)',
+                    'rgb(239, 68, 68)',
+                    'rgb(139, 92, 246)',
+                    'rgb(236, 72, 153)',
+                    'rgb(34, 197, 94)',
+                    'rgb(249, 115, 22)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 15
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            return '참가자: ' + context.parsed.x + '명'
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        font: { size: 14 }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y: {
+                    ticks: {
+                        font: { size: 14 }
+                    },
+                    grid: {
+                        display: false
                     }
                 }
             }
