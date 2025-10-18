@@ -77,18 +77,19 @@ async function loadOverview() {
         })
 
         // 전체 성별/교급 분포 계산
-        let genderDistribution = { male: 0, female: 0, other: 0 }
-        let gradeDistribution = { elementary: 0, middle: 0, high: 0, other: 0 }
+        let genderDistribution = { male: 0, female: 0 }
+        let gradeDistribution = { infant: 0, elementary: 0, middle: 0, high: 0, adult: 0, other: 0 }
 
         data.events.forEach(event => {
             event.booths.forEach(booth => {
                 genderDistribution.male += booth.gender_distribution.male
                 genderDistribution.female += booth.gender_distribution.female
-                genderDistribution.other += booth.gender_distribution.other
 
+                gradeDistribution.infant += booth.grade_distribution.infant || 0
                 gradeDistribution.elementary += booth.grade_distribution.elementary
                 gradeDistribution.middle += booth.grade_distribution.middle
                 gradeDistribution.high += booth.grade_distribution.high
+                gradeDistribution.adult += booth.grade_distribution.adult || 0
                 gradeDistribution.other += booth.grade_distribution.other
             })
         })
@@ -111,10 +112,10 @@ function updateOverallGenderChart(data) {
     overallGenderChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['남성', '여성', '기타'],
+            labels: ['남성', '여성'],
             datasets: [{
-                data: [data.male, data.female, data.other],
-                backgroundColor: ['#3b82f6', '#ec4899', '#9ca3af']
+                data: [data.male, data.female],
+                backgroundColor: ['#3b82f6', '#ec4899']
             }]
         },
         options: {
@@ -140,11 +141,11 @@ function updateOverallGradeChart(data) {
     overallGradeChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['초등', '중등', '고등', '기타'],
+            labels: ['유아', '초등', '중등', '고등', '성인', '기타'],
             datasets: [{
                 label: '참가자 수',
-                data: [data.elementary, data.middle, data.high, data.other],
-                backgroundColor: ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b']
+                data: [data.infant || 0, data.elementary, data.middle, data.high, data.adult || 0, data.other],
+                backgroundColor: ['#fbbf24', '#8b5cf6', '#06b6d4', '#10b981', '#6366f1', '#9ca3af']
             }]
         },
         options: {

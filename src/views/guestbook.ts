@@ -325,24 +325,25 @@ export const guestbookPage = `
             <!-- Step 6: 완료 -->
             <div id="section6" class="form-section flex-1 flex flex-col justify-center text-center">
                 <div class="mb-6">
-                    <div class="inline-block p-6 bg-green-100 rounded-full mb-4">
+                    <div class="inline-block p-6 bg-green-100 rounded-full mb-4 animate-bounce">
                         <i class="fas fa-check-circle text-green-600 text-6xl"></i>
                     </div>
                 </div>
                 
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">
-                    방명록 작성 완료!
+                    등록 완료!
                 </h2>
                 
                 <p class="text-gray-600 mb-8">
                     소중한 시간 내어 방명록을 작성해주셔서 감사합니다.<br>
-                    즐거운 시간 되세요!
+                    <strong>즐거운 시간 되세요!</strong> 🎉
                 </p>
 
                 <div class="bg-purple-50 p-6 rounded-lg">
                     <p class="text-sm text-gray-600">
                         <i class="fas fa-info-circle text-purple-600 mr-2"></i>
-                        3초 후 자동으로 페이지가 이동됩니다.
+                        3초 후 자동으로 새로고침됩니다.<br>
+                        <span class="text-xs text-gray-500 mt-1 block">다음 참가자도 작성 가능합니다</span>
                     </p>
                 </div>
             </div>
@@ -487,9 +488,9 @@ export const guestbookPage = `
                 showSection('section6')
                 updateProgress(6)
                 
-                // 3초 후 메인으로 이동
+                // 3초 후 페이지 새로고침 (다음 참가자 작성 가능)
                 setTimeout(() => {
-                    window.location.href = '/'
+                    window.location.reload()
                 }, 3000)
             } catch (error) {
                 console.error('참가자 등록 실패:', error)

@@ -56,9 +56,11 @@ stats.get('/booth/:booth_id', async (c) => {
     }
 
     const gradeDistribution = {
+      infant: participants?.filter(p => p.grade === '유아').length || 0,
       elementary: participants?.filter(p => p.grade === '초등').length || 0,
       middle: participants?.filter(p => p.grade === '중등').length || 0,
       high: participants?.filter(p => p.grade === '고등').length || 0,
+      adult: participants?.filter(p => p.grade === '성인').length || 0,
       other: participants?.filter(p => p.grade === '기타').length || 0
     }
 

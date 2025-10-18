@@ -99,18 +99,18 @@ export const operatorDashboardPage = `
 
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <i class="fas fa-graduation-cap text-3xl text-purple-500"></i>
-                    <span class="text-3xl font-bold text-gray-800" id="elementaryCount">0</span>
+                    <i class="fas fa-baby text-3xl text-yellow-500"></i>
+                    <span class="text-3xl font-bold text-gray-800" id="infantCount">0</span>
                 </div>
-                <h3 class="text-gray-600 font-medium">초등학생</h3>
+                <h3 class="text-gray-600 font-medium">유아</h3>
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <i class="fas fa-book text-3xl text-green-500"></i>
-                    <span class="text-3xl font-bold text-gray-800" id="middleHighCount">0</span>
+                    <i class="fas fa-user-tie text-3xl text-indigo-500"></i>
+                    <span class="text-3xl font-bold text-gray-800" id="adultCount">0</span>
                 </div>
-                <h3 class="text-gray-600 font-medium">중·고등학생</h3>
+                <h3 class="text-gray-600 font-medium">성인</h3>
             </div>
         </div>
 
@@ -204,9 +204,8 @@ export const operatorDashboardPage = `
                 document.getElementById('femaleCount').textContent = stats.gender_distribution.female
 
                 // 교급 통계
-                document.getElementById('elementaryCount').textContent = stats.grade_distribution.elementary
-                const middleHighCount = stats.grade_distribution.middle + stats.grade_distribution.high
-                document.getElementById('middleHighCount').textContent = middleHighCount
+                document.getElementById('infantCount').textContent = stats.grade_distribution.infant || 0
+                document.getElementById('adultCount').textContent = stats.grade_distribution.adult || 0
 
                 // 차트 업데이트
                 updateGenderChart(stats.gender_distribution)
@@ -229,10 +228,10 @@ export const operatorDashboardPage = `
             genderChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['남성', '여성', '기타'],
+                    labels: ['남성', '여성'],
                     datasets: [{
-                        data: [data.male, data.female, data.other],
-                        backgroundColor: ['#3b82f6', '#ec4899', '#9ca3af']
+                        data: [data.male, data.female],
+                        backgroundColor: ['#3b82f6', '#ec4899']
                     }]
                 },
                 options: {
@@ -258,11 +257,11 @@ export const operatorDashboardPage = `
             gradeChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['초등', '중등', '고등', '기타'],
+                    labels: ['유아', '초등', '중등', '고등', '성인', '기타'],
                     datasets: [{
                         label: '참가자 수',
-                        data: [data.elementary, data.middle, data.high, data.other],
-                        backgroundColor: ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b']
+                        data: [data.infant || 0, data.elementary, data.middle, data.high, data.adult || 0, data.other],
+                        backgroundColor: ['#fbbf24', '#8b5cf6', '#06b6d4', '#10b981', '#6366f1', '#9ca3af']
                     }]
                 },
                 options: {
