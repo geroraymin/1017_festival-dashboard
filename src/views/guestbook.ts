@@ -422,17 +422,6 @@ export const guestbookPage = `
             window.location.href = '/'
         }
 
-        // 뒤로가기 함수
-        function goBack() {
-            if (currentStep > 1 && !isFormCompleted) {
-                if (confirm('작성 중인 내용이 저장되지 않습니다. 이전 페이지로 돌아가시겠습니까?')) {
-                    window.history.back()
-                }
-            } else {
-                window.history.back()
-            }
-        }
-
         // 오늘 날짜를 max로 설정
         document.getElementById('dateOfBirth').max = new Date().toISOString().split('T')[0]
 
@@ -449,6 +438,17 @@ export const guestbookPage = `
 
         // 작성 완료 여부
         let isFormCompleted = false
+
+        // 뒤로가기 함수
+        function goBack() {
+            if (currentStep > 1 && !isFormCompleted) {
+                if (confirm('작성 중인 내용이 저장되지 않습니다. 이전 페이지로 돌아가시겠습니까?')) {
+                    window.history.back()
+                }
+            } else {
+                window.history.back()
+            }
+        }
 
         // 페이지 이탈 경고 (Step 2-5에만 적용)
         window.addEventListener('beforeunload', function(e) {

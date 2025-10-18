@@ -327,8 +327,12 @@ async function loadEvents() {
             const boothsData = await BoothsAPI.getAll(event.id)
             const boothCount = boothsData.booths.length
 
-            // 참가자 수 계산 (임시)
-            const participantCount = 0
+            // 참가자 수 계산 - 해당 행사의 모든 부스의 참가자 수 합산
+            let participantCount = 0
+            for (const booth of boothsData.booths) {
+                const participantsData = await ParticipantsAPI.getAll({ booth_id: booth.id })
+                participantCount += participantsData.total || participantsData.participants.length
+            }
 
             const row = document.createElement('tr')
             row.className = 'hover:bg-gray-50'
@@ -387,8 +391,9 @@ async function loadBooths() {
         }
 
         for (const booth of allBooths) {
-            // 참가자 수 계산 (임시)
-            const participantCount = 0
+            // 참가자 수 계산 - 해당 부스의 참가자 수
+            const participantsData = await ParticipantsAPI.getAll({ booth_id: booth.id })
+            const participantCount = participantsData.total || participantsData.participants.length
 
             const row = document.createElement('tr')
             row.className = 'hover:bg-gray-50'
