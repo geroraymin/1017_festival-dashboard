@@ -301,36 +301,43 @@ async function loadParticipants() {
         const data = await ParticipantsAPI.getAll({ limit: 100 })
         allParticipants = data.participants
 
-        const tbody = document.getElementById('participantsTableBody')
-        tbody.innerHTML = ''
-
-        if (allParticipants.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                        등록된 참가자가 없습니다.
-                    </td>
-                </tr>
-            `
-            return
-        }
-
-        allParticipants.forEach(participant => {
-            const row = document.createElement('tr')
-            row.className = 'hover:bg-gray-50'
-            row.innerHTML = `
-                <td class="px-6 py-4" data-label="이름">
-                    <div class="font-medium text-gray-900">${participant.name}</div>
-                </td>
-                <td class="px-6 py-4 text-gray-600" data-label="성별">${participant.gender}</td>
-                <td class="px-6 py-4 text-gray-600" data-label="교급">${participant.grade}</td>
-                <td class="px-6 py-4 text-gray-600" data-label="부스">${participant.booths?.name || '-'}</td>
-                <td class="px-6 py-4 text-gray-600" data-label="등록일시">${formatDateTime(participant.created_at)}</td>
-            `
-            tbody.appendChild(row)
+        // 부스 필터 드롭다운 채우기
+        const boothSelect = document.getElementById('filterBooth')
+        const uniqueBooths = [...new Set(allParticipants.map(p => p.booth_id).filter(Boolean))]
+        const boothMap = {}
+        
+        allParticipants.forEach(p => {
+            if (p.booth_id && p.booths?.name) {
+                boothMap[p.booth_id] = p.booths.name
+            }
         })
+
+        boothSelect.innerHTML = '<option value="">전체</option>'
+        uniqueBooths.forEach(boothId => {
+            const option = document.createElement('option')
+            option.value = boothId
+            option.textContent = boothMap[boothId] || `부스 ${boothId}`
+            boothSelect.appendChild(option)
+        })
+
+        // 테이블 렌더링 (새 함수 사용)
+        renderParticipantsTable(allParticipants)
+
+        // 카운트 업데이트
+        document.getElementById('filteredCount').textContent = allParticipants.length
+        document.getElementById('totalCount').textContent = allParticipants.length
+
     } catch (error) {
         console.error('참가자 목록 로드 실패:', error)
+        const tbody = document.getElementById('participantsTableBody')
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-red-500">
+                    <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                    <p>데이터 로드에 실패했습니다</p>
+                </td>
+            </tr>
+        `
     }
 }
 
@@ -471,16 +478,37 @@ async function deleteBooth(id) {
 
 // CSV 내보내기
 function exportCSV() {
-    if (allParticipants.length === 0) {
+    // 현재 화면에 표시된 (필터링된) 참가자만 가져오기
+    const displayedRows = document.querySelectorAll('#participantsTableBody tr')
+    
+    if (displayedRows.length === 0 || allParticipants.length === 0) {
         alert('내보낼 데이터가 없습니다.')
         return
+    }
+
+    // 필터링된 참가자 확인
+    const searchName = document.getElementById('searchName').value.toLowerCase().trim()
+    const filterGender = document.getElementById('filterGender').value
+    const filterGrade = document.getElementById('filterGrade').value
+    const filterBooth = document.getElementById('filterBooth').value
+
+    // 필터 적용
+    let participantsToExport = allParticipants
+    if (searchName || filterGender || filterGrade || filterBooth) {
+        participantsToExport = allParticipants.filter(p => {
+            if (searchName && !p.name.toLowerCase().includes(searchName)) return false
+            if (filterGender && p.gender !== filterGender) return false
+            if (filterGrade && p.grade !== filterGrade) return false
+            if (filterBooth && p.booth_id !== filterBooth) return false
+            return true
+        })
     }
 
     // CSV 헤더
     let csv = '이름,성별,교급,생년월일,부스명,등록일시\\n'
 
     // CSV 데이터
-    allParticipants.forEach(p => {
+    participantsToExport.forEach(p => {
         csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booths?.name || '-'},${formatDateTime(p.created_at)}\\n`
     })
 
@@ -489,11 +517,17 @@ function exportCSV() {
     const link = document.createElement('a')
     const url = URL.createObjectURL(blob)
     link.setAttribute('href', url)
-    link.setAttribute('download', `participants_${new Date().toISOString().split('T')[0]}.csv`)
+    const filename = participantsToExport.length === allParticipants.length 
+        ? `participants_${new Date().toISOString().split('T')[0]}.csv`
+        : `participants_filtered_${new Date().toISOString().split('T')[0]}.csv`
+    link.setAttribute('download', filename)
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+
+    // 사용자에게 알림
+    alert(`${participantsToExport.length}명의 참가자 데이터를 내보냈습니다.`)
 }
 
 // 날짜 포맷
@@ -515,6 +549,103 @@ function formatDateTime(dateStr) {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit'
+    })
+}
+
+// 참가자 필터링
+function filterParticipants() {
+    const searchName = document.getElementById('searchName').value.toLowerCase().trim()
+    const filterGender = document.getElementById('filterGender').value
+    const filterGrade = document.getElementById('filterGrade').value
+    const filterBooth = document.getElementById('filterBooth').value
+
+    let filtered = allParticipants.filter(p => {
+        // 이름 검색
+        if (searchName && !p.name.toLowerCase().includes(searchName)) {
+            return false
+        }
+
+        // 성별 필터
+        if (filterGender && p.gender !== filterGender) {
+            return false
+        }
+
+        // 교급 필터
+        if (filterGrade && p.grade !== filterGrade) {
+            return false
+        }
+
+        // 부스 필터
+        if (filterBooth && p.booth_id !== filterBooth) {
+            return false
+        }
+
+        return true
+    })
+
+    // 필터링된 데이터로 테이블 렌더링
+    renderParticipantsTable(filtered)
+
+    // 카운트 업데이트
+    document.getElementById('filteredCount').textContent = filtered.length
+    document.getElementById('totalCount').textContent = allParticipants.length
+}
+
+// 필터 초기화
+function resetFilters() {
+    document.getElementById('searchName').value = ''
+    document.getElementById('filterGender').value = ''
+    document.getElementById('filterGrade').value = ''
+    document.getElementById('filterBooth').value = ''
+    
+    filterParticipants()
+}
+
+// 참가자 테이블 렌더링 (필터링된 데이터 사용)
+function renderParticipantsTable(participants) {
+    const tbody = document.getElementById('participantsTableBody')
+    
+    if (participants.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                    <i class="fas fa-inbox text-3xl mb-2"></i>
+                    <p>검색 결과가 없습니다</p>
+                </td>
+            </tr>
+        `
+        return
+    }
+
+    tbody.innerHTML = ''
+    participants.forEach(p => {
+        const row = document.createElement('tr')
+        row.className = 'hover:bg-gray-50 transition'
+        row.innerHTML = `
+            <td class="px-6 py-4" data-label="이름">
+                <div class="font-medium text-gray-900">${p.name}</div>
+                <div class="text-sm text-gray-500">${p.date_of_birth}</div>
+            </td>
+            <td class="px-6 py-4 text-gray-600" data-label="성별">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    p.gender === '남성' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'
+                }">
+                    ${p.gender}
+                </span>
+            </td>
+            <td class="px-6 py-4 text-gray-600" data-label="교급">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    ${p.grade}
+                </span>
+            </td>
+            <td class="px-6 py-4 text-gray-600" data-label="부스">
+                ${p.booths?.name || '-'}
+            </td>
+            <td class="px-6 py-4 text-gray-600" data-label="등록일시">
+                ${formatDateTime(p.created_at)}
+            </td>
+        `
+        tbody.appendChild(row)
     })
 }
 

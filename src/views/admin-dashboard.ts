@@ -257,6 +257,79 @@ export const adminDashboardPage = `
                 </button>
             </div>
 
+            <!-- 검색 및 필터 -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    <!-- 이름 검색 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-search mr-1"></i>이름 검색
+                        </label>
+                        <input type="text" id="searchName" placeholder="이름 입력..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                            oninput="filterParticipants()">
+                    </div>
+
+                    <!-- 성별 필터 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-venus-mars mr-1"></i>성별
+                        </label>
+                        <select id="filterGender" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                            onchange="filterParticipants()">
+                            <option value="">전체</option>
+                            <option value="남성">남성</option>
+                            <option value="여성">여성</option>
+                        </select>
+                    </div>
+
+                    <!-- 교급 필터 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-graduation-cap mr-1"></i>교급
+                        </label>
+                        <select id="filterGrade" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                            onchange="filterParticipants()">
+                            <option value="">전체</option>
+                            <option value="유아">유아</option>
+                            <option value="초등">초등</option>
+                            <option value="중등">중등</option>
+                            <option value="고등">고등</option>
+                            <option value="성인">성인</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </div>
+
+                    <!-- 부스 필터 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-store mr-1"></i>부스
+                        </label>
+                        <select id="filterBooth" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                            onchange="filterParticipants()">
+                            <option value="">전체</option>
+                            <!-- 동적으로 부스 목록이 추가됩니다 -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 필터 결과 및 초기화 -->
+                <div class="flex justify-between items-center">
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-filter mr-1"></i>
+                        검색 결과: <span id="filteredCount" class="font-semibold text-indigo-600">0</span>명 / 
+                        전체 <span id="totalCount" class="font-semibold">0</span>명
+                    </div>
+                    <button onclick="resetFilters()" 
+                        class="text-sm text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-redo mr-1"></i>필터 초기화
+                    </button>
+                </div>
+            </div>
+
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                 <table class="w-full mobile-card-view">
                     <thead class="bg-gray-50 border-b">
