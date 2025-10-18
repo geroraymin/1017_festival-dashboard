@@ -372,6 +372,23 @@ export const guestbookPage = `
             dateOfBirth: ''
         }
 
+        // 현재 스텝 추적 (1-6)
+        let currentStep = 1
+
+        // 작성 완료 여부
+        let isFormCompleted = false
+
+        // 페이지 이탈 경고 (Step 2-5에만 적용)
+        window.addEventListener('beforeunload', function(e) {
+            // Step 1(동의), Step 6(완료) 제외, 작성 완료된 경우 제외
+            if (currentStep >= 2 && currentStep <= 5 && !isFormCompleted) {
+                const message = '작성 중인 내용이 저장되지 않습니다. 정말 나가시겠습니까?'
+                e.preventDefault()
+                e.returnValue = message
+                return message
+            }
+        })
+
         // 부스 정보 로드
         async function loadBoothInfo() {
             try {
@@ -438,6 +455,9 @@ export const guestbookPage = `
             // Section 전환
             showSection(\`section\${step}\`)
             updateProgress(step)
+            
+            // 현재 스텝 업데이트 (페이지 이탈 경고용)
+            currentStep = step
         }
 
         function showSection(sectionId) {
@@ -487,6 +507,10 @@ export const guestbookPage = `
                 // 성공 - Step 6으로 이동
                 showSection('section6')
                 updateProgress(6)
+                currentStep = 6
+                
+                // 작성 완료 플래그 설정 (페이지 이탈 경고 비활성화)
+                isFormCompleted = true
                 
                 // 3초 후 페이지 새로고침 (다음 참가자 작성 가능)
                 setTimeout(() => {
