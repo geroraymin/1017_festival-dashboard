@@ -77,12 +77,33 @@ async function loadOverview() {
 
         // 총 참가자 계산 (필터링된 행사 기준)
         let totalParticipants = 0
-        filteredEvents.forEach(event => {
-            event.booths.forEach(booth => {
-                totalParticipants += booth.participant_count
-            })
+        console.log('📊 [통계 개요] 데이터 구조 분석 시작')
+        console.log('전체 행사 수:', filteredEvents.length)
+        
+        filteredEvents.forEach((event, eventIndex) => {
+            console.log(`\n행사 ${eventIndex + 1}:`, event.name)
+            console.log('  - 행사 ID:', event.id)
+            console.log('  - 부스 수:', event.booths?.length || 0)
+            
+            if (event.booths) {
+                event.booths.forEach((booth, boothIndex) => {
+                    const count = booth.participant_count || 0
+                    console.log(`    부스 ${boothIndex + 1}:`, booth.name)
+                    console.log('      - participant_count:', booth.participant_count, '(타입:', typeof booth.participant_count, ')')
+                    console.log('      - 사용할 값:', count)
+                    
+                    totalParticipants += count
+                })
+            }
         })
-        document.getElementById('totalParticipants').textContent = totalParticipants
+        
+        console.log('\n✅ 총 참가자 수:', totalParticipants)
+        console.log('타입:', typeof totalParticipants)
+        console.log('isNaN:', isNaN(totalParticipants))
+        
+        // Fallback: NaN이면 0으로 표시
+        const displayValue = isNaN(totalParticipants) ? 0 : totalParticipants
+        document.getElementById('totalParticipants').textContent = displayValue
 
         // 행사 및 부스 수 (필터링된 기준)
         document.getElementById('totalEvents').textContent = filteredEvents.length
@@ -105,33 +126,47 @@ async function loadOverview() {
         let gradeDistribution = { infant: 0, elementary: 0, middle: 0, high: 0, adult: 0, other: 0 }
 
         filteredEvents.forEach(event => {
-            event.booths.forEach(booth => {
-                genderDistribution.male += booth.gender_distribution.male
-                genderDistribution.female += booth.gender_distribution.female
+            if (event.booths) {
+                event.booths.forEach(booth => {
+                    // Fallback: undefined 방지
+                    if (booth.gender_distribution) {
+                        genderDistribution.male += booth.gender_distribution.male || 0
+                        genderDistribution.female += booth.gender_distribution.female || 0
+                    }
 
-                gradeDistribution.infant += booth.grade_distribution.infant || 0
-                gradeDistribution.elementary += booth.grade_distribution.elementary
-                gradeDistribution.middle += booth.grade_distribution.middle
-                gradeDistribution.high += booth.grade_distribution.high
-                gradeDistribution.adult += booth.grade_distribution.adult || 0
-                gradeDistribution.other += booth.grade_distribution.other
-            })
+                    if (booth.grade_distribution) {
+                        gradeDistribution.infant += booth.grade_distribution.infant || 0
+                        gradeDistribution.elementary += booth.grade_distribution.elementary || 0
+                        gradeDistribution.middle += booth.grade_distribution.middle || 0
+                        gradeDistribution.high += booth.grade_distribution.high || 0
+                        gradeDistribution.adult += booth.grade_distribution.adult || 0
+                        gradeDistribution.other += booth.grade_distribution.other || 0
+                    }
+                })
+            }
         })
+        
+        console.log('📊 성별 분포:', genderDistribution)
+        console.log('📊 교급 분포:', gradeDistribution)
 
         // 부스별 데이터 수집
         let boothData = []
         filteredEvents.forEach(event => {
-            event.booths.forEach(booth => {
-                boothData.push({
-                    name: booth.name,
-                    count: booth.participant_count
+            if (event.booths) {
+                event.booths.forEach(booth => {
+                    boothData.push({
+                        name: booth.name,
+                        count: booth.participant_count || 0  // Fallback: undefined면 0
+                    })
                 })
-            })
+            }
         })
         // 참가자 수 많은 순으로 정렬
         boothData.sort((a, b) => b.count - a.count)
         // 상위 10개만 표시
         boothData = boothData.slice(0, 10)
+        
+        console.log('📊 부스별 데이터 (loadOverview):', boothData)
 
         updateOverallGenderChart(genderDistribution)
         updateOverallGradeChart(gradeDistribution)
@@ -903,23 +938,30 @@ async function updateChartMode() {
         let totalBooths = 0
         
         filteredEvents.forEach(event => {
-            totalBooths += event.booth_count
-            event.booths.forEach(booth => {
-                totalParticipants += booth.participant_count
-                genderDistribution.male += booth.gender_distribution.male
-                genderDistribution.female += booth.gender_distribution.female
-                
-                gradeDistribution.infant += booth.grade_distribution.infant || 0
-                gradeDistribution.elementary += booth.grade_distribution.elementary
-                gradeDistribution.middle += booth.grade_distribution.middle
-                gradeDistribution.high += booth.grade_distribution.high
-                gradeDistribution.adult += booth.grade_distribution.adult || 0
-                gradeDistribution.other += booth.grade_distribution.other
-            })
+            totalBooths += event.booth_count || 0
+            if (event.booths) {
+                event.booths.forEach(booth => {
+                    totalParticipants += booth.participant_count || 0
+                    
+                    if (booth.gender_distribution) {
+                        genderDistribution.male += booth.gender_distribution.male || 0
+                        genderDistribution.female += booth.gender_distribution.female || 0
+                    }
+                    
+                    if (booth.grade_distribution) {
+                        gradeDistribution.infant += booth.grade_distribution.infant || 0
+                        gradeDistribution.elementary += booth.grade_distribution.elementary || 0
+                        gradeDistribution.middle += booth.grade_distribution.middle || 0
+                        gradeDistribution.high += booth.grade_distribution.high || 0
+                        gradeDistribution.adult += booth.grade_distribution.adult || 0
+                        gradeDistribution.other += booth.grade_distribution.other || 0
+                    }
+                })
+            }
         })
         
-        // 요약 카드 업데이트
-        document.getElementById('chartModeTotalParticipants').textContent = totalParticipants
+        // 요약 카드 업데이트 (NaN 방지)
+        document.getElementById('chartModeTotalParticipants').textContent = isNaN(totalParticipants) ? 0 : totalParticipants
         document.getElementById('chartModeTotalEvents').textContent = filteredEvents.length
         document.getElementById('chartModeTotalBooths').textContent = totalBooths
         
@@ -940,17 +982,22 @@ async function updateChartMode() {
         // 부스별 데이터 수집
         let boothData = []
         filteredEvents.forEach(event => {
-            event.booths.forEach(booth => {
-                boothData.push({
-                    name: booth.name,
-                    count: booth.participant_count
+            if (event.booths) {
+                event.booths.forEach(booth => {
+                    boothData.push({
+                        name: booth.name,
+                        count: booth.participant_count || 0
+                    })
                 })
-            })
+            }
         })
         // 참가자 수 많은 순으로 정렬
         boothData.sort((a, b) => b.count - a.count)
         // 상위 10개만 표시
         boothData = boothData.slice(0, 10)
+        
+        console.log('📊 [차트 모드] 총 참가자:', totalParticipants)
+        console.log('📊 [차트 모드] 부스별 데이터:', boothData)
         
         // 차트 업데이트
         updateChartModeGenderChart(genderDistribution)
