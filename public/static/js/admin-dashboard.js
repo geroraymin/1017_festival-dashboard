@@ -218,6 +218,11 @@ function updateOverallBoothChart(boothData) {
         overallBoothChart.destroy()
     }
 
+    // 데이터가 없을 때 처리
+    if (!boothData || boothData.length === 0) {
+        boothData = [{ name: '데이터 없음', count: 0 }]
+    }
+
     overallBoothChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -794,17 +799,44 @@ let chartModeInterval = null
 let chartModeGenderChart = null
 let chartModeGradeChart = null
 let chartModeBoothChart = null
+let lastDataSnapshot = null // 마지막 데이터 스냅샷
 
 function enterChartMode() {
     document.getElementById('chartMode').classList.add('active')
     document.body.style.overflow = 'hidden'
     
+    lastDataSnapshot = null // 스냅샷 초기화
     updateChartMode()
     
-    // 5초마다 자동 갱신
+    // 5초마다 데이터 체크 (변경시에만 갱신)
     chartModeInterval = setInterval(() => {
-        updateChartMode()
+        checkAndUpdateChartMode()
     }, 5000)
+}
+
+// 데이터 변경 체크 후 업데이트
+async function checkAndUpdateChartMode() {
+    try {
+        const data = await StatsAPI.getAll()
+        const currentSnapshot = JSON.stringify(data)
+        
+        // 데이터가 변경된 경우에만 업데이트
+        if (currentSnapshot !== lastDataSnapshot) {
+            console.log('📊 새로운 데이터 감지 - 차트 업데이트 중...')
+            lastDataSnapshot = currentSnapshot
+            updateChartMode()
+        } else {
+            // 시간만 업데이트
+            const now = new Date()
+            document.getElementById('chartModeUpdateTime').textContent = now.toLocaleTimeString('ko-KR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            })
+        }
+    } catch (error) {
+        console.error('데이터 체크 실패:', error)
+    }
 }
 
 // 풀스크린 차트 모드 종료
@@ -844,6 +876,9 @@ document.addEventListener('keydown', (e) => {
 async function updateChartMode() {
     try {
         const data = await StatsAPI.getAll()
+        
+        // 현재 데이터 스냅샷 저장
+        lastDataSnapshot = JSON.stringify(data)
         
         // 선택된 행사 이름 표시
         const eventFilter = document.getElementById('eventFilter')
@@ -1007,6 +1042,11 @@ function updateChartModeBoothChart(boothData) {
     
     if (chartModeBoothChart) {
         chartModeBoothChart.destroy()
+    }
+    
+    // 데이터가 없을 때 처리
+    if (!boothData || boothData.length === 0) {
+        boothData = [{ name: '데이터 없음', count: 0 }]
     }
     
     chartModeBoothChart = new Chart(ctx, {
