@@ -677,6 +677,201 @@ function renderParticipantsTable(participants) {
 function filterByEvent() {
     selectedEventId = document.getElementById('eventFilter').value
     loadOverview()
+    
+    // 차트 모드가 활성화되어 있으면 차트 모드도 업데이트
+    if (document.getElementById('chartMode').classList.contains('active')) {
+        updateChartMode()
+    }
+}
+
+// 풀스크린 차트 모드 진입
+let chartModeInterval = null
+let chartModeGenderChart = null
+let chartModeGradeChart = null
+
+function enterChartMode() {
+    document.getElementById('chartMode').classList.add('active')
+    document.body.style.overflow = 'hidden'
+    
+    updateChartMode()
+    
+    // 5초마다 자동 갱신
+    chartModeInterval = setInterval(() => {
+        updateChartMode()
+    }, 5000)
+}
+
+// 풀스크린 차트 모드 종료
+function exitChartMode() {
+    document.getElementById('chartMode').classList.remove('active')
+    document.body.style.overflow = 'auto'
+    
+    // 자동 갱신 중지
+    if (chartModeInterval) {
+        clearInterval(chartModeInterval)
+        chartModeInterval = null
+    }
+    
+    // 차트 파괴
+    if (chartModeGenderChart) {
+        chartModeGenderChart.destroy()
+        chartModeGenderChart = null
+    }
+    if (chartModeGradeChart) {
+        chartModeGradeChart.destroy()
+        chartModeGradeChart = null
+    }
+}
+
+// ESC 키로 차트 모드 종료
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('chartMode').classList.contains('active')) {
+        exitChartMode()
+    }
+})
+
+// 차트 모드 데이터 업데이트
+async function updateChartMode() {
+    try {
+        const data = await StatsAPI.getAll()
+        
+        // 선택된 행사 이름 표시
+        const eventFilter = document.getElementById('eventFilter')
+        const selectedEventName = eventFilter.options[eventFilter.selectedIndex]?.text || '전체 행사'
+        document.getElementById('chartModeEventName').textContent = selectedEventName
+        
+        // 선택된 행사 필터링
+        let filteredEvents = data.events
+        if (selectedEventId) {
+            filteredEvents = data.events.filter(event => event.id === selectedEventId)
+        }
+        
+        // 총 참가자 계산
+        let totalParticipants = 0
+        let genderDistribution = { male: 0, female: 0 }
+        let gradeDistribution = { infant: 0, elementary: 0, middle: 0, high: 0, adult: 0, other: 0 }
+        let totalBooths = 0
+        
+        filteredEvents.forEach(event => {
+            totalBooths += event.booth_count
+            event.booths.forEach(booth => {
+                totalParticipants += booth.participant_count
+                genderDistribution.male += booth.gender_distribution.male
+                genderDistribution.female += booth.gender_distribution.female
+                
+                gradeDistribution.infant += booth.grade_distribution.infant || 0
+                gradeDistribution.elementary += booth.grade_distribution.elementary
+                gradeDistribution.middle += booth.grade_distribution.middle
+                gradeDistribution.high += booth.grade_distribution.high
+                gradeDistribution.adult += booth.grade_distribution.adult || 0
+                gradeDistribution.other += booth.grade_distribution.other
+            })
+        })
+        
+        // 요약 카드 업데이트
+        document.getElementById('chartModeTotalParticipants').textContent = totalParticipants
+        document.getElementById('chartModeTotalEvents').textContent = filteredEvents.length
+        document.getElementById('chartModeTotalBooths').textContent = totalBooths
+        
+        // 성별 비율 계산
+        const total = genderDistribution.male + genderDistribution.female
+        const malePercent = total > 0 ? Math.round((genderDistribution.male / total) * 100) : 0
+        const femalePercent = total > 0 ? Math.round((genderDistribution.female / total) * 100) : 0
+        document.getElementById('chartModeGenderRatio').textContent = `${malePercent}% / ${femalePercent}%`
+        
+        // 업데이트 시간
+        const now = new Date()
+        document.getElementById('chartModeUpdateTime').textContent = now.toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        })
+        
+        // 차트 업데이트
+        updateChartModeGenderChart(genderDistribution)
+        updateChartModeGradeChart(gradeDistribution)
+    } catch (error) {
+        console.error('차트 모드 데이터 업데이트 실패:', error)
+    }
+}
+
+// 차트 모드 성별 차트
+function updateChartModeGenderChart(data) {
+    const ctx = document.getElementById('chartModeGenderChart').getContext('2d')
+    
+    if (chartModeGenderChart) {
+        chartModeGenderChart.destroy()
+    }
+    
+    chartModeGenderChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['남성', '여성'],
+            datasets: [{
+                data: [data.male, data.female],
+                backgroundColor: ['#3b82f6', '#ec4899'],
+                borderWidth: 4,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: { size: 16 },
+                        padding: 20
+                    }
+                }
+            }
+        }
+    })
+}
+
+// 차트 모드 교급 차트
+function updateChartModeGradeChart(data) {
+    const ctx = document.getElementById('chartModeGradeChart').getContext('2d')
+    
+    if (chartModeGradeChart) {
+        chartModeGradeChart.destroy()
+    }
+    
+    chartModeGradeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['유아', '초등', '중등', '고등', '성인', '기타'],
+            datasets: [{
+                label: '참가자 수',
+                data: [data.infant || 0, data.elementary, data.middle, data.high, data.adult || 0, data.other],
+                backgroundColor: ['#fbbf24', '#8b5cf6', '#06b6d4', '#10b981', '#6366f1', '#9ca3af'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        font: { size: 14 }
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: { size: 14 }
+                    }
+                }
+            }
+        }
+    })
 }
 
 // 초기 로드

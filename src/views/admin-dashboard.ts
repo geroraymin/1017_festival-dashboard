@@ -38,6 +38,36 @@ export const adminDashboardPage = `
             margin-bottom: 0.5rem;
         }
         
+        /* 풀스크린 차트 모드 */
+        .chart-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            overflow-y: auto;
+            display: none;
+        }
+        .chart-mode.active {
+            display: block;
+        }
+        .chart-mode-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .chart-mode-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
         /* 모바일 반응형 */
         @media (max-width: 768px) {
             /* 테이블을 카드형으로 변환 */
@@ -74,6 +104,11 @@ export const adminDashboardPage = `
             }
             .tab-button i {
                 display: none;
+            }
+            
+            /* 차트 모드에서 패딩 줄이기 */
+            .chart-mode-content {
+                padding: 1rem;
             }
         }
     </style>
@@ -121,9 +156,9 @@ export const adminDashboardPage = `
     <main class="max-w-7xl mx-auto px-4 py-8">
         <!-- 통계 개요 탭 -->
         <div id="tab-overview" class="tab-content active">
-            <!-- 행사 선택 필터 -->
+            <!-- 행사 선택 필터 및 차트 모드 버튼 -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center space-x-4">
                         <i class="fas fa-filter text-indigo-600 text-xl"></i>
                         <div>
@@ -138,9 +173,16 @@ export const adminDashboardPage = `
                             </select>
                         </div>
                     </div>
-                    <div class="text-sm text-gray-600">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        행사를 선택하면 해당 행사의 통계만 표시됩니다
+                    <div class="flex items-center space-x-4">
+                        <div class="text-sm text-gray-600 hidden md:block">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            행사를 선택하면 해당 행사의 통계만 표시됩니다
+                        </div>
+                        <button onclick="enterChartMode()" 
+                            class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium transition shadow-lg">
+                            <i class="fas fa-expand"></i>
+                            <span>차트 모드</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -445,6 +487,90 @@ export const adminDashboardPage = `
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- 풀스크린 차트 모드 -->
+    <div id="chartMode" class="chart-mode">
+        <!-- 헤더 -->
+        <div class="chart-mode-header">
+            <div class="flex items-center justify-between text-white">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-chart-line text-2xl"></i>
+                    <div>
+                        <h2 class="text-xl font-bold">통계 대시보드</h2>
+                        <p class="text-sm opacity-80" id="chartModeEventName">전체 행사</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm opacity-80">
+                        <i class="fas fa-sync-alt mr-1"></i>
+                        <span id="chartModeUpdateTime">--:--</span>
+                    </div>
+                    <button onclick="exitChartMode()" 
+                        class="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition">
+                        <i class="fas fa-times"></i>
+                        <span>닫기 (ESC)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 차트 콘텐츠 -->
+        <div class="chart-mode-content">
+            <!-- 요약 카드 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-users text-4xl text-blue-600"></i>
+                        <span class="text-4xl font-bold text-gray-800" id="chartModeTotalParticipants">0</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium">총 참가자</h3>
+                </div>
+
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-calendar text-4xl text-purple-600"></i>
+                        <span class="text-4xl font-bold text-gray-800" id="chartModeTotalEvents">0</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium">진행 중인 행사</h3>
+                </div>
+
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-store text-4xl text-pink-600"></i>
+                        <span class="text-4xl font-bold text-gray-800" id="chartModeTotalBooths">0</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium">활성 부스</h3>
+                </div>
+
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-chart-pie text-4xl text-green-600"></i>
+                        <span class="text-2xl font-bold text-gray-800" id="chartModeGenderRatio">50% / 50%</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium">남성 / 여성 비율</h3>
+                </div>
+            </div>
+
+            <!-- 차트 그리드 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
+                        성별 분포
+                    </h3>
+                    <canvas id="chartModeGenderChart" style="max-height: 400px;"></canvas>
+                </div>
+
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-chart-bar text-purple-500 mr-2"></i>
+                        교급 분포
+                    </h3>
+                    <canvas id="chartModeGradeChart" style="max-height: 400px;"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
