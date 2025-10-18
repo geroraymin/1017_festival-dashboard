@@ -24,13 +24,13 @@ participants.post('/', async (c) => {
       return c.json({ error: '개인정보 수집 및 활용에 동의해주세요.' }, 400)
     }
 
-    // 성별 검증
-    if (!['남성', '여성', '기타'].includes(gender)) {
+    // 성별 검증 (기타 제거)
+    if (!['남성', '여성'].includes(gender)) {
       return c.json({ error: '유효하지 않은 성별입니다.' }, 400)
     }
 
-    // 교급 검증
-    if (!['초등', '중등', '고등', '기타'].includes(grade)) {
+    // 교급 검증 (유아, 성인 추가)
+    if (!['유아', '초등', '중등', '고등', '성인', '기타'].includes(grade)) {
       return c.json({ error: '유효하지 않은 교급입니다.' }, 400)
     }
 
