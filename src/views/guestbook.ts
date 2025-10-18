@@ -116,12 +116,21 @@ export const guestbookPage = `
 <body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen p-4">
     <div class="max-w-2xl mx-auto py-8">
         <!-- 헤더 -->
-        <div class="text-center mb-8">
-            <div class="inline-block p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full mb-4">
-                <i class="fas fa-pen-fancy text-white text-4xl"></i>
+        <div class="mb-8">
+            <!-- 뒤로가기 버튼 -->
+            <button onclick="goBack()" 
+                class="flex items-center space-x-2 text-gray-600 hover:text-purple-600 transition mb-6 group">
+                <i class="fas fa-arrow-left text-xl group-hover:-translate-x-1 transition-transform"></i>
+                <span class="font-medium">뒤로가기</span>
+            </button>
+            
+            <div class="text-center">
+                <div class="inline-block p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full mb-4">
+                    <i class="fas fa-pen-fancy text-white text-4xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">방명록 작성</h1>
+                <p class="text-gray-600" id="boothName">부스명을 불러오는 중...</p>
             </div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">방명록 작성</h1>
-            <p class="text-gray-600" id="boothName">부스명을 불러오는 중...</p>
         </div>
 
         <!-- 진행률 바 -->
@@ -411,6 +420,17 @@ export const guestbookPage = `
         if (!boothId) {
             alert('부스 정보가 없습니다.')
             window.location.href = '/'
+        }
+
+        // 뒤로가기 함수
+        function goBack() {
+            if (currentStep > 1 && !isFormCompleted) {
+                if (confirm('작성 중인 내용이 저장되지 않습니다. 이전 페이지로 돌아가시겠습니까?')) {
+                    window.history.back()
+                }
+            } else {
+                window.history.back()
+            }
         }
 
         // 오늘 날짜를 max로 설정

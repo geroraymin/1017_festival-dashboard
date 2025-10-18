@@ -1134,3 +1134,24 @@ function updateChartModeBoothChart(boothData) {
 
 // 초기 로드
 loadOverview()
+
+// 페이지가 보일 때마다 자동 새로고침
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        // 현재 활성화된 탭에 따라 새로고침
+        const activeTab = document.querySelector('.tab-content.active')
+        if (activeTab && activeTab.id === 'tab-overview') {
+            console.log('📊 페이지 포커스 - 통계 데이터 새로고침')
+            loadOverview()
+        }
+    }
+})
+
+// 창이 포커스를 받을 때마다 새로고침
+window.addEventListener('focus', () => {
+    const activeTab = document.querySelector('.tab-content.active')
+    if (activeTab && activeTab.id === 'tab-overview') {
+        console.log('📊 창 포커스 - 통계 데이터 새로고침')
+        loadOverview()
+    }
+})

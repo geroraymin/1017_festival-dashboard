@@ -182,6 +182,11 @@ export const adminDashboardPage = `
                             <i class="fas fa-info-circle mr-1"></i>
                             행사를 선택하면 해당 행사의 통계만 표시됩니다
                         </div>
+                        <button onclick="loadOverview()" 
+                            class="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg font-medium transition shadow-sm">
+                            <i class="fas fa-sync-alt"></i>
+                            <span class="hidden sm:inline">새로고침</span>
+                        </button>
                         <button onclick="enterChartMode()" 
                             class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium transition shadow-lg">
                             <i class="fas fa-expand"></i>
