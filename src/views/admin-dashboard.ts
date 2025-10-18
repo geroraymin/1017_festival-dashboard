@@ -121,6 +121,30 @@ export const adminDashboardPage = `
     <main class="max-w-7xl mx-auto px-4 py-8">
         <!-- 통계 개요 탭 -->
         <div id="tab-overview" class="tab-content active">
+            <!-- 행사 선택 필터 -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <i class="fas fa-filter text-indigo-600 text-xl"></i>
+                        <div>
+                            <label for="eventFilter" class="block text-sm font-medium text-gray-700 mb-1">
+                                행사 선택
+                            </label>
+                            <select id="eventFilter" 
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                onchange="filterByEvent()">
+                                <option value="">전체 행사</option>
+                                <!-- 동적으로 행사 목록이 추가됩니다 -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        행사를 선택하면 해당 행사의 통계만 표시됩니다
+                    </div>
+                </div>
+            </div>
+
             <!-- 요약 카드 -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">

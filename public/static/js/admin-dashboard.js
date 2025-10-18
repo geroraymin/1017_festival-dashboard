@@ -6,6 +6,7 @@ let overallGenderChart, overallGradeChart
 let allEvents = []
 let allBooths = []
 let allParticipants = []
+let selectedEventId = '' // 선택된 행사 ID (빈 문자열 = 전체)
 
 // 인증 확인
 const user = getUser()
@@ -57,14 +58,37 @@ async function loadOverview() {
     try {
         const data = await StatsAPI.getAll()
 
-        // 총 참가자
-        document.getElementById('totalParticipants').textContent = data.total_participants
+        // 행사 필터 드롭다운 채우기 (최초 로드 시)
+        const eventFilter = document.getElementById('eventFilter')
+        if (eventFilter.options.length === 1) { // "전체 행사"만 있을 때
+            data.events.forEach(event => {
+                const option = document.createElement('option')
+                option.value = event.id
+                option.textContent = event.name
+                eventFilter.appendChild(option)
+            })
+        }
 
-        // 행사 및 부스 수
-        document.getElementById('totalEvents').textContent = data.events.length
+        // 선택된 행사 필터링
+        let filteredEvents = data.events
+        if (selectedEventId) {
+            filteredEvents = data.events.filter(event => event.id === selectedEventId)
+        }
+
+        // 총 참가자 계산 (필터링된 행사 기준)
+        let totalParticipants = 0
+        filteredEvents.forEach(event => {
+            event.booths.forEach(booth => {
+                totalParticipants += booth.participant_count
+            })
+        })
+        document.getElementById('totalParticipants').textContent = totalParticipants
+
+        // 행사 및 부스 수 (필터링된 기준)
+        document.getElementById('totalEvents').textContent = filteredEvents.length
 
         let totalBooths = 0
-        data.events.forEach(event => {
+        filteredEvents.forEach(event => {
             totalBooths += event.booth_count
         })
         document.getElementById('totalBooths').textContent = totalBooths
@@ -76,11 +100,11 @@ async function loadOverview() {
             minute: '2-digit'
         })
 
-        // 전체 성별/교급 분포 계산
+        // 성별/교급 분포 계산 (필터링된 행사 기준)
         let genderDistribution = { male: 0, female: 0 }
         let gradeDistribution = { infant: 0, elementary: 0, middle: 0, high: 0, adult: 0, other: 0 }
 
-        data.events.forEach(event => {
+        filteredEvents.forEach(event => {
             event.booths.forEach(booth => {
                 genderDistribution.male += booth.gender_distribution.male
                 genderDistribution.female += booth.gender_distribution.female
@@ -647,6 +671,12 @@ function renderParticipantsTable(participants) {
         `
         tbody.appendChild(row)
     })
+}
+
+// 행사별 필터링
+function filterByEvent() {
+    selectedEventId = document.getElementById('eventFilter').value
+    loadOverview()
 }
 
 // 초기 로드
