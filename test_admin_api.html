@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 API 진단 도구</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">관리자 대시보드 API 진단 도구</h1>
+        
+        <!-- 인증 섹션 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">1. 인증 확인</h2>
+            <div class="space-y-2">
+                <div>
+                    <label class="font-medium">사용자명:</label>
+                    <input type="text" id="username" value="admin" class="ml-2 px-3 py-1 border rounded">
+                </div>
+                <div>
+                    <label class="font-medium">비밀번호:</label>
+                    <input type="password" id="password" value="admin1234" class="ml-2 px-3 py-1 border rounded">
+                </div>
+                <button onclick="testLogin()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    로그인 테스트
+                </button>
+                <div id="authResult" class="mt-2 p-3 rounded bg-gray-50"></div>
+            </div>
+        </div>
+
+        <!-- API 테스트 섹션 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">2. API 엔드포인트 테스트</h2>
+            <div class="space-y-3">
+                <button onclick="testAPI('/api/events', 'GET')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left">
+                    GET /api/events (행사 목록)
+                </button>
+                <button onclick="testAPI('/api/booths', 'GET')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left">
+                    GET /api/booths (부스 목록)
+                </button>
+                <button onclick="testAPI('/api/participants', 'GET')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left">
+                    GET /api/participants (참가자 목록)
+                </button>
+                <button onclick="testAPI('/api/stats/all', 'GET')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full text-left">
+                    GET /api/stats/all (전체 통계)
+                </button>
+                <div id="apiResult" class="mt-4 p-4 rounded bg-gray-50 overflow-auto max-h-96"></div>
+            </div>
+        </div>
+
+        <!-- 행사 추가 테스트 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">3. 행사 추가 테스트</h2>
+            <div class="space-y-2">
+                <div>
+                    <label class="font-medium">행사명:</label>
+                    <input type="text" id="eventName" value="테스트 행사" class="ml-2 px-3 py-1 border rounded w-64">
+                </div>
+                <div>
+                    <label class="font-medium">시작일:</label>
+                    <input type="date" id="startDate" class="ml-2 px-3 py-1 border rounded">
+                </div>
+                <div>
+                    <label class="font-medium">종료일:</label>
+                    <input type="date" id="endDate" class="ml-2 px-3 py-1 border rounded">
+                </div>
+                <button onclick="testCreateEvent()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                    행사 추가 테스트
+                </button>
+                <div id="createResult" class="mt-2 p-3 rounded bg-gray-50"></div>
+            </div>
+        </div>
+
+        <!-- 로컬스토리지 확인 -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4">4. 브라우저 저장소 확인</h2>
+            <button onclick="checkLocalStorage()" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+                LocalStorage 확인
+            </button>
+            <div id="storageResult" class="mt-2 p-3 rounded bg-gray-50"></div>
+        </div>
+    </div>
+
+    <script>
+        let token = null
+
+        // 로그인 테스트
+        async function testLogin() {
+            const username = document.getElementById('username').value
+            const password = document.getElementById('password').value
+            const resultDiv = document.getElementById('authResult')
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                })
+
+                const data = await response.json()
+                
+                if (response.ok) {
+                    token = data.token
+                    localStorage.setItem('token', token)
+                    localStorage.setItem('user', JSON.stringify(data.user))
+                    resultDiv.innerHTML = `
+                        <div class="text-green-600">
+                            ✅ 로그인 성공!<br>
+                            토큰: ${token.substring(0, 30)}...<br>
+                            역할: ${data.user.role}
+                        </div>
+                    `
+                } else {
+                    resultDiv.innerHTML = `<div class="text-red-600">❌ 로그인 실패: ${data.error}</div>`
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="text-red-600">❌ 네트워크 오류: ${error.message}</div>`
+            }
+        }
+
+        // API 테스트
+        async function testAPI(endpoint, method) {
+            const resultDiv = document.getElementById('apiResult')
+            resultDiv.innerHTML = '<div class="text-blue-600">⏳ 요청 중...</div>'
+
+            if (!token) {
+                resultDiv.innerHTML = '<div class="text-red-600">❌ 먼저 로그인하세요!</div>'
+                return
+            }
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                const data = await response.json()
+                
+                resultDiv.innerHTML = `
+                    <div class="mb-2">
+                        <strong>상태:</strong> 
+                        <span class="${response.ok ? 'text-green-600' : 'text-red-600'}">
+                            ${response.status} ${response.statusText}
+                        </span>
+                    </div>
+                    <div class="mb-2"><strong>엔드포인트:</strong> ${endpoint}</div>
+                    <div><strong>응답:</strong></div>
+                    <pre class="bg-gray-100 p-3 rounded mt-2 text-xs overflow-auto">${JSON.stringify(data, null, 2)}</pre>
+                `
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="text-red-600">❌ 오류: ${error.message}</div>`
+            }
+        }
+
+        // 행사 추가 테스트
+        async function testCreateEvent() {
+            const resultDiv = document.getElementById('createResult')
+            const name = document.getElementById('eventName').value
+            const start_date = document.getElementById('startDate').value
+            const end_date = document.getElementById('endDate').value
+
+            if (!token) {
+                resultDiv.innerHTML = '<div class="text-red-600">❌ 먼저 로그인하세요!</div>'
+                return
+            }
+
+            if (!name || !start_date || !end_date) {
+                resultDiv.innerHTML = '<div class="text-red-600">❌ 모든 필드를 입력하세요!</div>'
+                return
+            }
+
+            try {
+                const response = await fetch('/api/events', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, start_date, end_date })
+                })
+
+                const data = await response.json()
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="text-green-600">
+                            ✅ 행사 추가 성공!<br>
+                            행사 ID: ${data.event.id}<br>
+                            행사명: ${data.event.name}
+                        </div>
+                    `
+                } else {
+                    resultDiv.innerHTML = `<div class="text-red-600">❌ 실패: ${data.error}</div>`
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="text-red-600">❌ 오류: ${error.message}</div>`
+            }
+        }
+
+        // LocalStorage 확인
+        function checkLocalStorage() {
+            const resultDiv = document.getElementById('storageResult')
+            const storedToken = localStorage.getItem('token')
+            const storedUser = localStorage.getItem('user')
+
+            resultDiv.innerHTML = `
+                <div>
+                    <strong>저장된 토큰:</strong><br>
+                    ${storedToken ? storedToken.substring(0, 50) + '...' : '없음'}
+                </div>
+                <div class="mt-2">
+                    <strong>저장된 사용자 정보:</strong><br>
+                    <pre class="bg-gray-100 p-2 rounded mt-1 text-xs">${storedUser || '없음'}</pre>
+                </div>
+            `
+        }
+
+        // 페이지 로드 시 날짜 설정
+        window.onload = function() {
+            const today = new Date()
+            const tomorrow = new Date(today)
+            tomorrow.setDate(tomorrow.getDate() + 7)
+
+            document.getElementById('startDate').value = today.toISOString().split('T')[0]
+            document.getElementById('endDate').value = tomorrow.toISOString().split('T')[0]
+        }
+    </script>
+</body>
+</html>
