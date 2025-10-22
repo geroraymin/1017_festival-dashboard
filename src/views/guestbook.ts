@@ -96,6 +96,31 @@ export const guestbookPage = `
             border-color: #667eea;
             background: #f0f4ff;
         }
+        /* 선택 애니메이션 */
+        .radio-card.selecting {
+            animation: selectPulse 0.4s ease-in-out;
+        }
+        @keyframes selectPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .radio-card .check-icon {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #10b981;
+            font-size: 1.5rem;
+        }
+        .radio-card.selecting .check-icon {
+            display: block;
+            animation: checkFadeIn 0.3s ease-in-out;
+        }
+        @keyframes checkFadeIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
         .progress-bar {
             height: 4px;
             background: #e5e7eb;
@@ -242,16 +267,18 @@ export const guestbookPage = `
 
                 <fieldset class="grid grid-cols-2 gap-4 mb-8 max-w-md mx-auto" aria-required="true" aria-describedby="genderError">
                     <legend class="sr-only">성별 선택</legend>
-                    <label class="radio-card" tabindex="0">
+                    <label class="radio-card relative" tabindex="0" onclick="selectGenderAndProceed('남성', event)">
                         <input type="radio" name="gender" value="남성" class="sr-only" aria-label="남성">
                         <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                            <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-mars text-5xl text-blue-500 mb-3" aria-hidden="true"></i>
                             <div class="font-semibold text-lg">남성</div>
                         </div>
                     </label>
-                    <label class="radio-card" tabindex="0">
+                    <label class="radio-card relative" tabindex="0" onclick="selectGenderAndProceed('여성', event)">
                         <input type="radio" name="gender" value="여성" class="sr-only" aria-label="여성">
                         <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                            <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-venus text-5xl text-pink-500 mb-3" aria-hidden="true"></i>
                             <div class="font-semibold text-lg">여성</div>
                         </div>
@@ -287,44 +314,50 @@ export const guestbookPage = `
 
                 <fieldset class="grid grid-cols-2 gap-4 mb-8" aria-required="true" aria-describedby="gradeError">
                     <legend class="sr-only">학교급 선택</legend>
-                    <label class="radio-card" tabindex="0">
+                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('유아', event)">
                         <input type="radio" name="grade" value="유아" class="sr-only" aria-label="유아">
                         <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                            <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-baby text-5xl text-yellow-500 mb-3" aria-hidden="true"></i>
                             <div class="font-semibold text-lg">유아</div>
                         </div>
                     </label>
-                    <label class="radio-card" tabindex="0">
+                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('초등', event)">
                         <input type="radio" name="grade" value="초등" class="sr-only" aria-label="초등학생">
                         <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                            <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-child text-5xl text-green-500 mb-3" aria-hidden="true"></i>
                             <div class="font-semibold text-lg">초등학생</div>
                         </div>
                     </label>
-                    <label class="radio-card" tabindex="0">
+                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('중등', event)">
                         <input type="radio" name="grade" value="중등" class="sr-only" aria-label="중학생">
                         <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                            <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-user-graduate text-5xl text-blue-500 mb-3" aria-hidden="true"></i>
                             <div class="font-semibold text-lg">중학생</div>
                         </div>
                     </label>
-                    <label class="radio-card" tabindex="0">
+                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('고등', event)">
                         <input type="radio" name="grade" value="고등" class="sr-only" aria-label="고등학생">
                         <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                            <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-graduation-cap text-5xl text-purple-500 mb-3" aria-hidden="true"></i>
                             <div class="font-semibold text-lg">고등학생</div>
                         </div>
                     </label>
-                    <label class="radio-card" tabindex="0">
+                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('성인', event)">
                         <input type="radio" name="grade" value="성인" class="sr-only" aria-label="성인">
                         <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                            <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-user-tie text-5xl text-indigo-500 mb-3" aria-hidden="true"></i>
                             <div class="font-semibold text-lg">성인</div>
                         </div>
                     </label>
-                    <label class="radio-card" tabindex="0">
+                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('기타', event)">
                         <input type="radio" name="grade" value="기타" class="sr-only" aria-label="기타">
                         <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                            <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-user text-5xl text-gray-500 mb-3" aria-hidden="true"></i>
                             <div class="font-semibold text-lg">기타</div>
                         </div>
@@ -489,6 +522,56 @@ export const guestbookPage = `
                 progressBar.setAttribute('aria-valuenow', percent)
                 progressBar.setAttribute('aria-valuetext', \`\${step} / 6 단계, \${percent}% 완료\`)
             }
+        }
+
+        // 성별 선택 후 자동 진행
+        function selectGenderAndProceed(value, event) {
+            event.preventDefault()
+            
+            // 라디오 버튼 체크
+            const radio = document.querySelector('input[name="gender"][value="' + value + '"]')
+            if (radio) radio.checked = true
+            
+            // 시각적 피드백
+            const label = event.currentTarget
+            label.classList.add('selecting')
+            
+            // 에러 메시지 숨기기
+            document.getElementById('genderError').classList.add('hidden')
+            
+            // 데이터 저장
+            formData.gender = value
+            
+            // 0.5초 후 자동으로 다음 단계로
+            setTimeout(() => {
+                label.classList.remove('selecting')
+                goToStep(4)
+            }, 500)
+        }
+
+        // 교급 선택 후 자동 진행
+        function selectGradeAndProceed(value, event) {
+            event.preventDefault()
+            
+            // 라디오 버튼 체크
+            const radio = document.querySelector('input[name="grade"][value="' + value + '"]')
+            if (radio) radio.checked = true
+            
+            // 시각적 피드백
+            const label = event.currentTarget
+            label.classList.add('selecting')
+            
+            // 에러 메시지 숨기기
+            document.getElementById('gradeError').classList.add('hidden')
+            
+            // 데이터 저장
+            formData.grade = value
+            
+            // 0.5초 후 자동으로 다음 단계로
+            setTimeout(() => {
+                label.classList.remove('selecting')
+                goToStep(5)
+            }, 500)
         }
 
         // Step 전환 함수
