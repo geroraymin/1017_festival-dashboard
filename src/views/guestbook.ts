@@ -172,51 +172,59 @@ export const guestbookPage = `
         <!-- 메인 카드 -->
         <div class="bg-white rounded-2xl shadow-xl p-8 main-card flex flex-col" role="main">
             <!-- Step 1: 개인정보 수집 동의 -->
-            <div id="section1" class="form-section active flex-1 flex flex-col" role="region" aria-labelledby="step1-heading">
-                <h2 id="step1-heading" class="text-2xl font-bold text-gray-800 mb-4">
-                    <i class="fas fa-shield-alt text-purple-600 mr-2" aria-hidden="true"></i>
-                    개인정보 수집 및 활용 동의
-                </h2>
+            <div id="section1" class="form-section active flex-1 flex flex-col justify-center" role="region" aria-labelledby="step1-heading">
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4" aria-hidden="true">
+                        <i class="fas fa-shield-alt text-purple-600 text-5xl"></i>
+                    </div>
+                    <h2 id="step1-heading" class="text-3xl font-bold text-gray-800 mb-2">개인정보 수집 동의</h2>
+                    <p class="text-gray-600">방명록 작성을 위해 동의가 필요합니다</p>
+                </div>
                 
-                <div class="bg-gray-50 p-6 rounded-lg mb-6 flex-1 overflow-y-auto">
-                    <h3 class="font-semibold text-gray-800 mb-3">1. 수집하는 개인정보 항목</h3>
-                    <p class="text-gray-600 mb-4">이름, 성별, 교급, 생년월일</p>
-
-                    <h3 class="font-semibold text-gray-800 mb-3">2. 개인정보의 수집 및 이용 목적</h3>
-                    <p class="text-gray-600 mb-4">
-                        - 행사 참가자 현황 파악<br>
-                        - 통계 분석 및 행사 개선<br>
-                        - 참가자 관리
-                    </p>
-
-                    <h3 class="font-semibold text-gray-800 mb-3">3. 개인정보의 보유 및 이용 기간</h3>
-                    <p class="text-gray-600 mb-4">
-                        수집일로부터 <strong>90일</strong> 후 자동 파기
-                    </p>
-
-                    <h3 class="font-semibold text-gray-800 mb-3">4. 동의 거부 권리</h3>
-                    <p class="text-gray-600">
-                        귀하는 개인정보 수집 및 이용에 동의하지 않을 권리가 있습니다.<br>
-                        단, 동의하지 않을 경우 방명록 작성이 제한됩니다.
-                    </p>
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl mb-6">
+                    <div class="space-y-4 text-gray-700">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-purple-600 mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong>수집 항목:</strong> 이름, 성별, 교급, 생년월일
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-purple-600 mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong>이용 목적:</strong> 행사 참가자 현황 파악 및 통계 분석
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-purple-600 mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong>보유 기간:</strong> 수집일로부터 90일 후 자동 파기
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 상세 내용 펼치기 (선택적) -->
+                    <button type="button" onclick="togglePrivacyDetails()" class="mt-4 text-purple-600 hover:text-purple-700 text-sm font-medium flex items-center mx-auto">
+                        <span id="privacyToggleText">상세 내용 보기</span>
+                        <i id="privacyToggleIcon" class="fas fa-chevron-down ml-2" aria-hidden="true"></i>
+                    </button>
+                    
+                    <div id="privacyDetails" class="hidden mt-4 pt-4 border-t border-purple-200 text-sm text-gray-600">
+                        <h3 class="font-semibold text-gray-800 mb-2">동의 거부 권리</h3>
+                        <p>귀하는 개인정보 수집 및 이용에 동의하지 않을 권리가 있습니다. 단, 동의하지 않을 경우 방명록 작성이 제한됩니다.</p>
+                    </div>
                 </div>
 
-                <label class="flex items-center space-x-3 p-4 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100 transition">
-                    <input type="checkbox" id="consent" class="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" 
-                        aria-required="true" aria-describedby="consentError">
-                    <span class="text-gray-800 font-medium">위 내용을 확인하였으며, 개인정보 수집 및 활용에 동의합니다.</span>
-                </label>
-
-                <div id="consentError" class="hidden mt-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm" role="alert" aria-live="polite">
-                    <i class="fas fa-exclamation-circle mr-2" aria-hidden="true"></i>
-                    개인정보 수집 및 활용에 동의해주세요.
-                </div>
-
-                <button onclick="goToStep(2)" class="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300"
-                    aria-label="다음 단계로 이동">
-                    다음 단계
-                    <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>
+                <!-- 큰 버튼형 동의 -->
+                <button type="button" onclick="agreeAndProceed()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-6 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300 text-lg"
+                    aria-label="개인정보 수집 및 활용에 동의하고 다음 단계로 이동">
+                    <i class="fas fa-check-circle mr-3" aria-hidden="true"></i>
+                    동의하고 시작하기
                 </button>
+                
+                <p class="mt-4 text-center text-sm text-gray-500">
+                    버튼을 클릭하면 개인정보 수집 및 활용에 동의한 것으로 간주됩니다
+                </p>
             </div>
 
             <!-- Step 2: 이름 -->
@@ -229,12 +237,13 @@ export const guestbookPage = `
                     <p class="text-gray-600">본인의 실명을 입력해주세요</p>
                 </div>
 
-                <div class="mb-8">
+                <div class="mb-8 max-w-md mx-auto">
                     <label for="name" class="sr-only">이름</label>
                     <input type="text" id="name" 
-                        class="w-full px-6 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent"
+                        class="w-full px-6 py-5 text-2xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent"
                         placeholder="예: 홍길동"
-                        autocomplete="name"
+                        inputmode="text"
+                        autocomplete="off"
                         aria-required="true"
                         aria-describedby="nameError">
                     <div id="nameError" class="hidden mt-3 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center" role="alert" aria-live="polite">
@@ -387,20 +396,59 @@ export const guestbookPage = `
                     <div class="inline-block p-4 bg-purple-100 rounded-full mb-4" aria-hidden="true">
                         <i class="fas fa-calendar-alt text-purple-600 text-5xl"></i>
                     </div>
-                    <h2 id="step5-heading" class="text-3xl font-bold text-gray-800 mb-2">생년월일을 입력해주세요</h2>
-                    <p class="text-gray-600">통계 자료로 활용됩니다</p>
+                    <h2 id="step5-heading" class="text-3xl font-bold text-gray-800 mb-2">생년월일을 선택해주세요</h2>
+                    <p class="text-gray-600">태블릿 환경에 최적화된 선택기입니다</p>
                 </div>
 
-                <div class="mb-8">
-                    <label for="dateOfBirth" class="sr-only">생년월일</label>
-                    <input type="date" id="dateOfBirth" 
-                        class="w-full px-6 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent"
-                        max=""
-                        aria-required="true"
-                        aria-describedby="dateError">
-                    <div id="dateError" class="hidden mt-3 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center" role="alert" aria-live="polite">
+                <div class="mb-8 max-w-lg mx-auto">
+                    <!-- 년/월/일 분리형 선택기 -->
+                    <div class="grid grid-cols-3 gap-4">
+                        <!-- 년도 선택 -->
+                        <div>
+                            <label for="birthYear" class="block text-sm font-medium text-gray-700 mb-2 text-center">년도</label>
+                            <select id="birthYear" 
+                                class="w-full px-4 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
+                                aria-required="true">
+                                <option value="">선택</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 월 선택 -->
+                        <div>
+                            <label for="birthMonth" class="block text-sm font-medium text-gray-700 mb-2 text-center">월</label>
+                            <select id="birthMonth" 
+                                class="w-full px-4 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
+                                aria-required="true">
+                                <option value="">선택</option>
+                                <option value="01">1월</option>
+                                <option value="02">2월</option>
+                                <option value="03">3월</option>
+                                <option value="04">4월</option>
+                                <option value="05">5월</option>
+                                <option value="06">6월</option>
+                                <option value="07">7월</option>
+                                <option value="08">8월</option>
+                                <option value="09">9월</option>
+                                <option value="10">10월</option>
+                                <option value="11">11월</option>
+                                <option value="12">12월</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 일 선택 -->
+                        <div>
+                            <label for="birthDay" class="block text-sm font-medium text-gray-700 mb-2 text-center">일</label>
+                            <select id="birthDay" 
+                                class="w-full px-4 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
+                                aria-required="true">
+                                <option value="">선택</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="dateError" class="hidden mt-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center" role="alert" aria-live="polite">
                         <i class="fas fa-exclamation-circle mr-2" aria-hidden="true"></i>
-                        생년월일을 선택해주세요.
+                        <span id="dateErrorText">생년월일을 모두 선택해주세요.</span>
                     </div>
                 </div>
 
@@ -455,8 +503,64 @@ export const guestbookPage = `
             window.location.href = '/'
         }
 
-        // 오늘 날짜를 max로 설정
-        document.getElementById('dateOfBirth').max = new Date().toISOString().split('T')[0]
+        // 년도 선택 옵션 생성 (1950 ~ 올해)
+        const birthYearSelect = document.getElementById('birthYear')
+        const currentYear = new Date().getFullYear()
+        for (let year = currentYear; year >= 1950; year--) {
+            const option = document.createElement('option')
+            option.value = year
+            option.textContent = year + '년'
+            birthYearSelect.appendChild(option)
+        }
+
+        // 월 선택 시 일 옵션 업데이트
+        document.getElementById('birthMonth').addEventListener('change', updateDayOptions)
+        document.getElementById('birthYear').addEventListener('change', updateDayOptions)
+
+        function updateDayOptions() {
+            const year = document.getElementById('birthYear').value
+            const month = document.getElementById('birthMonth').value
+            const daySelect = document.getElementById('birthDay')
+            
+            // 일 선택 초기화
+            daySelect.innerHTML = '<option value="">선택</option>'
+            
+            if (year && month) {
+                // 해당 월의 마지막 날 계산
+                const lastDay = new Date(year, parseInt(month), 0).getDate()
+                
+                for (let day = 1; day <= lastDay; day++) {
+                    const option = document.createElement('option')
+                    const dayStr = day.toString().padStart(2, '0')
+                    option.value = dayStr
+                    option.textContent = day + '일'
+                    daySelect.appendChild(option)
+                }
+            }
+        }
+
+        // 개인정보 상세 내용 토글
+        function togglePrivacyDetails() {
+            const details = document.getElementById('privacyDetails')
+            const toggleText = document.getElementById('privacyToggleText')
+            const toggleIcon = document.getElementById('privacyToggleIcon')
+            
+            if (details.classList.contains('hidden')) {
+                details.classList.remove('hidden')
+                toggleText.textContent = '상세 내용 닫기'
+                toggleIcon.className = 'fas fa-chevron-up ml-2'
+            } else {
+                details.classList.add('hidden')
+                toggleText.textContent = '상세 내용 보기'
+                toggleIcon.className = 'fas fa-chevron-down ml-2'
+            }
+        }
+
+        // 동의하고 진행
+        function agreeAndProceed() {
+            // 동의 간주하고 바로 다음 단계로
+            goToStep(2)
+        }
 
         // 사용자 입력 데이터 저장
         const formData = {
@@ -578,13 +682,7 @@ export const guestbookPage = `
         function goToStep(step) {
             // 유효성 검증
             if (step === 2) {
-                // Step 1 → 2: 동의 체크
-                const consent = document.getElementById('consent').checked
-                if (!consent) {
-                    document.getElementById('consentError').classList.remove('hidden')
-                    return
-                }
-                document.getElementById('consentError').classList.add('hidden')
+                // Step 1 → 2: 동의는 버튼 클릭으로 간주 (별도 검증 불필요)
             } else if (step === 3) {
                 // Step 2 → 3: 이름 입력
                 const name = document.getElementById('name').value.trim()
@@ -631,13 +729,34 @@ export const guestbookPage = `
 
         // 폼 제출
         async function submitForm() {
-            const dateOfBirth = document.getElementById('dateOfBirth').value
-            if (!dateOfBirth) {
-                document.getElementById('dateError').classList.remove('hidden')
+            // 년/월/일 개별 검증
+            const year = document.getElementById('birthYear').value
+            const month = document.getElementById('birthMonth').value
+            const day = document.getElementById('birthDay').value
+            
+            const errorDiv = document.getElementById('dateError')
+            const errorText = document.getElementById('dateErrorText')
+            
+            if (!year) {
+                errorText.textContent = '년도를 선택해주세요.'
+                errorDiv.classList.remove('hidden')
                 return
             }
+            if (!month) {
+                errorText.textContent = '월을 선택해주세요.'
+                errorDiv.classList.remove('hidden')
+                return
+            }
+            if (!day) {
+                errorText.textContent = '일을 선택해주세요.'
+                errorDiv.classList.remove('hidden')
+                return
+            }
+            
+            // YYYY-MM-DD 형식으로 조합
+            const dateOfBirth = year + '-' + month + '-' + day
             formData.dateOfBirth = dateOfBirth
-            document.getElementById('dateError').classList.add('hidden')
+            errorDiv.classList.add('hidden')
 
             // 제출 버튼 비활성화
             const submitBtn = document.getElementById('submitBtn')
