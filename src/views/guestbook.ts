@@ -63,19 +63,10 @@ export const guestbookPage = `
             color: #9ca3af;
         }
         .form-section {
-            display: none !important;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            opacity: 0;
-            visibility: hidden;
+            display: none;
         }
         .form-section.active {
-            display: flex !important;
-            position: relative;
-            opacity: 1;
-            visibility: visible;
+            display: block;
             animation: fadeIn 0.3s ease;
         }
         @keyframes fadeIn {
@@ -136,7 +127,6 @@ export const guestbookPage = `
         }
         .main-card {
             position: relative;
-            min-height: 500px;
         }
         
         /* 뷰포트 높이 기반 레이아웃 */
