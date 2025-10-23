@@ -13,7 +13,9 @@ export const guestbookPage = `
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body, html {
-            overflow-x: hidden;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
         }
         
         /* 스크린 리더 전용 텍스트 */
@@ -136,31 +138,67 @@ export const guestbookPage = `
             position: relative;
             min-height: 500px;
         }
+        
+        /* 뷰포트 높이 기반 레이아웃 */
+        .container-wrapper {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+        
+        /* 모바일 최적화 */
+        @media (max-width: 640px) {
+            .content-area {
+                padding: 0.5rem 0;
+            }
+            h2 {
+                font-size: 1.25rem !important;
+            }
+            .text-lg {
+                font-size: 1rem !important;
+            }
+        }
+        
+        /* 컴팩트한 여백 */
+        .compact-spacing {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen p-4">
-    <div class="max-w-2xl mx-auto py-8">
-        <!-- 헤더 -->
-        <div class="mb-8">
+<body class="bg-gradient-to-br from-purple-50 to-pink-50">
+    <div class="container-wrapper max-w-2xl mx-auto px-4">
+        <!-- 헤더 (컴팩트) -->
+        <div class="compact-spacing py-3">
             <!-- 뒤로가기 버튼 -->
             <button onclick="goBack()" 
-                class="flex items-center space-x-2 text-gray-600 hover:text-purple-600 transition mb-6 group">
-                <i class="fas fa-arrow-left text-xl group-hover:-translate-x-1 transition-transform"></i>
-                <span class="font-medium">뒤로가기</span>
+                class="flex items-center space-x-2 text-gray-600 hover:text-purple-600 transition group">
+                <i class="fas fa-arrow-left text-lg group-hover:-translate-x-1 transition-transform"></i>
+                <span class="text-sm font-medium">뒤로가기</span>
             </button>
             
-            <div class="text-center">
-                <div class="inline-block p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full mb-4">
-                    <i class="fas fa-pen-fancy text-white text-4xl"></i>
+            <div class="text-center py-2">
+                <div class="inline-block p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full mb-2">
+                    <i class="fas fa-pen-fancy text-white text-2xl"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">방명록 작성</h1>
-                <p class="text-gray-600" id="boothName">부스명을 불러오는 중...</p>
+                <h1 class="text-xl font-bold text-gray-800 mb-1">방명록 작성</h1>
+                <p class="text-sm text-gray-600" id="boothName">부스명을 불러오는 중...</p>
             </div>
         </div>
 
         <!-- 진행률 바 -->
-        <div class="mb-6" role="progressbar" aria-valuenow="17" aria-valuemin="0" aria-valuemax="100" aria-label="방명록 작성 진행률">
-            <div class="flex justify-between text-sm text-gray-600 mb-2">
+        <div class="compact-spacing" role="progressbar" aria-valuenow="17" aria-valuemin="0" aria-valuemax="100" aria-label="방명록 작성 진행률">
+            <div class="flex justify-between text-xs text-gray-600 mb-1">
                 <span id="stepText">1 / 6 단계</span>
                 <span id="stepPercent">17%</span>
             </div>
@@ -170,33 +208,34 @@ export const guestbookPage = `
         </div>
 
         <!-- 메인 카드 -->
-        <div class="bg-white rounded-2xl shadow-xl p-8 main-card flex flex-col" role="main">
+        <div class="content-area">
+            <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 main-card" role="main">
             <!-- Step 1: 개인정보 수집 동의 -->
-            <div id="section1" class="form-section active flex-1 flex flex-col justify-center" role="region" aria-labelledby="step1-heading">
-                <div class="text-center mb-8">
-                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4" aria-hidden="true">
-                        <i class="fas fa-shield-alt text-purple-600 text-5xl"></i>
+            <div id="section1" class="form-section active" role="region" aria-labelledby="step1-heading">
+                <div class="text-center mb-4">
+                    <div class="inline-block p-3 bg-purple-100 rounded-full mb-2" aria-hidden="true">
+                        <i class="fas fa-shield-alt text-purple-600 text-3xl"></i>
                     </div>
-                    <h2 id="step1-heading" class="text-3xl font-bold text-gray-800 mb-2">개인정보 수집 동의</h2>
-                    <p class="text-gray-600">방명록 작성을 위해 동의가 필요합니다</p>
+                    <h2 id="step1-heading" class="text-2xl font-bold text-gray-800 mb-1">개인정보 수집 동의</h2>
+                    <p class="text-sm text-gray-600">방명록 작성을 위해 동의가 필요합니다</p>
                 </div>
                 
-                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl mb-6">
-                    <div class="space-y-4 text-gray-700">
-                        <div class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle text-purple-600 mt-1" aria-hidden="true"></i>
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl mb-4">
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-check-circle text-purple-600 mt-0.5 text-xs" aria-hidden="true"></i>
                             <div>
                                 <strong>수집 항목:</strong> 이름, 성별, 교급, 생년월일
                             </div>
                         </div>
-                        <div class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle text-purple-600 mt-1" aria-hidden="true"></i>
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-check-circle text-purple-600 mt-0.5 text-xs" aria-hidden="true"></i>
                             <div>
                                 <strong>이용 목적:</strong> 행사 참가자 현황 파악 및 통계 분석
                             </div>
                         </div>
-                        <div class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle text-purple-600 mt-1" aria-hidden="true"></i>
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-check-circle text-purple-600 mt-0.5 text-xs" aria-hidden="true"></i>
                             <div>
                                 <strong>보유 기간:</strong> 수집일로부터 90일 후 자동 파기
                             </div>
@@ -204,92 +243,92 @@ export const guestbookPage = `
                     </div>
                     
                     <!-- 상세 내용 펼치기 (선택적) -->
-                    <button type="button" onclick="togglePrivacyDetails()" class="mt-4 text-purple-600 hover:text-purple-700 text-sm font-medium flex items-center mx-auto">
+                    <button type="button" onclick="togglePrivacyDetails()" class="mt-3 text-purple-600 hover:text-purple-700 text-xs font-medium flex items-center mx-auto">
                         <span id="privacyToggleText">상세 내용 보기</span>
-                        <i id="privacyToggleIcon" class="fas fa-chevron-down ml-2" aria-hidden="true"></i>
+                        <i id="privacyToggleIcon" class="fas fa-chevron-down ml-1 text-xs" aria-hidden="true"></i>
                     </button>
                     
-                    <div id="privacyDetails" class="hidden mt-4 pt-4 border-t border-purple-200 text-sm text-gray-600">
-                        <h3 class="font-semibold text-gray-800 mb-2">동의 거부 권리</h3>
+                    <div id="privacyDetails" class="hidden mt-3 pt-3 border-t border-purple-200 text-xs text-gray-600">
+                        <h3 class="font-semibold text-gray-800 mb-1">동의 거부 권리</h3>
                         <p>귀하는 개인정보 수집 및 이용에 동의하지 않을 권리가 있습니다. 단, 동의하지 않을 경우 방명록 작성이 제한됩니다.</p>
                     </div>
                 </div>
 
                 <!-- 큰 버튼형 동의 -->
-                <button type="button" onclick="agreeAndProceed()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-6 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300 text-lg"
+                <button type="button" onclick="agreeAndProceed()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300"
                     aria-label="개인정보 수집 및 활용에 동의하고 다음 단계로 이동">
-                    <i class="fas fa-check-circle mr-3" aria-hidden="true"></i>
+                    <i class="fas fa-check-circle mr-2" aria-hidden="true"></i>
                     동의하고 시작하기
                 </button>
                 
-                <p class="mt-4 text-center text-sm text-gray-500">
+                <p class="mt-2 text-center text-xs text-gray-500">
                     버튼을 클릭하면 개인정보 수집 및 활용에 동의한 것으로 간주됩니다
                 </p>
             </div>
 
             <!-- Step 2: 이름 -->
-            <div id="section2" class="form-section flex-1 flex flex-col justify-center" role="region" aria-labelledby="step2-heading">
-                <div class="text-center mb-8">
-                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4" aria-hidden="true">
-                        <i class="fas fa-id-card text-purple-600 text-5xl"></i>
+            <div id="section2" class="form-section" role="region" aria-labelledby="step2-heading">
+                <div class="text-center mb-4">
+                    <div class="inline-block p-3 bg-purple-100 rounded-full mb-2" aria-hidden="true">
+                        <i class="fas fa-id-card text-purple-600 text-3xl"></i>
                     </div>
-                    <h2 id="step2-heading" class="text-3xl font-bold text-gray-800 mb-2">이름을 알려주세요</h2>
-                    <p class="text-gray-600">본인의 실명을 입력해주세요</p>
+                    <h2 id="step2-heading" class="text-2xl font-bold text-gray-800 mb-1">이름을 알려주세요</h2>
+                    <p class="text-sm text-gray-600">본인의 실명을 입력해주세요</p>
                 </div>
 
-                <div class="mb-8 max-w-md mx-auto">
+                <div class="mb-4">
                     <label for="name" class="sr-only">이름</label>
                     <input type="text" id="name" 
-                        class="w-full px-6 py-5 text-2xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent"
+                        class="w-full px-4 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent"
                         placeholder="예: 홍길동"
                         inputmode="text"
                         autocomplete="off"
                         aria-required="true"
                         aria-describedby="nameError">
-                    <div id="nameError" class="hidden mt-3 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center" role="alert" aria-live="polite">
-                        <i class="fas fa-exclamation-circle mr-2" aria-hidden="true"></i>
+                    <div id="nameError" class="hidden mt-2 bg-red-50 text-red-600 p-2 rounded-lg text-sm text-center" role="alert" aria-live="polite">
+                        <i class="fas fa-exclamation-circle mr-1" aria-hidden="true"></i>
                         이름을 입력해주세요.
                     </div>
                 </div>
 
-                <div class="flex gap-3">
-                    <button onclick="goToStep(1)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-gray-400"
+                <div class="flex gap-2">
+                    <button onclick="goToStep(1)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-gray-400"
                         aria-label="이전 단계로 돌아가기">
-                        <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>이전
+                        <i class="fas fa-arrow-left mr-1" aria-hidden="true"></i>이전
                     </button>
-                    <button onclick="goToStep(3)" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300"
+                    <button onclick="goToStep(3)" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300"
                         aria-label="다음 단계로 이동">
-                        다음 <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>
+                        다음 <i class="fas fa-arrow-right ml-1" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Step 3: 성별 -->
-            <div id="section3" class="form-section flex-1 flex flex-col justify-center" role="region" aria-labelledby="step3-heading">
-                <div class="text-center mb-8">
-                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4" aria-hidden="true">
-                        <i class="fas fa-venus-mars text-purple-600 text-5xl"></i>
+            <div id="section3" class="form-section" role="region" aria-labelledby="step3-heading">
+                <div class="text-center mb-4">
+                    <div class="inline-block p-3 bg-purple-100 rounded-full mb-2" aria-hidden="true">
+                        <i class="fas fa-venus-mars text-purple-600 text-3xl"></i>
                     </div>
-                    <h2 id="step3-heading" class="text-3xl font-bold text-gray-800 mb-2">성별을 선택해주세요</h2>
-                    <p class="text-gray-600">통계 자료로 활용됩니다</p>
+                    <h2 id="step3-heading" class="text-2xl font-bold text-gray-800 mb-1">성별을 선택해주세요</h2>
+                    <p class="text-sm text-gray-600">통계 자료로 활용됩니다</p>
                 </div>
 
-                <fieldset class="grid grid-cols-2 gap-4 mb-8 max-w-md mx-auto" aria-required="true" aria-describedby="genderError">
+                <fieldset class="grid grid-cols-2 gap-3 mb-4" aria-required="true" aria-describedby="genderError">
                     <legend class="sr-only">성별 선택</legend>
                     <label class="radio-card relative" tabindex="0" onclick="selectGenderAndProceed('남성', event)">
                         <input type="radio" name="gender" value="남성" class="sr-only" aria-label="남성">
-                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div class="p-4 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-mars text-5xl text-blue-500 mb-3" aria-hidden="true"></i>
-                            <div class="font-semibold text-lg">남성</div>
+                            <i class="fas fa-mars text-4xl text-blue-500 mb-2" aria-hidden="true"></i>
+                            <div class="font-semibold">남성</div>
                         </div>
                     </label>
                     <label class="radio-card relative" tabindex="0" onclick="selectGenderAndProceed('여성', event)">
                         <input type="radio" name="gender" value="여성" class="sr-only" aria-label="여성">
-                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div class="p-4 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-venus text-5xl text-pink-500 mb-3" aria-hidden="true"></i>
-                            <div class="font-semibold text-lg">여성</div>
+                            <i class="fas fa-venus text-4xl text-pink-500 mb-2" aria-hidden="true"></i>
+                            <div class="font-semibold">여성</div>
                         </div>
                     </label>
                 </fieldset>
@@ -312,63 +351,63 @@ export const guestbookPage = `
             </div>
 
             <!-- Step 4: 교급 -->
-            <div id="section4" class="form-section flex-1 flex flex-col justify-center" role="region" aria-labelledby="step4-heading">
-                <div class="text-center mb-8">
-                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4" aria-hidden="true">
-                        <i class="fas fa-graduation-cap text-purple-600 text-5xl"></i>
+            <div id="section4" class="form-section" role="region" aria-labelledby="step4-heading">
+                <div class="text-center mb-3">
+                    <div class="inline-block p-3 bg-purple-100 rounded-full mb-2" aria-hidden="true">
+                        <i class="fas fa-graduation-cap text-purple-600 text-3xl"></i>
                     </div>
-                    <h2 id="step4-heading" class="text-3xl font-bold text-gray-800 mb-2">학교급을 선택해주세요</h2>
-                    <p class="text-gray-600">현재 재학 중이신 학교급을 선택해주세요</p>
+                    <h2 id="step4-heading" class="text-2xl font-bold text-gray-800 mb-1">학교급을 선택해주세요</h2>
+                    <p class="text-sm text-gray-600">현재 재학 중이신 학교급을 선택해주세요</p>
                 </div>
 
-                <fieldset class="grid grid-cols-2 gap-4 mb-8" aria-required="true" aria-describedby="gradeError">
+                <fieldset class="grid grid-cols-3 gap-2 mb-3" aria-required="true" aria-describedby="gradeError">
                     <legend class="sr-only">학교급 선택</legend>
                     <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('유아', event)">
                         <input type="radio" name="grade" value="유아" class="sr-only" aria-label="유아">
-                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-baby text-5xl text-yellow-500 mb-3" aria-hidden="true"></i>
-                            <div class="font-semibold text-lg">유아</div>
+                            <i class="fas fa-baby text-3xl text-yellow-500 mb-1" aria-hidden="true"></i>
+                            <div class="font-semibold text-sm">유아</div>
                         </div>
                     </label>
                     <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('초등', event)">
                         <input type="radio" name="grade" value="초등" class="sr-only" aria-label="초등학생">
-                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-child text-5xl text-green-500 mb-3" aria-hidden="true"></i>
-                            <div class="font-semibold text-lg">초등학생</div>
+                            <i class="fas fa-child text-3xl text-green-500 mb-1" aria-hidden="true"></i>
+                            <div class="font-semibold text-sm">초등</div>
                         </div>
                     </label>
                     <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('중등', event)">
                         <input type="radio" name="grade" value="중등" class="sr-only" aria-label="중학생">
-                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-user-graduate text-5xl text-blue-500 mb-3" aria-hidden="true"></i>
-                            <div class="font-semibold text-lg">중학생</div>
+                            <i class="fas fa-user-graduate text-3xl text-blue-500 mb-1" aria-hidden="true"></i>
+                            <div class="font-semibold text-sm">중등</div>
                         </div>
                     </label>
                     <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('고등', event)">
                         <input type="radio" name="grade" value="고등" class="sr-only" aria-label="고등학생">
-                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-graduation-cap text-5xl text-purple-500 mb-3" aria-hidden="true"></i>
-                            <div class="font-semibold text-lg">고등학생</div>
+                            <i class="fas fa-graduation-cap text-3xl text-purple-500 mb-1" aria-hidden="true"></i>
+                            <div class="font-semibold text-sm">고등</div>
                         </div>
                     </label>
                     <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('성인', event)">
                         <input type="radio" name="grade" value="성인" class="sr-only" aria-label="성인">
-                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-user-tie text-5xl text-indigo-500 mb-3" aria-hidden="true"></i>
-                            <div class="font-semibold text-lg">성인</div>
+                            <i class="fas fa-user-tie text-3xl text-indigo-500 mb-1" aria-hidden="true"></i>
+                            <div class="font-semibold text-sm">성인</div>
                         </div>
                     </label>
                     <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('기타', event)">
                         <input type="radio" name="grade" value="기타" class="sr-only" aria-label="기타">
-                        <div class="p-6 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-user text-5xl text-gray-500 mb-3" aria-hidden="true"></i>
-                            <div class="font-semibold text-lg">기타</div>
+                            <i class="fas fa-user text-3xl text-gray-500 mb-1" aria-hidden="true"></i>
+                            <div class="font-semibold text-sm">기타</div>
                         </div>
                     </label>
                 </fieldset>
@@ -391,23 +430,23 @@ export const guestbookPage = `
             </div>
 
             <!-- Step 5: 생년월일 -->
-            <div id="section5" class="form-section flex-1 flex flex-col justify-center" role="region" aria-labelledby="step5-heading">
-                <div class="text-center mb-8">
-                    <div class="inline-block p-4 bg-purple-100 rounded-full mb-4" aria-hidden="true">
-                        <i class="fas fa-calendar-alt text-purple-600 text-5xl"></i>
+            <div id="section5" class="form-section" role="region" aria-labelledby="step5-heading">
+                <div class="text-center mb-3">
+                    <div class="inline-block p-3 bg-purple-100 rounded-full mb-2" aria-hidden="true">
+                        <i class="fas fa-calendar-alt text-purple-600 text-3xl"></i>
                     </div>
-                    <h2 id="step5-heading" class="text-3xl font-bold text-gray-800 mb-2">생년월일을 선택해주세요</h2>
-                    <p class="text-gray-600">태블릿 환경에 최적화된 선택기입니다</p>
+                    <h2 id="step5-heading" class="text-2xl font-bold text-gray-800 mb-1">생년월일을 선택해주세요</h2>
+                    <p class="text-sm text-gray-600">태블릿 환경에 최적화된 선택기입니다</p>
                 </div>
 
-                <div class="mb-8 max-w-lg mx-auto">
+                <div class="mb-4">
                     <!-- 년/월/일 분리형 선택기 -->
-                    <div class="grid grid-cols-3 gap-4">
+                    <div class="grid grid-cols-3 gap-2">
                         <!-- 년도 선택 -->
                         <div>
-                            <label for="birthYear" class="block text-sm font-medium text-gray-700 mb-2 text-center">년도</label>
+                            <label for="birthYear" class="block text-xs font-medium text-gray-700 mb-1 text-center">년도</label>
                             <select id="birthYear" 
-                                class="w-full px-4 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
+                                class="w-full px-2 py-3 text-base text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
                                 aria-required="true">
                                 <option value="">선택</option>
                             </select>
@@ -415,9 +454,9 @@ export const guestbookPage = `
                         
                         <!-- 월 선택 -->
                         <div>
-                            <label for="birthMonth" class="block text-sm font-medium text-gray-700 mb-2 text-center">월</label>
+                            <label for="birthMonth" class="block text-xs font-medium text-gray-700 mb-1 text-center">월</label>
                             <select id="birthMonth" 
-                                class="w-full px-4 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
+                                class="w-full px-2 py-3 text-base text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
                                 aria-required="true">
                                 <option value="">선택</option>
                                 <option value="01">1월</option>
@@ -437,57 +476,58 @@ export const guestbookPage = `
                         
                         <!-- 일 선택 -->
                         <div>
-                            <label for="birthDay" class="block text-sm font-medium text-gray-700 mb-2 text-center">일</label>
+                            <label for="birthDay" class="block text-xs font-medium text-gray-700 mb-1 text-center">일</label>
                             <select id="birthDay" 
-                                class="w-full px-4 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
+                                class="w-full px-2 py-3 text-base text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
                                 aria-required="true">
                                 <option value="">선택</option>
                             </select>
                         </div>
                     </div>
                     
-                    <div id="dateError" class="hidden mt-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center" role="alert" aria-live="polite">
-                        <i class="fas fa-exclamation-circle mr-2" aria-hidden="true"></i>
+                    <div id="dateError" class="hidden mt-2 bg-red-50 text-red-600 p-2 rounded-lg text-sm text-center" role="alert" aria-live="polite">
+                        <i class="fas fa-exclamation-circle mr-1" aria-hidden="true"></i>
                         <span id="dateErrorText">생년월일을 모두 선택해주세요.</span>
                     </div>
                 </div>
 
-                <div class="flex gap-3">
-                    <button onclick="goToStep(4)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-gray-400"
+                <div class="flex gap-2">
+                    <button onclick="goToStep(4)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-gray-400"
                         aria-label="이전 단계로 돌아가기">
-                        <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>이전
+                        <i class="fas fa-arrow-left mr-1" aria-hidden="true"></i>이전
                     </button>
-                    <button onclick="submitForm()" id="submitBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300"
+                    <button onclick="submitForm()" id="submitBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300"
                         aria-label="방명록 제출">
-                        제출하기 <i class="fas fa-check ml-2" aria-hidden="true"></i>
+                        제출하기 <i class="fas fa-check ml-1" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Step 6: 완료 -->
-            <div id="section6" class="form-section flex-1 flex flex-col justify-center text-center" role="region" aria-labelledby="step6-heading" aria-live="polite">
-                <div class="mb-6">
-                    <div class="inline-block p-6 bg-green-100 rounded-full mb-4 animate-bounce" aria-hidden="true">
-                        <i class="fas fa-check-circle text-green-600 text-6xl"></i>
+            <div id="section6" class="form-section text-center" role="region" aria-labelledby="step6-heading" aria-live="polite">
+                <div class="mb-4">
+                    <div class="inline-block p-4 bg-green-100 rounded-full mb-3 animate-bounce" aria-hidden="true">
+                        <i class="fas fa-check-circle text-green-600 text-5xl"></i>
                     </div>
                 </div>
                 
-                <h2 id="step6-heading" class="text-3xl font-bold text-gray-800 mb-4">
+                <h2 id="step6-heading" class="text-2xl font-bold text-gray-800 mb-3">
                     등록 완료!
                 </h2>
                 
-                <p class="text-gray-600 mb-8">
+                <p class="text-gray-600 mb-4 text-sm">
                     소중한 시간 내어 방명록을 작성해주셔서 감사합니다.<br>
                     <strong>즐거운 시간 되세요!</strong> 🎉
                 </p>
 
-                <div class="bg-purple-50 p-6 rounded-lg" role="status">
-                    <p class="text-sm text-gray-600">
-                        <i class="fas fa-info-circle text-purple-600 mr-2" aria-hidden="true"></i>
+                <div class="bg-purple-50 p-4 rounded-lg" role="status">
+                    <p class="text-xs text-gray-600">
+                        <i class="fas fa-info-circle text-purple-600 mr-1" aria-hidden="true"></i>
                         3초 후 자동으로 새로고침됩니다.<br>
                         <span class="text-xs text-gray-500 mt-1 block">다음 참가자도 작성 가능합니다</span>
                     </p>
                 </div>
+            </div>
             </div>
         </div>
     </div>
