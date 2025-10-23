@@ -779,7 +779,18 @@ export const guestbookPage = `
                     })
                 })
 
-                const data = await response.json()
+                // 응답 텍스트를 먼저 확인
+                const responseText = await response.text()
+                
+                // JSON 파싱 시도
+                let data
+                try {
+                    data = JSON.parse(responseText)
+                } catch (jsonError) {
+                    console.error('JSON 파싱 실패:', jsonError)
+                    console.error('서버 응답:', responseText)
+                    throw new Error('서버 응답을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.')
+                }
 
                 if (!response.ok) {
                     throw new Error(data.error || '등록에 실패했습니다.')
