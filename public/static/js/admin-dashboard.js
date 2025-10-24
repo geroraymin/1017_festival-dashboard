@@ -136,25 +136,27 @@ async function loadOverview() {
         })
 
         // 성별/교급 분포 계산 (필터링된 행사 기준)
-        let genderDistribution = { male: 0, female: 0 }
-        let gradeDistribution = { infant: 0, elementary: 0, middle: 0, high: 0, adult: 0, other: 0 }
+        let genderDistribution = { '남성': 0, '여성': 0 }
+        let gradeDistribution = { '유아': 0, '초등': 0, '중등': 0, '고등': 0, '성인': 0 }
 
         filteredEvents.forEach(event => {
             if (event.booths) {
                 event.booths.forEach(booth => {
                     // Fallback: undefined 방지
                     if (booth.gender_distribution) {
-                        genderDistribution.male += booth.gender_distribution.male || 0
-                        genderDistribution.female += booth.gender_distribution.female || 0
+                        Object.entries(booth.gender_distribution).forEach(([gender, count]) => {
+                            if (genderDistribution[gender] !== undefined) {
+                                genderDistribution[gender] += count || 0
+                            }
+                        })
                     }
 
                     if (booth.grade_distribution) {
-                        gradeDistribution.infant += booth.grade_distribution.infant || 0
-                        gradeDistribution.elementary += booth.grade_distribution.elementary || 0
-                        gradeDistribution.middle += booth.grade_distribution.middle || 0
-                        gradeDistribution.high += booth.grade_distribution.high || 0
-                        gradeDistribution.adult += booth.grade_distribution.adult || 0
-                        gradeDistribution.other += booth.grade_distribution.other || 0
+                        Object.entries(booth.grade_distribution).forEach(([grade, count]) => {
+                            if (gradeDistribution[grade] !== undefined) {
+                                gradeDistribution[grade] += count || 0
+                            }
+                        })
                     }
                 })
             }
@@ -201,24 +203,83 @@ function updateOverallGenderChart(data) {
         overallGenderChart.destroy()
     }
 
+    const labels = Object.keys(data)
+    const values = Object.values(data)
+
     overallGenderChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['남성', '여성'],
+            labels: labels,
             datasets: [{
-                data: [data.male, data.female],
-                backgroundColor: ['#3b82f6', '#ec4899']
+                data: values,
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',  // 남성 - 파랑
+                    'rgba(236, 72, 153, 0.8)',  // 여성 - 핑크
+                ],
+                borderColor: [
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(236, 72, 153, 1)',
+                ],
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'bottom'
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        padding: 15,
+                        generateLabels: function(chart) {
+                            const data = chart.data
+                            return data.labels.map((label, i) => {
+                                const value = data.datasets[0].data[i]
+                                return {
+                                    text: `${label}: ${value}명`,
+                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                    hidden: false,
+                                    index: i
+                                }
+                            })
+                        }
+                    }
+                },
+                datalabels: {
+                    color: '#fff',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    formatter: function(value, context) {
+                        return value + '명'
+                    }
                 }
             }
         }
+    })
+
+    // 성별 통계 테이블 업데이트
+    updateGenderStatsTable(data)
+}
+
+// 성별 통계 테이블 업데이트
+function updateGenderStatsTable(data) {
+    const tableContainer = document.getElementById('genderStatsTable')
+    tableContainer.innerHTML = ''
+    
+    Object.entries(data).forEach(([gender, count]) => {
+        const statItem = document.createElement('div')
+        statItem.className = 'p-3 rounded-lg bg-gray-50'
+        statItem.innerHTML = `
+            <div class="text-base text-gray-600 mb-1">${gender}</div>
+            <div class="text-2xl font-bold text-gray-800">${count}<span class="text-sm text-gray-500 ml-1">명</span></div>
+        `
+        tableContainer.appendChild(statItem)
     })
 }
 
@@ -230,21 +291,44 @@ function updateOverallGradeChart(data) {
         overallGradeChart.destroy()
     }
 
+    // 모든 교급 순서 고정 (5개 교급)
+    const allGrades = ['유아', '초등', '중등', '고등', '성인']
+    const labels = allGrades
+    const values = allGrades.map(grade => data[grade] || 0)
+
     overallGradeChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['유아', '초등', '중등', '고등', '성인', '기타'],
+            labels: labels,
             datasets: [{
                 label: '참가자 수',
-                data: [data.infant || 0, data.elementary, data.middle, data.high, data.adult || 0, data.other],
-                backgroundColor: ['#fbbf24', '#8b5cf6', '#06b6d4', '#10b981', '#6366f1', '#9ca3af']
+                data: values,
+                backgroundColor: [
+                    'rgba(251, 191, 36, 0.8)',   // 유아
+                    'rgba(34, 197, 94, 0.8)',    // 초등
+                    'rgba(59, 130, 246, 0.8)',   // 중등
+                    'rgba(168, 85, 247, 0.8)',   // 고등
+                    'rgba(99, 102, 241, 0.8)',   // 성인
+                ],
+                borderColor: [
+                    'rgba(251, 191, 36, 1)',
+                    'rgba(34, 197, 94, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(168, 85, 247, 1)',
+                    'rgba(99, 102, 241, 1)',
+                ],
+                borderWidth: 2,
+                borderRadius: 6
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
+                    display: false
+                },
+                datalabels: {
                     display: false
                 }
             },
@@ -252,11 +336,51 @@ function updateOverallGradeChart(data) {
                 y: {
                     beginAtZero: true,
                     ticks: {
+                        font: {
+                            size: 12
+                        },
                         stepSize: 1
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        display: false
                     }
                 }
             }
         }
+    })
+
+    // 교급 통계 테이블 업데이트
+    updateGradeStatsTable(data)
+}
+
+// 교급 통계 테이블 업데이트
+function updateGradeStatsTable(data) {
+    const tableContainer = document.getElementById('gradeStatsTable')
+    tableContainer.innerHTML = ''
+    
+    // 모든 교급 순서 고정 (5개 교급)
+    const allGrades = ['유아', '초등', '중등', '고등', '성인']
+    
+    allGrades.forEach(grade => {
+        const count = data[grade] || 0
+        const statItem = document.createElement('div')
+        statItem.className = 'p-2 rounded-lg bg-gray-50'
+        statItem.innerHTML = `
+            <div class="text-xs text-gray-600">${grade}</div>
+            <div class="text-lg font-bold text-gray-800">${count}<span class="text-xs text-gray-500 ml-1">명</span></div>
+        `
+        tableContainer.appendChild(statItem)
     })
 }
 

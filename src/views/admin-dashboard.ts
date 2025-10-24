@@ -12,6 +12,7 @@ export const adminDashboardPage = `
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <style>
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -235,18 +236,30 @@ export const adminDashboardPage = `
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
-                        <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
+                        <i class="fas fa-venus-mars text-pink-500 mr-2"></i>
                         전체 성별 분포
                     </h3>
-                    <canvas id="overallGenderChart"></canvas>
+                    <div style="height: 280px;">
+                        <canvas id="overallGenderChart"></canvas>
+                    </div>
+                    <!-- 성별 통계 테이블 -->
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div id="genderStatsTable" class="grid grid-cols-2 gap-4 text-center"></div>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
-                        <i class="fas fa-chart-bar text-purple-500 mr-2"></i>
+                        <i class="fas fa-graduation-cap text-blue-500 mr-2"></i>
                         전체 교급 분포
                     </h3>
-                    <canvas id="overallGradeChart"></canvas>
+                    <div style="height: 280px;">
+                        <canvas id="overallGradeChart"></canvas>
+                    </div>
+                    <!-- 교급 통계 테이블 -->
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div id="gradeStatsTable" class="grid grid-cols-5 gap-2 text-center"></div>
+                    </div>
                 </div>
             </div>
 
@@ -382,7 +395,6 @@ export const adminDashboardPage = `
                             <option value="중등">중등</option>
                             <option value="고등">고등</option>
                             <option value="성인">성인</option>
-                            <option value="기타">기타</option>
                         </select>
                     </div>
 
