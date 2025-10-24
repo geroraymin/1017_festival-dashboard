@@ -103,12 +103,12 @@ export const operatorDashboardPage = `
                 <i class="fas fa-chevron-right text-2xl text-gray-400"></i>
             </a>
 
-            <button onclick="loadStats()" 
+            <button id="refreshButton" onclick="refreshStats()" 
                 class="bg-white hover:bg-gray-50 rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:scale-105">
                 <div class="text-left">
                     <h3 class="text-xl font-bold text-gray-800 mb-2">
-                        <i class="fas fa-sync-alt text-blue-500 mr-2"></i>
-                        통계 새로고침
+                        <i id="refreshIcon" class="fas fa-sync-alt text-blue-500 mr-2"></i>
+                        <span id="refreshText">통계 새로고침</span>
                     </h3>
                     <p class="text-gray-600">최신 데이터 불러오기</p>
                 </div>
@@ -313,6 +313,25 @@ export const operatorDashboardPage = `
         function hideLoading() {
             document.getElementById('statsCards').classList.remove('hidden')
             document.getElementById('statsCardsLoading').classList.add('hidden')
+        }
+
+        // 새로고침 버튼 클릭 핸들러
+        async function refreshStats() {
+            const refreshButton = document.getElementById('refreshButton')
+            const refreshIcon = document.getElementById('refreshIcon')
+            const refreshText = document.getElementById('refreshText')
+            
+            // 버튼 비활성화 및 로딩 표시
+            refreshButton.disabled = true
+            refreshIcon.classList.add('fa-spin')
+            refreshText.textContent = '새로고침 중...'
+            
+            await loadStats()
+            
+            // 버튼 활성화 및 원래 상태로
+            refreshButton.disabled = false
+            refreshIcon.classList.remove('fa-spin')
+            refreshText.textContent = '통계 새로고침'
         }
 
         // 통계 로드
