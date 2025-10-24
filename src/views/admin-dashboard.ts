@@ -198,78 +198,90 @@ export const adminDashboardPage = `
             </div>
 
             <!-- 요약 카드 -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <i class="fas fa-users text-4xl opacity-80"></i>
-                        <span class="text-3xl font-bold" id="totalParticipants">0</span>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800" id="totalParticipants">0</div>
+                            <div class="text-xs text-gray-600 mt-1">총 참가자</div>
+                        </div>
+                        <i class="fas fa-users text-3xl text-blue-500 opacity-60"></i>
                     </div>
-                    <h3 class="text-blue-100 text-sm">총 참가자</h3>
                 </div>
 
-                <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <i class="fas fa-calendar text-4xl opacity-80"></i>
-                        <span class="text-3xl font-bold" id="totalEvents">0</span>
+                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-purple-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800" id="totalEvents">0</div>
+                            <div class="text-xs text-gray-600 mt-1">진행 중인 행사</div>
+                        </div>
+                        <i class="fas fa-calendar text-3xl text-purple-500 opacity-60"></i>
                     </div>
-                    <h3 class="text-purple-100 text-sm">진행 중인 행사</h3>
                 </div>
 
-                <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl shadow-lg p-6 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <i class="fas fa-store text-4xl opacity-80"></i>
-                        <span class="text-3xl font-bold" id="totalBooths">0</span>
+                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-pink-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800" id="totalBooths">0</div>
+                            <div class="text-xs text-gray-600 mt-1">활성 부스</div>
+                        </div>
+                        <i class="fas fa-store text-3xl text-pink-500 opacity-60"></i>
                     </div>
-                    <h3 class="text-pink-100 text-sm">활성 부스</h3>
                 </div>
 
-                <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <i class="fas fa-clock text-4xl opacity-80"></i>
-                        <span class="text-lg font-bold" id="lastUpdate">--:--</span>
+                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-green-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-sm font-bold text-gray-800" id="lastUpdate">--:--</div>
+                            <div class="text-xs text-gray-600 mt-1">마지막 업데이트</div>
+                        </div>
+                        <i class="fas fa-clock text-3xl text-green-500 opacity-60"></i>
                     </div>
-                    <h3 class="text-green-100 text-sm">마지막 업데이트</h3>
                 </div>
             </div>
 
-            <!-- 차트 -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+            <!-- 차트 그리드 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- 성별 분포 -->
+                <div class="bg-white rounded-xl shadow-lg p-5">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
                         <i class="fas fa-venus-mars text-pink-500 mr-2"></i>
-                        전체 성별 분포
+                        성별 분포
                     </h3>
-                    <div style="height: 280px;">
+                    <div style="height: 220px;">
                         <canvas id="overallGenderChart"></canvas>
                     </div>
                     <!-- 성별 통계 테이블 -->
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <div id="genderStatsTable" class="grid grid-cols-2 gap-4 text-center"></div>
+                    <div class="mt-3 pt-3 border-t border-gray-200">
+                        <div id="genderStatsTable" class="grid grid-cols-2 gap-3 text-center"></div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                <!-- 교급 분포 -->
+                <div class="bg-white rounded-xl shadow-lg p-5">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
                         <i class="fas fa-graduation-cap text-blue-500 mr-2"></i>
-                        전체 교급 분포
+                        교급 분포
                     </h3>
-                    <div style="height: 280px;">
+                    <div style="height: 220px;">
                         <canvas id="overallGradeChart"></canvas>
                     </div>
                     <!-- 교급 통계 테이블 -->
-                    <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="mt-3 pt-3 border-t border-gray-200">
                         <div id="gradeStatsTable" class="grid grid-cols-5 gap-2 text-center"></div>
                     </div>
                 </div>
             </div>
 
             <!-- 부스별 참가자 수 차트 -->
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">
-                    <i class="fas fa-store-alt text-pink-500 mr-2"></i>
+            <div class="bg-white rounded-xl shadow-lg p-5 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-store-alt text-indigo-500 mr-2"></i>
                     부스별 참가자 현황
                 </h3>
-                <canvas id="overallBoothChart" style="max-height: 400px;"></canvas>
+                <div style="height: 300px;">
+                    <canvas id="overallBoothChart"></canvas>
+                </div>
             </div>
         </div>
 

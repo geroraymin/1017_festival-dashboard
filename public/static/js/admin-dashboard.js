@@ -436,7 +436,7 @@ function updateOverallBoothChart(boothData) {
         options: {
             indexAxis: 'y', // 가로 막대형 차트
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false
