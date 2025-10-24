@@ -90,7 +90,7 @@ export const operatorDashboardPage = `
         </div>
 
         <!-- 액션 버튼 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <a href="#" onclick="openGuestbook(); return false;" 
                 class="bg-white hover:bg-gray-50 rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:scale-105">
                 <div>
@@ -103,6 +103,18 @@ export const operatorDashboardPage = `
                 <i class="fas fa-chevron-right text-2xl text-gray-400"></i>
             </a>
 
+            <button onclick="openDisplayMode()" 
+                class="bg-white hover:bg-gray-50 rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:scale-105">
+                <div class="text-left">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-tv text-purple-500 mr-2"></i>
+                        디스플레이 모드
+                    </h3>
+                    <p class="text-gray-600">통계 크게 보기</p>
+                </div>
+                <i class="fas fa-chevron-right text-2xl text-gray-400"></i>
+            </button>
+
             <button id="refreshButton" onclick="refreshStats()" 
                 class="bg-white hover:bg-gray-50 rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:scale-105">
                 <div class="text-left">
@@ -114,35 +126,6 @@ export const operatorDashboardPage = `
                 </div>
                 <i class="fas fa-chevron-right text-2xl text-gray-400"></i>
             </button>
-        </div>
-
-        <!-- QR 코드 섹션 -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
-                <i class="fas fa-qrcode text-teal-500 mr-2"></i>
-                방명록 QR 코드
-            </h3>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-6">
-                <!-- QR 코드 이미지 -->
-                <div id="qrCodeContainer" class="flex justify-center items-center">
-                    <img id="qrCodeImage" alt="방명록 QR 코드" class="rounded-lg shadow-md" style="width: 200px; height: 200px;">
-                </div>
-                <!-- 설명 및 버튼 -->
-                <div class="text-center md:text-left">
-                    <p class="text-gray-700 mb-4">
-                        참가자가 이 QR 코드를 스캔하면<br>
-                        자동으로 방명록 작성 페이지로 이동합니다.
-                    </p>
-                    <button onclick="copyGuestbookLink()" 
-                        class="px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-lg transition flex items-center gap-2 mx-auto md:mx-0">
-                        <i class="fas fa-copy"></i>
-                        링크 복사
-                    </button>
-                    <p id="copySuccess" class="text-green-600 text-sm mt-2 hidden">
-                        <i class="fas fa-check-circle"></i> 복사되었습니다!
-                    </p>
-                </div>
-            </div>
         </div>
 
         <!-- 통계 카드 -->
@@ -254,36 +237,9 @@ export const operatorDashboardPage = `
             window.open(\`/guestbook?booth_id=\${boothId}\`, '_blank')
         }
 
-        // QR 코드 생성
-        function generateQRCode() {
-            const guestbookUrl = \`\${window.location.origin}/guestbook?booth_id=\${boothId}\`
-            const qrImage = document.getElementById('qrCodeImage')
-            
-            // QR Server API 사용 (fallback 포함)
-            const qrApiUrl = \`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=\${encodeURIComponent(guestbookUrl)}\`
-            
-            qrImage.src = qrApiUrl
-            qrImage.onerror = function() {
-                // Fallback: QuickChart API
-                console.warn('QR Server API failed, trying QuickChart...')
-                qrImage.src = \`https://quickchart.io/qr?text=\${encodeURIComponent(guestbookUrl)}&size=200\`
-            }
-        }
-
-        // 방명록 링크 복사
-        function copyGuestbookLink() {
-            const guestbookUrl = \`\${window.location.origin}/guestbook?booth_id=\${boothId}\`
-            
-            navigator.clipboard.writeText(guestbookUrl).then(() => {
-                const successMsg = document.getElementById('copySuccess')
-                successMsg.classList.remove('hidden')
-                setTimeout(() => {
-                    successMsg.classList.add('hidden')
-                }, 2000)
-            }).catch(err => {
-                console.error('복사 실패:', err)
-                alert('링크를 복사하지 못했습니다.')
-            })
+        // 디스플레이 모드 열기
+        function openDisplayMode() {
+            window.open(\`/display?booth_id=\${boothId}\`, '_blank', 'width=1920,height=1080')
         }
 
         // 부스 정보 로드
@@ -480,7 +436,6 @@ export const operatorDashboardPage = `
         // 초기 로드
         loadBoothInfo()
         loadStats()
-        generateQRCode()
 
         // 10초마다 자동 새로고침
         setInterval(loadStats, 10000)

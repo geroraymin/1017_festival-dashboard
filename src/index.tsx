@@ -15,6 +15,7 @@ import { adminLoginPage, operatorLoginPage } from './views/pages'
 import { guestbookPage } from './views/guestbook'
 import { operatorDashboardPage } from './views/operator-dashboard'
 import { adminDashboardPage } from './views/admin-dashboard'
+import { statsDisplayPage } from './views/stats-display'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -113,6 +114,11 @@ app.get('/dashboard/operator', (c) => {
 // 관리자 대시보드
 app.get('/dashboard/admin', (c) => {
   return c.html(adminDashboardPage)
+})
+
+// 통계 디스플레이 페이지
+app.get('/display', (c) => {
+  return c.html(statsDisplayPage)
 })
 
 // 404 에러 핸들링

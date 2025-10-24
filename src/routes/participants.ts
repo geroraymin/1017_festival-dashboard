@@ -30,7 +30,7 @@ participants.post('/', async (c) => {
     }
 
     // 교급 검증 (유아, 성인 추가)
-    if (!['유아', '초등', '중등', '고등', '성인', '기타'].includes(grade)) {
+    if (!['유아', '초등', '중등', '고등', '성인'].includes(grade)) {
       return c.json({ error: '유효하지 않은 교급입니다.' }, 400)
     }
 

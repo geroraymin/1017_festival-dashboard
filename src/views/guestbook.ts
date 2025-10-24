@@ -11,6 +11,7 @@ export const guestbookPage = `
     <title>방명록 작성 - 제미나이 부스</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         body, html {
             overflow: hidden;
@@ -164,9 +165,102 @@ export const guestbookPage = `
             padding-top: 0.5rem;
             padding-bottom: 0.5rem;
         }
+        
+        /* QR 코드 관련 스타일 */
+        .qr-code-small {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 50;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .qr-code-small:hover {
+            transform: scale(1.05);
+        }
+        
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        
+        .qr-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .qr-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 90%;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .qr-code-small {
+                top: 10px;
+                right: 10px;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 to-pink-50">
+    <!-- 우측 상단 작은 QR 코드 -->
+    <div class="qr-code-small" onclick="openQRModal()" title="QR 코드 크게 보기">
+        <div class="bg-white rounded-xl shadow-lg p-2 border-2 border-purple-300">
+            <div id="qrCodeSmall"></div>
+        </div>
+    </div>
+
+    <!-- QR 코드 확대 모달 -->
+    <div id="qrModal" class="qr-modal" onclick="closeQRModal()">
+        <div class="qr-modal-content" onclick="event.stopPropagation()">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                <i class="fas fa-qrcode text-purple-600 mr-2"></i>
+                방명록 QR 코드
+            </h3>
+            <div id="qrCodeLarge" class="mx-auto mb-4" style="display: flex; justify-content: center;"></div>
+            <p class="text-gray-700 mb-4">
+                QR 코드를 스캔하면<br>
+                자동으로 방명록 작성 페이지로 이동합니다.
+            </p>
+            <button onclick="copyGuestbookLink()" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition mb-2 inline-flex items-center gap-2">
+                <i class="fas fa-copy"></i>
+                링크 복사
+            </button>
+            <p id="copySuccessModal" class="text-green-600 text-sm hidden">
+                <i class="fas fa-check-circle"></i> 복사되었습니다!
+            </p>
+            <button onclick="closeQRModal()" class="mt-4 px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition">
+                <i class="fas fa-times mr-2"></i>닫기
+            </button>
+        </div>
+    </div>
+
     <div class="container-wrapper max-w-2xl mx-auto px-4">
         <!-- 헤더 (컴팩트) -->
         <div class="compact-spacing py-3">
@@ -390,14 +484,6 @@ export const guestbookPage = `
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-user-tie text-3xl text-indigo-500 mb-1" aria-hidden="true"></i>
                             <div class="font-semibold text-sm">성인</div>
-                        </div>
-                    </label>
-                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('기타', event)">
-                        <input type="radio" name="grade" value="기타" class="sr-only" aria-label="기타">
-                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
-                            <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-user text-3xl text-gray-500 mb-1" aria-hidden="true"></i>
-                            <div class="font-semibold text-sm">기타</div>
                         </div>
                     </label>
                 </fieldset>
@@ -642,6 +728,68 @@ export const guestbookPage = `
         }
 
         loadBoothInfo()
+        
+        // QR 코드 생성 및 로드
+        function generateQRCode() {
+            const guestbookUrl = window.location.href
+            
+            // QRCode.js 라이브러리로 QR 코드 생성
+            // 작은 QR 코드 (80x80)
+            const qrSmallContainer = document.getElementById('qrCodeSmall')
+            qrSmallContainer.innerHTML = '' // 기존 내용 제거
+            
+            new QRCode(qrSmallContainer, {
+                text: guestbookUrl,
+                width: 80,
+                height: 80,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            })
+            
+            // 큰 QR 코드 (250x250)
+            const qrLargeContainer = document.getElementById('qrCodeLarge')
+            qrLargeContainer.innerHTML = '' // 기존 내용 제거
+            
+            new QRCode(qrLargeContainer, {
+                text: guestbookUrl,
+                width: 250,
+                height: 250,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            })
+        }
+        
+        // QR 모달 열기
+        function openQRModal() {
+            document.getElementById('qrModal').classList.add('active')
+        }
+        
+        // QR 모달 닫기
+        function closeQRModal() {
+            document.getElementById('qrModal').classList.remove('active')
+        }
+        
+        // 링크 복사
+        function copyGuestbookLink() {
+            const guestbookUrl = window.location.href
+            
+            navigator.clipboard.writeText(guestbookUrl).then(() => {
+                const successMsg = document.getElementById('copySuccessModal')
+                successMsg.classList.remove('hidden')
+                
+                setTimeout(() => {
+                    successMsg.classList.add('hidden')
+                }, 2000)
+            }).catch(err => {
+                console.error('복사 실패:', err)
+                alert('링크 복사에 실패했습니다.')
+            })
+        }
+        
+        // 페이지 로드 시 QR 코드 생성
+        generateQRCode()
 
         // 진행률 업데이트
         function updateProgress(step) {

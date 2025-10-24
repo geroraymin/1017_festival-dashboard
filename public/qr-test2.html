@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR 코드 테스트 v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">QR 코드 생성 테스트 v2</h1>
+        
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">URL 입력:</label>
+            <input type="text" id="urlInput" value="https://example.com/guestbook?booth_id=ABC123"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        
+        <button onclick="generateQR()" 
+            class="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg mb-6">
+            QR 코드 생성
+        </button>
+        
+        <div id="qrcode" class="flex justify-center bg-gray-50 p-6 rounded-lg border-4 border-teal-100"></div>
+        
+        <div id="log" class="mt-4 text-sm bg-gray-100 p-4 rounded font-mono"></div>
+    </div>
+
+    <script>
+        const log = document.getElementById('log')
+        
+        function addLog(msg) {
+            log.innerHTML += msg + '<br>'
+            console.log(msg)
+        }
+        
+        function generateQR() {
+            const url = document.getElementById('urlInput').value
+            const qrcodeContainer = document.getElementById('qrcode')
+            
+            addLog('=== QR 코드 생성 시작 ===')
+            addLog('URL: ' + url)
+            addLog('QRCode 라이브러리: ' + (typeof QRCode !== 'undefined' ? '로드됨 ✓' : '로드 안됨 ✗'))
+            
+            // 기존 QR코드 제거
+            qrcodeContainer.innerHTML = ''
+            
+            // Canvas 생성
+            const canvas = document.createElement('canvas')
+            canvas.style.width = '256px'
+            canvas.style.height = '256px'
+            canvas.style.margin = '0 auto'
+            qrcodeContainer.appendChild(canvas)
+            
+            if (typeof QRCode !== 'undefined') {
+                QRCode.toCanvas(canvas, url, {
+                    width: 256,
+                    margin: 2,
+                    color: {
+                        dark: '#0d9488',
+                        light: '#ffffff'
+                    },
+                    errorCorrectionLevel: 'H'
+                }, function (error) {
+                    if (error) {
+                        addLog('❌ 오류: ' + error.message)
+                        qrcodeContainer.innerHTML = '<p class="text-red-600 text-center">QR 코드 생성 실패</p>'
+                    } else {
+                        addLog('✓ QR 코드 생성 완료!')
+                    }
+                })
+            } else {
+                addLog('❌ QRCode 라이브러리가 로드되지 않았습니다')
+                qrcodeContainer.innerHTML = '<p class="text-red-600 text-center">라이브러리 로드 실패</p>'
+            }
+        }
+        
+        // 페이지 로드 시 자동 생성
+        window.addEventListener('load', () => {
+            addLog('페이지 로드 완료')
+            generateQR()
+        })
+    </script>
+</body>
+</html>

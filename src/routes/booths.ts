@@ -9,6 +9,86 @@ const booths = new Hono<{ Bindings: Env }>()
 // 부스 코드 생성기 (6자리 영숫자)
 const generateBoothCode = customAlphabet('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 6)
 
+/**
+ * GET /api/booths/:id/public-stats
+ * 공개 통계 조회 (인증 불필요 - 디스플레이용)
+ */
+booths.get('/:id/public-stats', async (c) => {
+  try {
+    const boothId = c.req.param('id')
+    const supabase = createSupabaseClient(c.env)
+
+    // 부스 정보와 통계 조회
+    const { data: booth, error: boothError } = await supabase
+      .from('booths')
+      .select('*, events(*)')
+      .eq('id', boothId)
+      .single()
+
+    if (boothError || !booth) {
+      return c.json({ error: '부스를 찾을 수 없습니다.' }, 404)
+    }
+
+    // 총 참가자 수
+    const { count: totalParticipants, error: countError } = await supabase
+      .from('participants')
+      .select('*', { count: 'exact', head: true })
+      .eq('booth_id', boothId)
+
+    if (countError) {
+      console.error('Error counting participants:', countError)
+    }
+
+    // 성별 분포
+    const { data: genderData, error: genderError } = await supabase
+      .from('participants')
+      .select('gender')
+      .eq('booth_id', boothId)
+
+    const genderDistribution: Record<string, number> = {}
+    if (!genderError && genderData) {
+      genderData.forEach(p => {
+        genderDistribution[p.gender] = (genderDistribution[p.gender] || 0) + 1
+      })
+    }
+
+    // 교급 분포 (모든 교급을 0으로 초기화)
+    const allGrades = ['유아', '초등', '중등', '고등', '성인']
+    const gradeDistribution: Record<string, number> = {}
+    allGrades.forEach(grade => {
+      gradeDistribution[grade] = 0
+    })
+    
+    const { data: gradeData, error: gradeError } = await supabase
+      .from('participants')
+      .select('grade')
+      .eq('booth_id', boothId)
+
+    if (!gradeError && gradeData) {
+      gradeData.forEach(p => {
+        if (allGrades.includes(p.grade)) {
+          gradeDistribution[p.grade] = (gradeDistribution[p.grade] || 0) + 1
+        }
+      })
+    }
+
+    return c.json({
+      booth: {
+        name: booth.name,
+        event_name: booth.events?.name || '행사'
+      },
+      stats: {
+        total_participants: totalParticipants || 0,
+        gender_distribution: genderDistribution,
+        grade_distribution: gradeDistribution
+      }
+    })
+  } catch (error) {
+    console.error('Public stats fetch error:', error)
+    return c.json({ error: '통계를 불러오는데 실패했습니다.' }, 500)
+  }
+})
+
 // 모든 라우트에 인증 미들웨어 적용
 booths.use('/*', authMiddleware)
 
