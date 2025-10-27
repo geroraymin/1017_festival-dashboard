@@ -50,18 +50,16 @@ stats.get('/booth/:booth_id', async (c) => {
     const totalParticipants = participants?.length || 0
     
     const genderDistribution = {
-      male: participants?.filter(p => p.gender === '남성').length || 0,
-      female: participants?.filter(p => p.gender === '여성').length || 0,
-      other: participants?.filter(p => p.gender === '기타').length || 0
+      '남성': participants?.filter(p => p.gender === '남성').length || 0,
+      '여성': participants?.filter(p => p.gender === '여성').length || 0
     }
 
     const gradeDistribution = {
-      infant: participants?.filter(p => p.grade === '유아').length || 0,
-      elementary: participants?.filter(p => p.grade === '초등').length || 0,
-      middle: participants?.filter(p => p.grade === '중등').length || 0,
-      high: participants?.filter(p => p.grade === '고등').length || 0,
-      adult: participants?.filter(p => p.grade === '성인').length || 0,
-      other: participants?.filter(p => p.grade === '기타').length || 0
+      '유아': participants?.filter(p => p.grade === '유아').length || 0,
+      '초등': participants?.filter(p => p.grade === '초등').length || 0,
+      '중등': participants?.filter(p => p.grade === '중등').length || 0,
+      '고등': participants?.filter(p => p.grade === '고등').length || 0,
+      '성인': participants?.filter(p => p.grade === '성인').length || 0
     }
 
     // 시간대별 분포 (시간별 참가자 수)
@@ -135,16 +133,16 @@ stats.get('/event/:event_id', async (c) => {
       const totalParticipants = participants?.length || 0
       
       const genderDistribution = {
-        male: participants?.filter(p => p.gender === '남성').length || 0,
-        female: participants?.filter(p => p.gender === '여성').length || 0,
-        other: participants?.filter(p => p.gender === '기타').length || 0
+        '남성': participants?.filter(p => p.gender === '남성').length || 0,
+        '여성': participants?.filter(p => p.gender === '여성').length || 0
       }
 
       const gradeDistribution = {
-        elementary: participants?.filter(p => p.grade === '초등').length || 0,
-        middle: participants?.filter(p => p.grade === '중등').length || 0,
-        high: participants?.filter(p => p.grade === '고등').length || 0,
-        other: participants?.filter(p => p.grade === '기타').length || 0
+        '유아': participants?.filter(p => p.grade === '유아').length || 0,
+        '초등': participants?.filter(p => p.grade === '초등').length || 0,
+        '중등': participants?.filter(p => p.grade === '중등').length || 0,
+        '고등': participants?.filter(p => p.grade === '고등').length || 0,
+        '성인': participants?.filter(p => p.grade === '성인').length || 0
       }
 
       const hourlyDistribution: Record<string, number> = {}
@@ -155,13 +153,13 @@ stats.get('/event/:event_id', async (c) => {
       })
 
       return {
-        booth_id: booth.id,
-        booth_name: booth.name,
+        id: booth.id,
+        name: booth.name,
         total_participants: totalParticipants,
         gender_distribution: genderDistribution,
         grade_distribution: gradeDistribution,
         hourly_distribution: hourlyDistribution
-      } as BoothStats
+      }
     })
 
     const boothsStats = await Promise.all(boothStatsPromises)
@@ -223,16 +221,16 @@ stats.get('/all', async (c) => {
         const totalParticipants = participants?.length || 0
         
         const genderDistribution = {
-          male: participants?.filter(p => p.gender === '남성').length || 0,
-          female: participants?.filter(p => p.gender === '여성').length || 0,
-          other: participants?.filter(p => p.gender === '기타').length || 0
+          '남성': participants?.filter(p => p.gender === '남성').length || 0,
+          '여성': participants?.filter(p => p.gender === '여성').length || 0
         }
 
         const gradeDistribution = {
-          elementary: participants?.filter(p => p.grade === '초등').length || 0,
-          middle: participants?.filter(p => p.grade === '중등').length || 0,
-          high: participants?.filter(p => p.grade === '고등').length || 0,
-          other: participants?.filter(p => p.grade === '기타').length || 0
+          '유아': participants?.filter(p => p.grade === '유아').length || 0,
+          '초등': participants?.filter(p => p.grade === '초등').length || 0,
+          '중등': participants?.filter(p => p.grade === '중등').length || 0,
+          '고등': participants?.filter(p => p.grade === '고등').length || 0,
+          '성인': participants?.filter(p => p.grade === '성인').length || 0
         }
 
         const hourlyDistribution: Record<string, number> = {}
@@ -243,25 +241,25 @@ stats.get('/all', async (c) => {
         })
 
         return {
-          booth_id: booth.id,
-          booth_name: booth.name,
+          id: booth.id,
+          name: booth.name,
           total_participants: totalParticipants,
           gender_distribution: genderDistribution,
           grade_distribution: gradeDistribution,
           hourly_distribution: hourlyDistribution
-        } as BoothStats
+        }
       })
 
       const boothsStats = await Promise.all(boothStatsPromises)
       const totalParticipants = boothsStats.reduce((sum, b) => sum + b.total_participants, 0)
 
       return {
-        event_id: event.id,
-        event_name: event.name,
+        id: event.id,
+        name: event.name,
         total_participants: totalParticipants,
         booth_count: booths?.length || 0,
         booths: boothsStats
-      } as EventStats
+      }
     })
 
     const allStats = await Promise.all(eventStatsPromises)
