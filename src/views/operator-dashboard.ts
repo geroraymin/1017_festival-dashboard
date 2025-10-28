@@ -301,12 +301,12 @@ export const operatorDashboardPage = `
                 document.getElementById('totalParticipants').textContent = stats.total_participants
 
                 // 성별 통계
-                document.getElementById('maleCount').textContent = stats.gender_distribution.male
-                document.getElementById('femaleCount').textContent = stats.gender_distribution.female
+                document.getElementById('maleCount').textContent = stats.gender_distribution['남성'] || 0
+                document.getElementById('femaleCount').textContent = stats.gender_distribution['여성'] || 0
 
                 // 교급 통계
-                document.getElementById('infantCount').textContent = stats.grade_distribution.infant || 0
-                document.getElementById('adultCount').textContent = stats.grade_distribution.adult || 0
+                document.getElementById('infantCount').textContent = stats.grade_distribution['유아'] || 0
+                document.getElementById('adultCount').textContent = stats.grade_distribution['성인'] || 0
 
                 // 차트 업데이트
                 updateGenderChart(stats.gender_distribution)
@@ -334,7 +334,7 @@ export const operatorDashboardPage = `
                 data: {
                     labels: ['남성', '여성'],
                     datasets: [{
-                        data: [data.male, data.female],
+                        data: [data['남성'] || 0, data['여성'] || 0],
                         backgroundColor: ['#3b82f6', '#ec4899']
                     }]
                 },
@@ -361,11 +361,17 @@ export const operatorDashboardPage = `
             gradeChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['유아', '초등', '중등', '고등', '성인', '기타'],
+                    labels: ['유아', '초등', '중등', '고등', '성인'],
                     datasets: [{
                         label: '참가자 수',
-                        data: [data.infant || 0, data.elementary, data.middle, data.high, data.adult || 0, data.other],
-                        backgroundColor: ['#fbbf24', '#8b5cf6', '#06b6d4', '#10b981', '#6366f1', '#9ca3af']
+                        data: [
+                            data['유아'] || 0,
+                            data['초등'] || 0,
+                            data['중등'] || 0,
+                            data['고등'] || 0,
+                            data['성인'] || 0
+                        ],
+                        backgroundColor: ['#fbbf24', '#34d399', '#3b82f6', '#a78bfa', '#6366f1']
                     }]
                 },
                 options: {
