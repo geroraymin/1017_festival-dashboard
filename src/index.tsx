@@ -44,7 +44,7 @@ app.get('/api/health', (c) => {
   return c.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    service: '제미나이 부스 디지털 방명록'
+    service: '축제 디지털방명록 시스템'
   })
 })
 
@@ -56,7 +56,7 @@ app.get('/', (c) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>제미나이 부스 디지털 방명록</title>
+        <title>축제 디지털방명록 시스템</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     </head>
@@ -66,8 +66,8 @@ app.get('/', (c) => {
                 <div class="inline-block p-3 bg-indigo-600 rounded-full mb-4">
                     <i class="fas fa-clipboard-list text-white text-4xl"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">제미나이 부스</h1>
-                <p class="text-gray-600">디지털 방명록 시스템</p>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">축제 디지털방명록</h1>
+                <p class="text-gray-600">시스템</p>
             </div>
 
             <div class="bg-white rounded-2xl shadow-xl p-8 space-y-4">
@@ -83,7 +83,7 @@ app.get('/', (c) => {
             </div>
 
             <p class="text-center text-sm text-gray-500 mt-6">
-                © 2025 제미나이 부스. All rights reserved.
+                © 2025 축제 디지털방명록 시스템. All rights reserved.
             </p>
         </div>
     </body>
