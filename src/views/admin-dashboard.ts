@@ -173,44 +173,40 @@ export const adminDashboardPage = `
         <!-- 통계 개요 탭 -->
         <div id="tab-overview" class="tab-content active">
             <!-- 행사 선택 필터 및 모드 버튼 -->
-            <div class="bg-white rounded-xl shadow-lg p-4 mb-6">
-                <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
-                    <!-- 행사 선택 -->
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-filter text-indigo-600 text-lg"></i>
-                        <div class="flex-1">
-                            <label for="eventFilter" class="block text-xs font-medium text-gray-700 mb-1">
-                                행사 선택
-                            </label>
-                            <select id="eventFilter" 
-                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                onchange="filterByEvent()">
-                                <option value="">전체 행사</option>
-                                <!-- 동적으로 행사 목록이 추가됩니다 -->
-                            </select>
-                        </div>
+            <div class="bg-white rounded-xl shadow-lg p-3 sm:p-4 mb-4 sm:mb-6">
+                <!-- 행사 선택 (전체 너비) -->
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fas fa-filter text-indigo-600 text-base sm:text-lg flex-shrink-0"></i>
+                    <div class="flex-1 min-w-0">
+                        <label for="eventFilter" class="block text-xs font-medium text-gray-700 mb-1">
+                            행사 선택
+                        </label>
+                        <select id="eventFilter" 
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            onchange="filterByEvent()">
+                            <option value="">전체 행사</option>
+                            <!-- 동적으로 행사 목록이 추가됩니다 -->
+                        </select>
                     </div>
-                    
-                    <!-- 버튼 그룹 -->
-                    <div class="flex items-center gap-2 flex-nowrap">
-                        <button onclick="loadOverview()" 
-                            class="flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium transition shadow-sm whitespace-nowrap">
-                            <i class="fas fa-sync-alt"></i>
-                            <span class="hidden md:inline">새로고침</span>
-                        </button>
-                        <button onclick="enterChartMode()" 
-                            class="flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg whitespace-nowrap">
-                            <i class="fas fa-chart-line"></i>
-                            <span class="hidden sm:inline">차트</span>
-                            <span class="sm:hidden">차트</span>
-                        </button>
-                        <button onclick="enterCardMode()" 
-                            class="flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg whitespace-nowrap">
-                            <i class="fas fa-th-large"></i>
-                            <span class="hidden sm:inline">카드</span>
-                            <span class="sm:hidden">카드</span>
-                        </button>
-                    </div>
+                </div>
+                
+                <!-- 버튼 그룹 (전체 너비, 균등 분할) -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="loadOverview()" 
+                        class="flex items-center justify-center gap-1 px-2 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium transition shadow-sm">
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="hidden sm:inline">새로고침</span>
+                    </button>
+                    <button onclick="enterChartMode()" 
+                        class="flex items-center justify-center gap-1 px-2 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg">
+                        <i class="fas fa-chart-line"></i>
+                        <span>차트</span>
+                    </button>
+                    <button onclick="enterCardMode()" 
+                        class="flex items-center justify-center gap-1 px-2 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg">
+                        <i class="fas fa-th-large"></i>
+                        <span>카드</span>
+                    </button>
                 </div>
                 
                 <!-- 안내 문구 (모바일에서는 숨김) -->
