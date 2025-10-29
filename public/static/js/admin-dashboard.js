@@ -171,10 +171,14 @@ async function loadOverview() {
         // 부스별 데이터 수집
         let boothData = []
         filteredEvents.forEach(event => {
+            const eventName = event.name || event.event_name
             if (event.booths) {
                 event.booths.forEach(booth => {
+                    const boothName = booth.name || booth.booth_name
+                    // 전체 행사 선택 시: 행사명 포함, 특정 행사 선택 시: 부스명만
+                    const displayName = selectedEventId ? boothName : `${eventName}-${boothName}`
                     boothData.push({
-                        name: booth.name || booth.booth_name,
+                        name: displayName,
                         count: booth.total_participants || booth.participant_count || 0
                     })
                 })
@@ -975,12 +979,31 @@ function filterByEvent() {
     }
 }
 
-// 풀스크린 차트 모드 진입
+// 풀스크린 모드 전역 변수
 let chartModeInterval = null
 let chartModeGenderChart = null
 let chartModeGradeChart = null
 let chartModeBoothChart = null
+let cardModeInterval = null
 let lastDataSnapshot = null // 마지막 데이터 스냅샷
+
+// 행사별 색상 테마
+const eventColors = [
+    { bg: 'bg-blue-500', text: 'text-blue-600', gradient: 'from-blue-400 to-blue-600' },
+    { bg: 'bg-purple-500', text: 'text-purple-600', gradient: 'from-purple-400 to-purple-600' },
+    { bg: 'bg-pink-500', text: 'text-pink-600', gradient: 'from-pink-400 to-pink-600' },
+    { bg: 'bg-green-500', text: 'text-green-600', gradient: 'from-green-400 to-green-600' },
+    { bg: 'bg-orange-500', text: 'text-orange-600', gradient: 'from-orange-400 to-orange-600' },
+    { bg: 'bg-teal-500', text: 'text-teal-600', gradient: 'from-teal-400 to-teal-600' },
+    { bg: 'bg-indigo-500', text: 'text-indigo-600', gradient: 'from-indigo-400 to-indigo-600' },
+    { bg: 'bg-rose-500', text: 'text-rose-600', gradient: 'from-rose-400 to-rose-600' }
+]
+
+// 행사별 아이콘
+const eventIcons = ['fa-calendar-star', 'fa-flag-checkered', 'fa-trophy', 'fa-rocket', 'fa-star', 'fa-heart', 'fa-gift', 'fa-crown']
+
+// 부스별 아이콘 (랜덤)
+const boothIcons = ['fa-store', 'fa-shop', 'fa-cart-shopping', 'fa-bag-shopping', 'fa-basket-shopping', 'fa-gifts']
 
 function enterChartMode() {
     document.getElementById('chartMode').classList.add('active')
@@ -1046,10 +1069,14 @@ function exitChartMode() {
     }
 }
 
-// ESC 키로 차트 모드 종료
+// ESC 키로 모드 종료
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById('chartMode').classList.contains('active')) {
-        exitChartMode()
+    if (e.key === 'Escape') {
+        if (document.getElementById('chartMode').classList.contains('active')) {
+            exitChartMode()
+        } else if (document.getElementById('cardMode').classList.contains('active')) {
+            exitCardMode()
+        }
     }
 })
 
@@ -1123,13 +1150,17 @@ async function updateChartMode() {
             second: '2-digit'
         })
         
-        // 부스별 데이터 수집
+        // 부스별 데이터 수집 (차트 모드용)
         let boothData = []
         filteredEvents.forEach(event => {
+            const eventName = event.name || event.event_name
             if (event.booths) {
                 event.booths.forEach(booth => {
+                    const boothName = booth.name || booth.booth_name
+                    // 전체 행사 선택 시: 행사명 포함, 특정 행사 선택 시: 부스명만
+                    const displayName = selectedEventId ? boothName : `${eventName}-${boothName}`
                     boothData.push({
-                        name: booth.name || booth.booth_name,
+                        name: displayName,
                         count: booth.total_participants || booth.participant_count || 0
                     })
                 })
@@ -1442,3 +1473,237 @@ window.addEventListener('focus', () => {
         loadOverview()
     }
 })
+
+// ============================================
+// 카드 모드 함수들
+// ============================================
+
+// 카드 모드 진입
+function enterCardMode() {
+    document.getElementById('cardMode').classList.add('active')
+    document.body.style.overflow = 'hidden'
+    
+    lastDataSnapshot = null
+    updateCardMode()
+    
+    // 10초마다 자동 갱신
+    cardModeInterval = setInterval(() => {
+        updateCardMode()
+    }, 10000)
+}
+
+// 카드 모드 종료
+function exitCardMode() {
+    document.getElementById('cardMode').classList.remove('active')
+    document.body.style.overflow = 'auto'
+    
+    if (cardModeInterval) {
+        clearInterval(cardModeInterval)
+        cardModeInterval = null
+    }
+}
+
+// 카드 모드 데이터 업데이트
+async function updateCardMode() {
+    try {
+        const data = await StatsAPI.getAll()
+        
+        // 선택된 행사 이름 표시
+        const eventFilter = document.getElementById('eventFilter')
+        const selectedEventName = eventFilter.options[eventFilter.selectedIndex]?.text || '전체 행사'
+        document.getElementById('cardModeEventName').textContent = selectedEventName
+        
+        // 선택된 행사 필터링
+        let filteredEvents = data.events
+        if (selectedEventId) {
+            filteredEvents = data.events.filter(event => {
+                const eventId = event.id || event.event_id
+                return eventId === selectedEventId
+            })
+        }
+        
+        // 총 통계 계산
+        let totalParticipants = 0
+        let totalBooths = 0
+        
+        filteredEvents.forEach(event => {
+            totalBooths += event.booth_count || 0
+            if (event.booths) {
+                event.booths.forEach(booth => {
+                    totalParticipants += booth.total_participants || booth.participant_count || 0
+                })
+            }
+        })
+        
+        // 요약 카드 업데이트
+        document.getElementById('cardModeTotalParticipants').textContent = totalParticipants
+        document.getElementById('cardModeTotalEvents').textContent = filteredEvents.length
+        document.getElementById('cardModeTotalBooths').textContent = totalBooths
+        
+        // 업데이트 시간
+        const now = new Date()
+        document.getElementById('cardModeUpdateTime').textContent = now.toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        })
+        
+        // 카드 렌더링
+        if (selectedEventId) {
+            // 특정 행사 선택 → 부스별 카드
+            renderBoothCards(filteredEvents[0])
+        } else {
+            // 전체 행사 → 행사별 카드
+            renderEventCards(filteredEvents)
+        }
+        
+    } catch (error) {
+        console.error('카드 모드 데이터 업데이트 실패:', error)
+    }
+}
+
+// 행사별 카드 렌더링
+function renderEventCards(events) {
+    const container = document.getElementById('cardModeGrid')
+    const sortOrder = document.getElementById('cardModeSortOrder').value
+    
+    document.getElementById('cardModeDescription').textContent = '행사 카드를 클릭하면 해당 행사의 부스를 확인할 수 있습니다'
+    
+    // 정렬
+    const sortedEvents = [...events].sort((a, b) => {
+        if (sortOrder === 'count') {
+            // 참가자 많은 순
+            const aCount = a.booths?.reduce((sum, booth) => sum + (booth.total_participants || 0), 0) || 0
+            const bCount = b.booths?.reduce((sum, booth) => sum + (booth.total_participants || 0), 0) || 0
+            return bCount - aCount
+        } else {
+            // 일자 순 (시작일 기준)
+            const aDate = new Date(a.start_date || 0)
+            const bDate = new Date(b.start_date || 0)
+            return bDate - aDate
+        }
+    })
+    
+    // 카드 생성
+    container.innerHTML = sortedEvents.map((event, index) => {
+        const eventId = event.id || event.event_id
+        const eventName = event.name || event.event_name
+        const boothCount = event.booth_count || 0
+        const participantCount = event.booths?.reduce((sum, booth) => sum + (booth.total_participants || 0), 0) || 0
+        const startDate = event.start_date ? new Date(event.start_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : ''
+        const endDate = event.end_date ? new Date(event.end_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : ''
+        
+        const color = eventColors[index % eventColors.length]
+        const icon = eventIcons[index % eventIcons.length]
+        
+        return `
+            <div onclick="selectEventFromCard('${eventId}')" 
+                class="bg-gradient-to-br ${color.gradient} rounded-xl shadow-2xl p-6 cursor-pointer transform transition hover:scale-105 hover:shadow-3xl">
+                <div class="text-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas ${icon} text-4xl opacity-80"></i>
+                        <span class="text-sm opacity-80">${startDate}${endDate ? ' - ' + endDate : ''}</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 line-clamp-2">${eventName}</h3>
+                    <div class="mt-4 pt-4 border-t border-white border-opacity-30">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-3xl font-bold">${participantCount}</div>
+                                <div class="text-sm opacity-80">참가자</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold">${boothCount}</div>
+                                <div class="text-sm opacity-80">부스</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    }).join('')
+}
+
+// 부스별 카드 렌더링
+function renderBoothCards(event) {
+    const container = document.getElementById('cardModeGrid')
+    const sortOrder = document.getElementById('cardModeSortOrder').value
+    
+    if (!event || !event.booths) {
+        container.innerHTML = '<div class="col-span-full text-center text-white text-lg">부스 데이터가 없습니다</div>'
+        return
+    }
+    
+    document.getElementById('cardModeDescription').textContent = `${event.name || event.event_name} 행사의 부스별 실적입니다`
+    
+    // 정렬 (부스는 참가자 많은 순 또는 이름 순)
+    const sortedBooths = [...event.booths].sort((a, b) => {
+        if (sortOrder === 'count') {
+            const aCount = a.total_participants || a.participant_count || 0
+            const bCount = b.total_participants || b.participant_count || 0
+            return bCount - aCount
+        } else {
+            // 이름 순
+            const aName = a.name || a.booth_name || ''
+            const bName = b.name || b.booth_name || ''
+            return aName.localeCompare(bName)
+        }
+    })
+    
+    // 행사 색상 (첫 번째 행사와 동일한 색상 사용)
+    const eventIndex = allEvents.findIndex(e => (e.id || e.event_id) === selectedEventId)
+    const color = eventColors[eventIndex >= 0 ? eventIndex % eventColors.length : 0]
+    
+    // 카드 생성
+    container.innerHTML = sortedBooths.map((booth, index) => {
+        const boothName = booth.name || booth.booth_name
+        const participantCount = booth.total_participants || booth.participant_count || 0
+        const icon = boothIcons[index % boothIcons.length]
+        
+        // 성별 분포
+        const genderDist = booth.gender_distribution || {}
+        const maleCount = genderDist['남성'] || 0
+        const femaleCount = genderDist['여성'] || 0
+        const totalGender = maleCount + femaleCount
+        const genderRatio = totalGender > 0 ? `${Math.round(maleCount/totalGender*100)}% / ${Math.round(femaleCount/totalGender*100)}%` : '-'
+        
+        // 최다 교급
+        const gradeDist = booth.grade_distribution || {}
+        const gradeEntries = Object.entries(gradeDist)
+        const topGrade = gradeEntries.length > 0 
+            ? gradeEntries.reduce((max, curr) => curr[1] > max[1] ? curr : max, gradeEntries[0])[0]
+            : '-'
+        
+        return `
+            <div class="bg-white rounded-xl shadow-2xl p-6 border-t-4 border-${color.bg.replace('bg-', '')} transform transition hover:scale-105 hover:shadow-3xl">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="fas ${icon} text-3xl ${color.text}"></i>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold text-gray-800">${participantCount}</div>
+                        <div class="text-xs text-gray-500">명</div>
+                    </div>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800 mb-3 line-clamp-2">${boothName}</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center justify-between text-gray-600">
+                        <span><i class="fas fa-venus-mars mr-1"></i>성별</span>
+                        <span class="font-semibold">${genderRatio}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-gray-600">
+                        <span><i class="fas fa-graduation-cap mr-1"></i>최다 교급</span>
+                        <span class="font-semibold">${topGrade}</span>
+                    </div>
+                </div>
+            </div>
+        `
+    }).join('')
+}
+
+// 행사 카드 클릭 시 해당 행사 선택
+function selectEventFromCard(eventId) {
+    const eventFilter = document.getElementById('eventFilter')
+    eventFilter.value = eventId
+    selectedEventId = eventId
+    
+    // 카드 모드 업데이트
+    updateCardMode()
+}

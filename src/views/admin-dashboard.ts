@@ -196,8 +196,13 @@ export const adminDashboardPage = `
                         </button>
                         <button onclick="enterChartMode()" 
                             class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium transition shadow-lg">
-                            <i class="fas fa-expand"></i>
+                            <i class="fas fa-chart-line"></i>
                             <span>차트 모드</span>
+                        </button>
+                        <button onclick="enterCardMode()" 
+                            class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-lg font-medium transition shadow-lg">
+                            <i class="fas fa-th-large"></i>
+                            <span>카드 모드</span>
                         </button>
                     </div>
                 </div>
@@ -643,6 +648,71 @@ export const adminDashboardPage = `
                 <div style="height: 200px;">
                     <canvas id="chartModeBoothChart"></canvas>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 풀스크린 카드 모드 -->
+    <div id="cardMode" class="chart-mode">
+        <!-- 헤더 -->
+        <div class="chart-mode-header">
+            <div class="flex items-center justify-between text-white">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-th-large text-2xl"></i>
+                    <div>
+                        <h2 class="text-xl font-bold">실적 대시보드</h2>
+                        <p class="text-sm opacity-80" id="cardModeEventName">전체 행사</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- 정렬 토글 -->
+                    <select id="cardModeSortOrder" onchange="updateCardMode()"
+                        class="px-3 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg text-sm border-none outline-none cursor-pointer">
+                        <option value="count" class="text-gray-800">참가자 많은 순</option>
+                        <option value="date" class="text-gray-800">일자 순</option>
+                    </select>
+                    <div class="text-sm opacity-80">
+                        <i class="fas fa-sync-alt mr-1"></i>
+                        <span id="cardModeUpdateTime">--:--</span>
+                    </div>
+                    <button onclick="exitCardMode()" 
+                        class="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition">
+                        <i class="fas fa-times"></i>
+                        <span>닫기 (ESC)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카드 콘텐츠 -->
+        <div class="chart-mode-content">
+            <!-- 요약 정보 -->
+            <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-4 mb-4">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center space-x-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-indigo-600" id="cardModeTotalParticipants">0</div>
+                            <div class="text-sm text-gray-600 mt-1">총 참가자</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-purple-600" id="cardModeTotalEvents">0</div>
+                            <div class="text-sm text-gray-600 mt-1">진행 행사</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-pink-600" id="cardModeTotalBooths">0</div>
+                            <div class="text-sm text-gray-600 mt-1">활성 부스</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        <span id="cardModeDescription">카드를 클릭하여 상세 정보를 확인하세요</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 카드 그리드 -->
+            <div id="cardModeGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- 카드들이 동적으로 추가됩니다 -->
             </div>
         </div>
     </div>
