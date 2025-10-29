@@ -819,12 +819,12 @@ function exportCSV() {
         })
     }
 
-    // CSV 헤더
-    let csv = '이름,성별,교급,생년월일,부스명,등록일시\\n'
+    // CSV 헤더 (UTF-8 BOM 추가)
+    let csv = '\uFEFF이름,성별,교급,생년월일,부스명,등록일시\n'
 
     // CSV 데이터
     participantsToExport.forEach(p => {
-        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booths?.name || '-'},${formatDateTime(p.created_at)}\\n`
+        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booths?.name || '-'},${formatDateTime(p.created_at)}\n`
     })
 
     // 다운로드
