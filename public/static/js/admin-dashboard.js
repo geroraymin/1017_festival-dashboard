@@ -1077,8 +1077,8 @@ async function updateChartMode() {
         
         // 총 참가자 계산
         let totalParticipants = 0
-        let genderDistribution = { male: 0, female: 0 }
-        let gradeDistribution = { infant: 0, elementary: 0, middle: 0, high: 0, adult: 0, other: 0 }
+        let genderDistribution = { '남성': 0, '여성': 0 }
+        let gradeDistribution = { '유아': 0, '초등': 0, '중등': 0, '고등': 0, '성인': 0 }
         let totalBooths = 0
         
         filteredEvents.forEach(event => {
@@ -1089,17 +1089,16 @@ async function updateChartMode() {
                     totalParticipants += booth.total_participants || booth.participant_count || 0
                     
                     if (booth.gender_distribution) {
-                        genderDistribution.male += booth.gender_distribution.male || 0
-                        genderDistribution.female += booth.gender_distribution.female || 0
+                        genderDistribution['남성'] += booth.gender_distribution['남성'] || 0
+                        genderDistribution['여성'] += booth.gender_distribution['여성'] || 0
                     }
                     
                     if (booth.grade_distribution) {
-                        gradeDistribution.infant += booth.grade_distribution.infant || 0
-                        gradeDistribution.elementary += booth.grade_distribution.elementary || 0
-                        gradeDistribution.middle += booth.grade_distribution.middle || 0
-                        gradeDistribution.high += booth.grade_distribution.high || 0
-                        gradeDistribution.adult += booth.grade_distribution.adult || 0
-                        gradeDistribution.other += booth.grade_distribution.other || 0
+                        gradeDistribution['유아'] += booth.grade_distribution['유아'] || 0
+                        gradeDistribution['초등'] += booth.grade_distribution['초등'] || 0
+                        gradeDistribution['중등'] += booth.grade_distribution['중등'] || 0
+                        gradeDistribution['고등'] += booth.grade_distribution['고등'] || 0
+                        gradeDistribution['성인'] += booth.grade_distribution['성인'] || 0
                     }
                 })
             }
@@ -1111,9 +1110,9 @@ async function updateChartMode() {
         document.getElementById('chartModeTotalBooths').textContent = totalBooths
         
         // 성별 비율 계산
-        const total = genderDistribution.male + genderDistribution.female
-        const malePercent = total > 0 ? Math.round((genderDistribution.male / total) * 100) : 0
-        const femalePercent = total > 0 ? Math.round((genderDistribution.female / total) * 100) : 0
+        const total = genderDistribution['남성'] + genderDistribution['여성']
+        const malePercent = total > 0 ? Math.round((genderDistribution['남성'] / total) * 100) : 0
+        const femalePercent = total > 0 ? Math.round((genderDistribution['여성'] / total) * 100) : 0
         document.getElementById('chartModeGenderRatio').textContent = `${malePercent}% / ${femalePercent}%`
         
         // 업데이트 시간
