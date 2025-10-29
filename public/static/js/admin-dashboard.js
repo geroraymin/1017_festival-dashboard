@@ -1161,30 +1161,77 @@ function updateChartModeGenderChart(data) {
         chartModeGenderChart.destroy()
     }
     
+    const labels = Object.keys(data)
+    const values = Object.values(data)
+    
     chartModeGenderChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['남성', '여성'],
+            labels: labels,
             datasets: [{
-                data: [data.male, data.female],
-                backgroundColor: ['#3b82f6', '#ec4899'],
-                borderWidth: 4,
-                borderColor: '#ffffff'
+                data: values,
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(236, 72, 153, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(236, 72, 153, 1)'
+                ],
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        font: { size: 16 },
-                        padding: 20
+                        font: { size: 18, weight: 'bold' },
+                        padding: 20,
+                        generateLabels: function(chart) {
+                            const data = chart.data
+                            return data.labels.map((label, i) => {
+                                const value = data.datasets[0].data[i]
+                                return {
+                                    text: `${label}: ${value}명`,
+                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                    hidden: false,
+                                    index: i
+                                }
+                            })
+                        }
+                    }
+                },
+                datalabels: {
+                    color: '#fff',
+                    font: { size: 24, weight: 'bold' },
+                    formatter: function(value) {
+                        return value + '명'
                     }
                 }
             }
         }
+    })
+    
+    // 통계 테이블 업데이트
+    updateChartModeGenderStatsTable(data)
+}
+
+// 차트 모드 성별 통계 테이블
+function updateChartModeGenderStatsTable(data) {
+    const tableContainer = document.getElementById('chartModeGenderStatsTable')
+    tableContainer.innerHTML = ''
+    
+    Object.entries(data).forEach(([gender, count]) => {
+        const statItem = document.createElement('div')
+        statItem.className = 'p-3 rounded-lg bg-gray-50'
+        statItem.innerHTML = `
+            <div class="text-base text-gray-600 mb-1">${gender}</div>
+            <div class="text-2xl font-bold text-gray-800">${count}<span class="text-sm text-gray-500 ml-1">명</span></div>
+        `
+        tableContainer.appendChild(statItem)
     })
 }
 
@@ -1196,39 +1243,83 @@ function updateChartModeGradeChart(data) {
         chartModeGradeChart.destroy()
     }
     
+    const allGrades = ['유아', '초등', '중등', '고등', '성인']
+    const labels = allGrades
+    const values = allGrades.map(grade => data[grade] || 0)
+    
     chartModeGradeChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['유아', '초등', '중등', '고등', '성인', '기타'],
+            labels: labels,
             datasets: [{
                 label: '참가자 수',
-                data: [data.infant || 0, data.elementary, data.middle, data.high, data.adult || 0, data.other],
-                backgroundColor: ['#fbbf24', '#8b5cf6', '#06b6d4', '#10b981', '#6366f1', '#9ca3af'],
-                borderWidth: 0
+                data: values,
+                backgroundColor: [
+                    'rgba(251, 191, 36, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(168, 85, 247, 0.8)',
+                    'rgba(99, 102, 241, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(251, 191, 36, 1)',
+                    'rgba(34, 197, 94, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(168, 85, 247, 1)',
+                    'rgba(99, 102, 241, 1)'
+                ],
+                borderWidth: 2,
+                borderRadius: 8
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                }
+                legend: { display: false },
+                datalabels: { display: false }
             },
             scales: {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        font: { size: 14 }
+                        font: { size: 14 },
+                        stepSize: 1
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
                     }
                 },
                 x: {
                     ticks: {
-                        font: { size: 14 }
-                    }
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    grid: { display: false }
                 }
             }
         }
+    })
+    
+    // 통계 테이블 업데이트
+    updateChartModeGradeStatsTable(data)
+}
+
+// 차트 모드 교급 통계 테이블
+function updateChartModeGradeStatsTable(data) {
+    const tableContainer = document.getElementById('chartModeGradeStatsTable')
+    tableContainer.innerHTML = ''
+    
+    const allGrades = ['유아', '초등', '중등', '고등', '성인']
+    
+    allGrades.forEach(grade => {
+        const count = data[grade] || 0
+        const statItem = document.createElement('div')
+        statItem.className = 'p-2 rounded-lg bg-gray-50'
+        statItem.innerHTML = `
+            <div class="text-xs text-gray-600">${grade}</div>
+            <div class="text-lg font-bold text-gray-800">${count}<span class="text-xs text-gray-500 ml-1">명</span></div>
+        `
+        tableContainer.appendChild(statItem)
     })
 }
 
@@ -1283,6 +1374,7 @@ function updateChartModeBoothChart(boothData) {
         options: {
             indexAxis: 'y',
             responsive: true,
+            maintainAspectRatio: false,
             maintainAspectRatio: true,
             plugins: {
                 legend: {

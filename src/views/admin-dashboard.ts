@@ -596,29 +596,46 @@ export const adminDashboardPage = `
             </div>
 
             <!-- 차트 그리드 -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- 성별 분포 -->
                 <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
-                        <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
+                        <i class="fas fa-venus-mars text-pink-500 mr-2"></i>
                         성별 분포
                     </h3>
-                    <canvas id="chartModeGenderChart" style="max-height: 300px;"></canvas>
+                    <div style="height: 280px;">
+                        <canvas id="chartModeGenderChart"></canvas>
+                    </div>
+                    <!-- 성별 통계 테이블 -->
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div id="chartModeGenderStatsTable" class="grid grid-cols-2 gap-4 text-center"></div>
+                    </div>
                 </div>
 
+                <!-- 교급 분포 -->
                 <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
-                        <i class="fas fa-chart-bar text-purple-500 mr-2"></i>
+                        <i class="fas fa-graduation-cap text-blue-500 mr-2"></i>
                         교급 분포
                     </h3>
-                    <canvas id="chartModeGradeChart" style="max-height: 300px;"></canvas>
+                    <div style="height: 280px;">
+                        <canvas id="chartModeGradeChart"></canvas>
+                    </div>
+                    <!-- 교급 통계 테이블 -->
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div id="chartModeGradeStatsTable" class="grid grid-cols-5 gap-2 text-center"></div>
+                    </div>
                 </div>
+            </div>
 
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">
-                        <i class="fas fa-store-alt text-pink-500 mr-2"></i>
-                        부스별 참가자 현황
-                    </h3>
-                    <canvas id="chartModeBoothChart" style="max-height: 300px;"></canvas>
+            <!-- 부스별 참가자 현황 -->
+            <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-store-alt text-indigo-500 mr-2"></i>
+                    부스별 참가자 현황
+                </h3>
+                <div style="height: 300px;">
+                    <canvas id="chartModeBoothChart"></canvas>
                 </div>
             </div>
         </div>
