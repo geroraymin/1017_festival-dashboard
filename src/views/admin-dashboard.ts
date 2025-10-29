@@ -167,44 +167,49 @@ export const adminDashboardPage = `
     <main class="max-w-7xl mx-auto px-4 py-8">
         <!-- 통계 개요 탭 -->
         <div id="tab-overview" class="tab-content active">
-            <!-- 행사 선택 필터 및 차트 모드 버튼 -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <div class="flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex items-center space-x-4">
-                        <i class="fas fa-filter text-indigo-600 text-xl"></i>
-                        <div>
-                            <label for="eventFilter" class="block text-sm font-medium text-gray-700 mb-1">
+            <!-- 행사 선택 필터 및 모드 버튼 -->
+            <div class="bg-white rounded-xl shadow-lg p-4 mb-6">
+                <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+                    <!-- 행사 선택 -->
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-filter text-indigo-600 text-lg"></i>
+                        <div class="flex-1">
+                            <label for="eventFilter" class="block text-xs font-medium text-gray-700 mb-1">
                                 행사 선택
                             </label>
                             <select id="eventFilter" 
-                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 onchange="filterByEvent()">
                                 <option value="">전체 행사</option>
                                 <!-- 동적으로 행사 목록이 추가됩니다 -->
                             </select>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="text-sm text-gray-600 hidden md:block">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            행사를 선택하면 해당 행사의 통계만 표시됩니다
-                        </div>
+                    
+                    <!-- 버튼 그룹 -->
+                    <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                         <button onclick="loadOverview()" 
-                            class="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg font-medium transition shadow-sm">
+                            class="flex items-center justify-center gap-2 px-3 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg text-sm font-medium transition shadow-sm whitespace-nowrap">
                             <i class="fas fa-sync-alt"></i>
                             <span class="hidden sm:inline">새로고침</span>
                         </button>
                         <button onclick="enterChartMode()" 
-                            class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium transition shadow-lg">
+                            class="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-sm font-medium transition shadow-lg whitespace-nowrap">
                             <i class="fas fa-chart-line"></i>
                             <span>차트 모드</span>
                         </button>
                         <button onclick="enterCardMode()" 
-                            class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-lg font-medium transition shadow-lg">
+                            class="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-lg text-sm font-medium transition shadow-lg whitespace-nowrap">
                             <i class="fas fa-th-large"></i>
                             <span>카드 모드</span>
                         </button>
                     </div>
+                </div>
+                
+                <!-- 안내 문구 (모바일에서는 숨김) -->
+                <div class="text-xs text-gray-600 mt-3 hidden lg:block">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    행사를 선택하면 해당 행사의 통계만 표시됩니다
                 </div>
             </div>
 
