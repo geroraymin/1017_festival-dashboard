@@ -1188,8 +1188,8 @@ function updateChartModeGenderChart(data) {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        font: { size: 18, weight: 'bold' },
-                        padding: 20,
+                        font: { size: 12, weight: 'bold' },
+                        padding: 10,
                         generateLabels: function(chart) {
                             const data = chart.data
                             return data.labels.map((label, i) => {
@@ -1206,7 +1206,7 @@ function updateChartModeGenderChart(data) {
                 },
                 datalabels: {
                     color: '#fff',
-                    font: { size: 24, weight: 'bold' },
+                    font: { size: 16, weight: 'bold' },
                     formatter: function(value) {
                         return value + '명'
                     }
@@ -1226,10 +1226,10 @@ function updateChartModeGenderStatsTable(data) {
     
     Object.entries(data).forEach(([gender, count]) => {
         const statItem = document.createElement('div')
-        statItem.className = 'p-3 rounded-lg bg-gray-50'
+        statItem.className = 'p-2 rounded-lg bg-gray-50'
         statItem.innerHTML = `
-            <div class="text-base text-gray-600 mb-1">${gender}</div>
-            <div class="text-2xl font-bold text-gray-800">${count}<span class="text-sm text-gray-500 ml-1">명</span></div>
+            <div class="text-xs text-gray-600">${gender}</div>
+            <div class="text-lg font-bold text-gray-800">${count}<span class="text-xs text-gray-500 ml-1">명</span></div>
         `
         tableContainer.appendChild(statItem)
     })
@@ -1283,7 +1283,7 @@ function updateChartModeGradeChart(data) {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        font: { size: 14 },
+                        font: { size: 10 },
                         stepSize: 1
                     },
                     grid: {
@@ -1292,7 +1292,7 @@ function updateChartModeGradeChart(data) {
                 },
                 x: {
                     ticks: {
-                        font: { size: 14, weight: 'bold' }
+                        font: { size: 10, weight: 'bold' }
                     },
                     grid: { display: false }
                 }
@@ -1375,7 +1375,6 @@ function updateChartModeBoothChart(boothData) {
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
-            maintainAspectRatio: true,
             plugins: {
                 legend: {
                     display: false

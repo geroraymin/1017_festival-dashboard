@@ -64,13 +64,13 @@ export const adminDashboardPage = `
             z-index: 100;
         }
         .chart-mode-content {
-            padding: 1.5rem;
+            padding: 1rem;
             max-width: 1600px;
             margin: 0 auto;
             height: calc(100vh - 80px);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            overflow-y: auto;
         }
         
         /* 모바일 반응형 */
@@ -113,7 +113,13 @@ export const adminDashboardPage = `
             
             /* 차트 모드에서 패딩 줄이기 */
             .chart-mode-content {
-                padding: 1rem;
+                padding: 0.5rem;
+            }
+            
+            /* 모바일에서 차트 높이 더 줄이기 */
+            .chart-mode-content > div > div > div[style*="height"] {
+                height: auto !important;
+                min-height: 120px;
             }
         }
     </style>
@@ -560,81 +566,81 @@ export const adminDashboardPage = `
 
         <!-- 차트 콘텐츠 -->
         <div class="chart-mode-content">
-            <!-- 요약 카드 -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <i class="fas fa-users text-3xl text-blue-600"></i>
-                        <span class="text-3xl font-bold text-gray-800" id="chartModeTotalParticipants">0</span>
+            <!-- 요약 카드 (더 컴팩트하게) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-lg shadow-2xl p-2">
+                    <div class="flex items-center justify-between">
+                        <i class="fas fa-users text-xl text-blue-600"></i>
+                        <span class="text-2xl font-bold text-gray-800" id="chartModeTotalParticipants">0</span>
                     </div>
-                    <h3 class="text-gray-600 text-xs font-medium">총 참가자</h3>
+                    <h3 class="text-gray-600 text-xs font-medium mt-1">총 참가자</h3>
                 </div>
 
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <i class="fas fa-calendar text-3xl text-purple-600"></i>
-                        <span class="text-3xl font-bold text-gray-800" id="chartModeTotalEvents">0</span>
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-lg shadow-2xl p-2">
+                    <div class="flex items-center justify-between">
+                        <i class="fas fa-calendar text-xl text-purple-600"></i>
+                        <span class="text-2xl font-bold text-gray-800" id="chartModeTotalEvents">0</span>
                     </div>
-                    <h3 class="text-gray-600 text-xs font-medium">진행 중인 행사</h3>
+                    <h3 class="text-gray-600 text-xs font-medium mt-1">진행 중인 행사</h3>
                 </div>
 
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <i class="fas fa-store text-3xl text-pink-600"></i>
-                        <span class="text-3xl font-bold text-gray-800" id="chartModeTotalBooths">0</span>
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-lg shadow-2xl p-2">
+                    <div class="flex items-center justify-between">
+                        <i class="fas fa-store text-xl text-pink-600"></i>
+                        <span class="text-2xl font-bold text-gray-800" id="chartModeTotalBooths">0</span>
                     </div>
-                    <h3 class="text-gray-600 text-xs font-medium">활성 부스</h3>
+                    <h3 class="text-gray-600 text-xs font-medium mt-1">활성 부스</h3>
                 </div>
 
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <i class="fas fa-chart-pie text-3xl text-green-600"></i>
-                        <span class="text-xl font-bold text-gray-800" id="chartModeGenderRatio">50% / 50%</span>
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-lg shadow-2xl p-2">
+                    <div class="flex items-center justify-between">
+                        <i class="fas fa-chart-pie text-xl text-green-600"></i>
+                        <span class="text-lg font-bold text-gray-800" id="chartModeGenderRatio">50% / 50%</span>
                     </div>
-                    <h3 class="text-gray-600 text-xs font-medium">남성 / 여성 비율</h3>
+                    <h3 class="text-gray-600 text-xs font-medium mt-1">남성 / 여성 비율</h3>
                 </div>
             </div>
 
-            <!-- 차트 그리드 -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- 차트 그리드 (더 작은 높이와 패딩) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
                 <!-- 성별 분포 -->
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">
-                        <i class="fas fa-venus-mars text-pink-500 mr-2"></i>
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-3">
+                    <h3 class="text-base font-bold text-gray-800 mb-2">
+                        <i class="fas fa-venus-mars text-pink-500 mr-1"></i>
                         성별 분포
                     </h3>
-                    <div style="height: 280px;">
+                    <div style="height: 160px;">
                         <canvas id="chartModeGenderChart"></canvas>
                     </div>
-                    <!-- 성별 통계 테이블 -->
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <div id="chartModeGenderStatsTable" class="grid grid-cols-2 gap-4 text-center"></div>
+                    <!-- 성별 통계 테이블 (더 컴팩트하게) -->
+                    <div class="mt-2 pt-2 border-t border-gray-200">
+                        <div id="chartModeGenderStatsTable" class="grid grid-cols-2 gap-2 text-center text-xs"></div>
                     </div>
                 </div>
 
                 <!-- 교급 분포 -->
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">
-                        <i class="fas fa-graduation-cap text-blue-500 mr-2"></i>
+                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-3">
+                    <h3 class="text-base font-bold text-gray-800 mb-2">
+                        <i class="fas fa-graduation-cap text-blue-500 mr-1"></i>
                         교급 분포
                     </h3>
-                    <div style="height: 280px;">
+                    <div style="height: 160px;">
                         <canvas id="chartModeGradeChart"></canvas>
                     </div>
-                    <!-- 교급 통계 테이블 -->
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <div id="chartModeGradeStatsTable" class="grid grid-cols-5 gap-2 text-center"></div>
+                    <!-- 교급 통계 테이블 (더 컴팩트하게) -->
+                    <div class="mt-2 pt-2 border-t border-gray-200">
+                        <div id="chartModeGradeStatsTable" class="grid grid-cols-5 gap-1 text-center text-xs"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 부스별 참가자 현황 -->
-            <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">
-                    <i class="fas fa-store-alt text-indigo-500 mr-2"></i>
+            <!-- 부스별 참가자 현황 (더 작은 높이) -->
+            <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-3">
+                <h3 class="text-base font-bold text-gray-800 mb-2">
+                    <i class="fas fa-store-alt text-indigo-500 mr-1"></i>
                     부스별 참가자 현황
                 </h3>
-                <div style="height: 300px;">
+                <div style="height: 200px;">
                     <canvas id="chartModeBoothChart"></canvas>
                 </div>
             </div>
