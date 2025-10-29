@@ -104,14 +104,19 @@ export const adminDashboardPage = `
             
             /* 탭 버튼 작게 */
             .tab-button {
-                font-size: 0.875rem;
-                padding: 0.75rem 0.5rem;
+                font-size: 0.75rem;
+                padding: 0.75rem 0.25rem;
             }
             .tab-button i {
                 display: none;
             }
             
-            /* 차트 모드에서 패딩 줄이기 */
+            /* 차트/카드 모드 헤더 패딩 줄이기 */
+            .chart-mode-header {
+                padding: 0.75rem 0.5rem;
+            }
+            
+            /* 차트/카드 모드 콘텐츠 패딩 줄이기 */
             .chart-mode-content {
                 padding: 0.5rem;
             }
@@ -187,21 +192,23 @@ export const adminDashboardPage = `
                     </div>
                     
                     <!-- 버튼 그룹 -->
-                    <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                    <div class="flex items-center gap-2 flex-nowrap">
                         <button onclick="loadOverview()" 
-                            class="flex items-center justify-center gap-2 px-3 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg text-sm font-medium transition shadow-sm whitespace-nowrap">
+                            class="flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium transition shadow-sm whitespace-nowrap">
                             <i class="fas fa-sync-alt"></i>
-                            <span class="hidden sm:inline">새로고침</span>
+                            <span class="hidden md:inline">새로고침</span>
                         </button>
                         <button onclick="enterChartMode()" 
-                            class="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-sm font-medium transition shadow-lg whitespace-nowrap">
+                            class="flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg whitespace-nowrap">
                             <i class="fas fa-chart-line"></i>
-                            <span>차트 모드</span>
+                            <span class="hidden sm:inline">차트</span>
+                            <span class="sm:hidden">차트</span>
                         </button>
                         <button onclick="enterCardMode()" 
-                            class="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-lg text-sm font-medium transition shadow-lg whitespace-nowrap">
+                            class="flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg whitespace-nowrap">
                             <i class="fas fa-th-large"></i>
-                            <span>카드 모드</span>
+                            <span class="hidden sm:inline">카드</span>
+                            <span class="sm:hidden">카드</span>
                         </button>
                     </div>
                 </div>
@@ -552,23 +559,23 @@ export const adminDashboardPage = `
     <div id="chartMode" class="chart-mode">
         <!-- 헤더 -->
         <div class="chart-mode-header">
-            <div class="flex items-center justify-between text-white">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-2xl"></i>
-                    <div>
-                        <h2 class="text-xl font-bold">통계 대시보드</h2>
-                        <p class="text-sm opacity-80" id="chartModeEventName">전체 행사</p>
+            <div class="flex items-center justify-between text-white gap-2">
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <i class="fas fa-chart-line text-xl sm:text-2xl"></i>
+                    <div class="min-w-0">
+                        <h2 class="text-base sm:text-xl font-bold truncate">통계 대시보드</h2>
+                        <p class="text-xs sm:text-sm opacity-80 truncate" id="chartModeEventName">전체 행사</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-sm opacity-80">
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <div class="text-xs sm:text-sm opacity-80 hidden sm:flex items-center">
                         <i class="fas fa-sync-alt mr-1"></i>
                         <span id="chartModeUpdateTime">--:--</span>
                     </div>
                     <button onclick="exitChartMode()" 
-                        class="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition">
+                        class="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition text-sm sm:text-base">
                         <i class="fas fa-times"></i>
-                        <span>닫기 (ESC)</span>
+                        <span class="hidden sm:inline">닫기 (ESC)</span>
                     </button>
                 </div>
             </div>
@@ -661,29 +668,29 @@ export const adminDashboardPage = `
     <div id="cardMode" class="chart-mode">
         <!-- 헤더 -->
         <div class="chart-mode-header">
-            <div class="flex items-center justify-between text-white">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-th-large text-2xl"></i>
-                    <div>
-                        <h2 class="text-xl font-bold">실적 대시보드</h2>
-                        <p class="text-sm opacity-80" id="cardModeEventName">전체 행사</p>
+            <div class="flex items-center justify-between text-white gap-2">
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <i class="fas fa-th-large text-xl sm:text-2xl"></i>
+                    <div class="min-w-0">
+                        <h2 class="text-base sm:text-xl font-bold truncate">실적 대시보드</h2>
+                        <p class="text-xs sm:text-sm opacity-80 truncate" id="cardModeEventName">전체 행사</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                     <!-- 정렬 토글 -->
                     <select id="cardModeSortOrder" onchange="updateCardMode()"
-                        class="px-3 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg text-sm border-none outline-none cursor-pointer">
-                        <option value="count" class="text-gray-800">참가자 많은 순</option>
+                        class="px-2 py-1.5 sm:px-3 sm:py-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg text-xs sm:text-sm border-none outline-none cursor-pointer">
+                        <option value="count" class="text-gray-800">많은 순</option>
                         <option value="date" class="text-gray-800">일자 순</option>
                     </select>
-                    <div class="text-sm opacity-80">
+                    <div class="text-xs sm:text-sm opacity-80 hidden sm:flex items-center">
                         <i class="fas fa-sync-alt mr-1"></i>
                         <span id="cardModeUpdateTime">--:--</span>
                     </div>
                     <button onclick="exitCardMode()" 
-                        class="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition">
+                        class="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition text-sm sm:text-base">
                         <i class="fas fa-times"></i>
-                        <span>닫기 (ESC)</span>
+                        <span class="hidden sm:inline">닫기 (ESC)</span>
                     </button>
                 </div>
             </div>
