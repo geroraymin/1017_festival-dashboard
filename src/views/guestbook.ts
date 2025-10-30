@@ -511,18 +511,19 @@ export const guestbookPage = `
                     <div class="inline-block p-3 bg-purple-100 rounded-full mb-2" aria-hidden="true">
                         <i class="fas fa-calendar-alt text-purple-600 text-3xl"></i>
                     </div>
-                    <h2 id="step5-heading" class="text-2xl font-bold text-gray-800 mb-1">생년월일을 선택해주세요</h2>
-                    <p class="text-sm text-gray-600">태블릿 환경에 최적화된 선택기입니다</p>
+                    <h2 id="step5-heading" class="text-2xl font-bold text-gray-800 mb-1">생년월일을 알려주세요</h2>
+                    <p class="text-sm text-gray-600">동명이인 구분을 위해 필요합니다</p>
                 </div>
 
                 <div class="mb-4">
-                    <!-- 년/월/일 분리형 선택기 -->
-                    <div class="grid grid-cols-3 gap-2">
+                    <!-- 년/월/일 분리형 선택기 (개선된 버전) -->
+                    <div class="grid grid-cols-3 gap-3">
                         <!-- 년도 선택 -->
                         <div>
-                            <label for="birthYear" class="block text-xs font-medium text-gray-700 mb-1 text-center">년도</label>
+                            <label for="birthYear" class="block text-sm font-semibold text-gray-700 mb-2 text-center">년</label>
                             <select id="birthYear" 
-                                class="w-full px-2 py-3 text-base text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
+                                class="w-full px-2 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-500 bg-white appearance-none cursor-pointer transition-all hover:border-purple-400"
+                                style="min-height: 70px; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23667eea\' stroke-width=\'2\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; padding-right: 2.5rem;"
                                 aria-required="true">
                                 <option value="">선택</option>
                             </select>
@@ -530,9 +531,10 @@ export const guestbookPage = `
                         
                         <!-- 월 선택 -->
                         <div>
-                            <label for="birthMonth" class="block text-xs font-medium text-gray-700 mb-1 text-center">월</label>
+                            <label for="birthMonth" class="block text-sm font-semibold text-gray-700 mb-2 text-center">월</label>
                             <select id="birthMonth" 
-                                class="w-full px-2 py-3 text-base text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
+                                class="w-full px-2 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-500 bg-white appearance-none cursor-pointer transition-all hover:border-purple-400"
+                                style="min-height: 70px; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23667eea\' stroke-width=\'2\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; padding-right: 2.5rem;"
                                 aria-required="true">
                                 <option value="">선택</option>
                                 <option value="01">1월</option>
@@ -552,16 +554,26 @@ export const guestbookPage = `
                         
                         <!-- 일 선택 -->
                         <div>
-                            <label for="birthDay" class="block text-xs font-medium text-gray-700 mb-1 text-center">일</label>
+                            <label for="birthDay" class="block text-sm font-semibold text-gray-700 mb-2 text-center">일</label>
                             <select id="birthDay" 
-                                class="w-full px-2 py-3 text-base text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-transparent bg-white"
-                                aria-required="true">
-                                <option value="">선택</option>
+                                class="w-full px-2 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-500 bg-white appearance-none cursor-pointer transition-all hover:border-purple-400"
+                                style="min-height: 70px; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23667eea\' stroke-width=\'2\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; padding-right: 2.5rem;"
+                                aria-required="true"
+                                disabled>
+                                <option value="">월 선택 후</option>
                             </select>
                         </div>
                     </div>
                     
-                    <div id="dateError" class="hidden mt-2 bg-red-50 text-red-600 p-2 rounded-lg text-sm text-center" role="alert" aria-live="polite">
+                    <!-- 선택된 날짜 실시간 미리보기 -->
+                    <div class="mt-4 p-4 bg-purple-50 rounded-xl text-center transition-all" id="datePreviewBox">
+                        <p class="text-sm text-gray-600 mb-1">선택한 생년월일</p>
+                        <p id="datePreview" class="text-2xl font-bold text-gray-400">
+                            선택해주세요
+                        </p>
+                    </div>
+                    
+                    <div id="dateError" class="hidden mt-2 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center" role="alert" aria-live="polite">
                         <i class="fas fa-exclamation-circle mr-1" aria-hidden="true"></i>
                         <span id="dateErrorText">생년월일을 모두 선택해주세요.</span>
                     </div>
@@ -572,8 +584,9 @@ export const guestbookPage = `
                         aria-label="이전 단계로 돌아가기">
                         <i class="fas fa-arrow-left mr-1" aria-hidden="true"></i>이전
                     </button>
-                    <button onclick="submitForm()" id="submitBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300"
-                        aria-label="방명록 제출">
+                    <button onclick="submitForm()" id="submitBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                        aria-label="방명록 제출"
+                        disabled>
                         제출하기 <i class="fas fa-check ml-1" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -632,6 +645,11 @@ export const guestbookPage = `
         // 월 선택 시 일 옵션 업데이트
         document.getElementById('birthMonth').addEventListener('change', updateDayOptions)
         document.getElementById('birthYear').addEventListener('change', updateDayOptions)
+        
+        // 날짜 선택 시 실시간 미리보기 업데이트
+        document.getElementById('birthYear').addEventListener('change', updateDatePreview)
+        document.getElementById('birthMonth').addEventListener('change', updateDatePreview)
+        document.getElementById('birthDay').addEventListener('change', updateDatePreview)
 
         function updateDayOptions() {
             const year = document.getElementById('birthYear').value
@@ -642,7 +660,11 @@ export const guestbookPage = `
             daySelect.innerHTML = '<option value="">선택</option>'
             
             if (year && month) {
-                // 해당 월의 마지막 날 계산
+                // 일 선택 활성화
+                daySelect.disabled = false
+                daySelect.classList.remove('opacity-50', 'cursor-not-allowed')
+                
+                // 해당 월의 마지막 날 계산 (윤년 자동 처리)
                 const lastDay = new Date(year, parseInt(month), 0).getDate()
                 
                 for (let day = 1; day <= lastDay; day++) {
@@ -651,6 +673,71 @@ export const guestbookPage = `
                     option.value = dayStr
                     option.textContent = day + '일'
                     daySelect.appendChild(option)
+                }
+            } else {
+                // 년/월 미선택 시 일 선택 비활성화
+                daySelect.disabled = true
+                daySelect.classList.add('opacity-50', 'cursor-not-allowed')
+                daySelect.innerHTML = '<option value="">월 선택 후</option>'
+            }
+            
+            // 미리보기 업데이트
+            updateDatePreview()
+        }
+        
+        // 선택된 날짜 실시간 미리보기
+        function updateDatePreview() {
+            const year = document.getElementById('birthYear').value
+            const month = document.getElementById('birthMonth').value
+            const day = document.getElementById('birthDay').value
+            const preview = document.getElementById('datePreview')
+            const previewBox = document.getElementById('datePreviewBox')
+            const submitBtn = document.getElementById('submitBtn')
+            
+            if (year && month && day) {
+                // 모두 선택됨
+                const monthNum = parseInt(month)
+                const dayNum = parseInt(day)
+                preview.textContent = year + '년 ' + monthNum + '월 ' + dayNum + '일'
+                preview.classList.remove('text-gray-400')
+                preview.classList.add('text-purple-600')
+                previewBox.classList.add('ring-2', 'ring-purple-300')
+                
+                // 제출 버튼 활성화
+                if (submitBtn) {
+                    submitBtn.disabled = false
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed')
+                }
+                
+                // 에러 메시지 숨기기
+                document.getElementById('dateError').classList.add('hidden')
+            } else if (year || month || day) {
+                // 일부만 선택됨
+                const parts = []
+                if (year) parts.push(year + '년')
+                if (month) parts.push(parseInt(month) + '월')
+                if (day) parts.push(parseInt(day) + '일')
+                preview.textContent = parts.join(' ') + ' (미완성)'
+                preview.classList.remove('text-purple-600')
+                preview.classList.add('text-gray-400')
+                previewBox.classList.remove('ring-2', 'ring-purple-300')
+                
+                // 제출 버튼 비활성화
+                if (submitBtn) {
+                    submitBtn.disabled = true
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed')
+                }
+            } else {
+                // 아무것도 선택 안 됨
+                preview.textContent = '선택해주세요'
+                preview.classList.remove('text-purple-600')
+                preview.classList.add('text-gray-400')
+                previewBox.classList.remove('ring-2', 'ring-purple-300')
+                
+                // 제출 버튼 비활성화
+                if (submitBtn) {
+                    submitBtn.disabled = true
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed')
                 }
             }
         }

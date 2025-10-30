@@ -89,6 +89,60 @@ booths.get('/:id/public-stats', async (c) => {
   }
 })
 
+/**
+ * POST /api/booths/find-code
+ * 부스 코드 찾기 (인증 불필요 - 운영자 셀프서비스용)
+ * Request body: { event_id: string, booth_name: string }
+ * Response: { booths: Array<{ id, name, booth_code, event_name }> }
+ */
+booths.post('/find-code', async (c) => {
+  try {
+    const body = await c.req.json<{ event_id?: string, booth_name?: string }>()
+    const { event_id, booth_name } = body
+
+    if (!event_id || !booth_name) {
+      return c.json({ error: '행사와 부스 이름을 입력해주세요.' }, 400)
+    }
+
+    const trimmedBoothName = booth_name.trim()
+    if (trimmedBoothName.length === 0) {
+      return c.json({ error: '부스 이름을 입력해주세요.' }, 400)
+    }
+
+    const supabase = createSupabaseClient(c.env)
+
+    // 부스 검색 (활성 부스만, 부분 문자열 매칭, 대소문자 무관)
+    const { data: booths, error } = await supabase
+      .from('booths')
+      .select('id, name, booth_code, event_id, events(name)')
+      .eq('event_id', event_id)
+      .eq('is_active', true)
+      .ilike('name', `%${trimmedBoothName}%`)
+      .order('name', { ascending: true })
+
+    if (error) {
+      console.error('Error finding booths:', error)
+      return c.json({ error: '부스 검색에 실패했습니다.' }, 500)
+    }
+
+    // 결과 포맷팅
+    const formattedBooths = (booths || []).map(booth => ({
+      id: booth.id,
+      name: booth.name,
+      booth_code: booth.booth_code,
+      event_name: booth.events?.name || '알 수 없는 행사'
+    }))
+
+    return c.json({ 
+      booths: formattedBooths,
+      count: formattedBooths.length
+    })
+  } catch (error) {
+    console.error('Booth code finder error:', error)
+    return c.json({ error: '부스 코드 찾기에 실패했습니다.' }, 500)
+  }
+})
+
 // 모든 라우트에 인증 미들웨어 적용
 booths.use('/*', authMiddleware)
 
