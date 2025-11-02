@@ -73,6 +73,30 @@ export const adminDashboardPage = `
             overflow-y: auto;
         }
         
+        /* 필터 버튼 스타일 */
+        .filter-btn {
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: #6b7280;
+            cursor: pointer;
+        }
+        .filter-btn:hover {
+            border-color: #6366f1;
+            background: #eef2ff;
+            color: #6366f1;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+        }
+        .filter-btn.active {
+            border-color: #6366f1;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+        }
+        .filter-btn.active:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        
         /* 모바일 반응형 */
         @media (max-width: 768px) {
             /* 테이블을 카드형으로 변환 */
@@ -417,60 +441,90 @@ export const adminDashboardPage = `
 
             <!-- 검색 및 필터 -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                    <!-- 이름 검색 -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-search mr-1"></i>이름 검색
-                        </label>
-                        <input type="text" id="searchName" placeholder="이름 입력..."
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                            oninput="filterParticipants()">
-                    </div>
+                <!-- 이름 검색 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-search mr-1"></i>이름 검색
+                    </label>
+                    <input type="text" id="searchName" placeholder="이름 입력..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                        oninput="filterParticipants()">
+                </div>
 
-                    <!-- 성별 필터 -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-venus-mars mr-1"></i>성별
-                        </label>
-                        <select id="filterGender" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                            onchange="filterParticipants()">
-                            <option value="">전체</option>
-                            <option value="남성">남성</option>
-                            <option value="여성">여성</option>
-                        </select>
+                <!-- 성별 필터 (버튼형) -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-venus-mars mr-1"></i>성별
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setGenderFilter('')" 
+                            class="filter-btn filter-btn-gender px-4 py-2 rounded-full text-sm font-medium transition-all active"
+                            data-value="">
+                            <i class="fas fa-users mr-1"></i>전체
+                        </button>
+                        <button onclick="setGenderFilter('남성')" 
+                            class="filter-btn filter-btn-gender px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            data-value="남성">
+                            <i class="fas fa-mars mr-1"></i>남성
+                        </button>
+                        <button onclick="setGenderFilter('여성')" 
+                            class="filter-btn filter-btn-gender px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            data-value="여성">
+                            <i class="fas fa-venus mr-1"></i>여성
+                        </button>
                     </div>
+                </div>
 
-                    <!-- 교급 필터 -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-graduation-cap mr-1"></i>교급
-                        </label>
-                        <select id="filterGrade" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                            onchange="filterParticipants()">
-                            <option value="">전체</option>
-                            <option value="유아">유아</option>
-                            <option value="초등">초등</option>
-                            <option value="중등">중등</option>
-                            <option value="고등">고등</option>
-                            <option value="성인">성인</option>
-                        </select>
+                <!-- 교급 필터 (버튼형) -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-graduation-cap mr-1"></i>교급
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setGradeFilter('')" 
+                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all active"
+                            data-value="">
+                            <i class="fas fa-list mr-1"></i>전체
+                        </button>
+                        <button onclick="setGradeFilter('유아')" 
+                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            data-value="유아">
+                            <i class="fas fa-baby mr-1"></i>유아
+                        </button>
+                        <button onclick="setGradeFilter('초등')" 
+                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            data-value="초등">
+                            <i class="fas fa-child mr-1"></i>초등
+                        </button>
+                        <button onclick="setGradeFilter('중등')" 
+                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            data-value="중등">
+                            <i class="fas fa-user-graduate mr-1"></i>중등
+                        </button>
+                        <button onclick="setGradeFilter('고등')" 
+                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            data-value="고등">
+                            <i class="fas fa-user-tie mr-1"></i>고등
+                        </button>
+                        <button onclick="setGradeFilter('성인')" 
+                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            data-value="성인">
+                            <i class="fas fa-user mr-1"></i>성인
+                        </button>
                     </div>
+                </div>
 
-                    <!-- 부스 필터 -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-store mr-1"></i>부스
-                        </label>
-                        <select id="filterBooth" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                            onchange="filterParticipants()">
-                            <option value="">전체</option>
-                            <!-- 동적으로 부스 목록이 추가됩니다 -->
-                        </select>
-                    </div>
+                <!-- 부스 필터 (드롭다운 유지 - 많은 옵션) -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-store mr-1"></i>부스
+                    </label>
+                    <select id="filterBooth" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                        onchange="filterParticipants()">
+                        <option value="">전체</option>
+                        <!-- 동적으로 부스 목록이 추가됩니다 -->
+                    </select>
                 </div>
 
                 <!-- 필터 결과 및 초기화 -->

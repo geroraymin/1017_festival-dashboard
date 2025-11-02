@@ -872,10 +872,48 @@ function formatDateTime(dateStr) {
 }
 
 // 참가자 필터링
+// 전역 필터 변수
+let currentGenderFilter = ''
+let currentGradeFilter = ''
+
+// 성별 필터 설정
+function setGenderFilter(value) {
+    currentGenderFilter = value
+    
+    // 모든 성별 버튼 비활성화
+    document.querySelectorAll('.filter-btn-gender').forEach(btn => {
+        btn.classList.remove('active')
+    })
+    
+    // 선택된 버튼 활성화
+    const selectedBtn = document.querySelector(`.filter-btn-gender[data-value="${value}"]`)
+    if (selectedBtn) {
+        selectedBtn.classList.add('active')
+    }
+    
+    filterParticipants()
+}
+
+// 교급 필터 설정
+function setGradeFilter(value) {
+    currentGradeFilter = value
+    
+    // 모든 교급 버튼 비활성화
+    document.querySelectorAll('.filter-btn-grade').forEach(btn => {
+        btn.classList.remove('active')
+    })
+    
+    // 선택된 버튼 활성화
+    const selectedBtn = document.querySelector(`.filter-btn-grade[data-value="${value}"]`)
+    if (selectedBtn) {
+        selectedBtn.classList.add('active')
+    }
+    
+    filterParticipants()
+}
+
 function filterParticipants() {
     const searchName = document.getElementById('searchName').value.toLowerCase().trim()
-    const filterGender = document.getElementById('filterGender').value
-    const filterGrade = document.getElementById('filterGrade').value
     const filterBooth = document.getElementById('filterBooth').value
 
     let filtered = allParticipants.filter(p => {
@@ -884,13 +922,13 @@ function filterParticipants() {
             return false
         }
 
-        // 성별 필터
-        if (filterGender && p.gender !== filterGender) {
+        // 성별 필터 (버튼)
+        if (currentGenderFilter && p.gender !== currentGenderFilter) {
             return false
         }
 
-        // 교급 필터
-        if (filterGrade && p.grade !== filterGrade) {
+        // 교급 필터 (버튼)
+        if (currentGradeFilter && p.grade !== currentGradeFilter) {
             return false
         }
 
@@ -913,9 +951,11 @@ function filterParticipants() {
 // 필터 초기화
 function resetFilters() {
     document.getElementById('searchName').value = ''
-    document.getElementById('filterGender').value = ''
-    document.getElementById('filterGrade').value = ''
     document.getElementById('filterBooth').value = ''
+    
+    // 버튼 필터 초기화
+    setGenderFilter('')
+    setGradeFilter('')
     
     filterParticipants()
 }
