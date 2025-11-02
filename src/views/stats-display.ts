@@ -7,7 +7,9 @@ export const statsDisplayPage = `
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>실시간 통계 - 축제 디지털방명록 시스템</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
@@ -19,7 +21,7 @@ export const statsDisplayPage = `
         }
         
         .stat-number {
-            font-size: 6rem;
+            font-size: 2.5rem;
             line-height: 1;
             font-weight: 900;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -602,6 +604,18 @@ export const statsDisplayPage = `
 
         // 자동 새로고침 (10초마다)
         setInterval(loadStats, 10000)
+
+        // 현재 시간 업데이트 (1초마다)
+        setInterval(updateCurrentTime, 1000)
+        updateCurrentTime()
+
+        // 마지막 업데이트 시간 표시 (1초마다)
+        setInterval(updateLastUpdateTime, 1000)
+    </script>
+</body>
+</html>
+`
+terval(loadStats, 10000)
 
         // 현재 시간 업데이트 (1초마다)
         setInterval(updateCurrentTime, 1000)
