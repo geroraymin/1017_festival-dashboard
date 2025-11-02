@@ -51,6 +51,45 @@ participants.post('/', async (c) => {
       return c.json({ error: '현재 비활성화된 부스입니다.' }, 400)
     }
 
+    // 중복 등록 체크 (이름 + 생년월일 + 부스 조합)
+    const { data: existingParticipant, error: checkError } = await supabase
+      .from('participants')
+      .select('id, name, created_at')
+      .eq('booth_id', booth_id)
+      .eq('name', name)
+      .eq('date_of_birth', date_of_birth)
+      .maybeSingle()
+
+    if (checkError) {
+      console.error('Error checking duplicate:', checkError)
+    }
+
+    if (existingParticipant) {
+      // 중복 등록 감지 - 이미 등록된 사용자
+      const createdAt = new Date(existingParticipant.created_at)
+      const timeDiff = Date.now() - createdAt.getTime()
+      const minutesAgo = Math.floor(timeDiff / 60000)
+      
+      let timeMessage = ''
+      if (minutesAgo < 1) {
+        timeMessage = '방금 전'
+      } else if (minutesAgo < 60) {
+        timeMessage = `${minutesAgo}분 전`
+      } else {
+        const hoursAgo = Math.floor(minutesAgo / 60)
+        timeMessage = `${hoursAgo}시간 전`
+      }
+      
+      return c.json({ 
+        error: `이미 등록된 참가자입니다.\n${existingParticipant.name}님은 ${timeMessage}에 등록하셨습니다.`,
+        duplicate: true,
+        existing_participant: {
+          name: existingParticipant.name,
+          created_at: existingParticipant.created_at
+        }
+      }, 409)
+    }
+
     // 참가자 등록
     const { data, error } = await supabase
       .from('participants')

@@ -1121,7 +1121,31 @@ export const guestbookPage = `
                 }
 
                 if (!response.ok) {
-                    // 서버 오류 - 오프라인 저장으로 폴백
+                    // 중복 등록 체크 (409 Conflict)
+                    if (response.status === 409 && data.duplicate) {
+                        console.log('[Guestbook] Duplicate registration detected')
+                        
+                        // 중복 등록 에러 메시지 표시
+                        const errorDiv = document.getElementById('dateError')
+                        const errorText = document.getElementById('dateErrorText')
+                        
+                        errorText.textContent = data.error || '이미 등록된 참가자입니다.'
+                        errorDiv.classList.remove('hidden')
+                        
+                        // 제출 버튼 활성화
+                        submitBtn.disabled = false
+                        submitBtn.innerHTML = '제출하기 <i class="fas fa-check ml-2"></i>'
+                        
+                        // 알림 표시
+                        syncManager.showNotification(
+                            data.error || '이미 등록된 참가자입니다.',
+                            'error'
+                        )
+                        
+                        return
+                    }
+                    
+                    // 기타 서버 오류 - 오프라인 저장으로 폴백
                     console.log('[Guestbook] Server error:', data.error)
                     await offlineDB.addPendingParticipant(participantData)
                     
