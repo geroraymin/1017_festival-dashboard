@@ -54,9 +54,99 @@ export const statsDisplayPage = `
             right: 20px;
             z-index: 1000;
         }
+        
+        /* 가로모드 권장 안내 배너 */
+        .landscape-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            z-index: 999;
+            font-size: 0.9rem;
+            animation: slideDown 0.5s ease;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+        
+        /* 세로모드일 때 배너 표시 */
+        @media (orientation: portrait) {
+            .landscape-banner {
+                display: block;
+            }
+            
+            body {
+                padding-top: 2.5rem;
+            }
+        }
+        
+        /* 가로모드 최적화 */
+        @media (orientation: landscape) {
+            .stat-number {
+                font-size: 5rem;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+            
+            .container {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+            
+            /* 차트 영역 높이 최적화 */
+            .grid.gap-6.flex-1 {
+                min-height: auto !important;
+            }
+        }
+        
+        /* 태블릿 가로모드 (1024px 이상) */
+        @media (orientation: landscape) and (min-width: 1024px) {
+            .stat-number {
+                font-size: 6rem;
+            }
+            
+            .chart-container {
+                height: 350px;
+            }
+        }
+        
+        /* 대형 디스플레이 (1920px 이상) */
+        @media (orientation: landscape) and (min-width: 1920px) {
+            .stat-number {
+                font-size: 8rem;
+            }
+            
+            .chart-container {
+                height: 450px;
+            }
+            
+            h1 {
+                font-size: 3rem !important;
+            }
+            
+            h3 {
+                font-size: 2rem !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 min-h-screen">
+    <!-- 가로모드 권장 배너 (세로모드일 때만 표시) -->
+    <div class="landscape-banner">
+        <i class="fas fa-mobile-screen-button mr-2"></i>
+        <strong>가로모드 권장:</strong> 더 나은 화면 경험을 위해 태블릿을 가로로 회전해주세요
+        <i class="fas fa-sync-alt ml-2"></i>
+    </div>
+    
     <!-- 전체화면 버튼 -->
     <button onclick="toggleFullscreen()" class="fullscreen-btn px-4 py-2 bg-white hover:bg-gray-100 rounded-lg shadow-lg transition flex items-center gap-2 text-gray-700">
         <i id="fullscreenIcon" class="fas fa-expand"></i>

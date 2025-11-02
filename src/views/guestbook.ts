@@ -41,12 +41,57 @@ export const guestbookPage = `
             }
         }
         
-        /* 가로 모드 - 스크롤 허용 */
+        /* 가로 모드 최적화 - 2열 레이아웃 */
         @media (orientation: landscape) {
             body {
                 overflow-y: auto;
                 overflow-x: hidden;
                 min-height: 100vh;
+            }
+            
+            /* 가로모드 컨테이너 최적화 */
+            .landscape-container {
+                max-width: 90vw !important;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                align-items: start;
+                padding: 1rem;
+            }
+            
+            /* 진행 표시줄은 전체 너비 */
+            .landscape-container > .w-full:first-child {
+                grid-column: 1 / -1;
+            }
+            
+            /* 폼 섹션과 미리보기를 나란히 */
+            .form-section {
+                grid-column: 1 / 2;
+            }
+            
+            /* 버튼 영역도 2열 */
+            .button-area {
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+            }
+        }
+        
+        /* 태블릿 가로모드 (1024px 이상) */
+        @media (orientation: landscape) and (min-width: 1024px) {
+            .landscape-container {
+                max-width: 1200px !important;
+                gap: 3rem;
+            }
+            
+            .form-section {
+                font-size: 1.1rem;
+            }
+            
+            input, select, button {
+                font-size: 1.1rem !important;
+                padding: 1rem !important;
             }
         }
         
