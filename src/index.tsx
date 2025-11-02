@@ -39,6 +39,40 @@ app.route('/api/stats', stats)
 // 정적 파일 서빙
 app.use('/static/*', serveStatic({ root: './public' }))
 
+// PWA 매니페스트 (JSON 직접 반환)
+app.get('/manifest.json', (c) => {
+  return c.json({
+    name: '제미나이 부스 디지털 방명록',
+    short_name: '방명록',
+    description: '축제 및 행사를 위한 디지털 방명록 시스템',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#ffffff',
+    theme_color: '#4F46E5',
+    orientation: 'portrait',
+    icons: [
+      {
+        src: '/static/icon-192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any maskable'
+      },
+      {
+        src: '/static/icon-512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any maskable'
+      }
+    ],
+    categories: ['productivity', 'utilities'],
+    lang: 'ko-KR',
+    dir: 'ltr'
+  })
+})
+
+// Service Worker와 오프라인 페이지는 Cloudflare Pages에서 자동 제공
+// (dist 폴더에 있는 파일들이 루트에서 직접 접근 가능)
+
 // 헬스 체크
 app.get('/api/health', (c) => {
   return c.json({ 
@@ -57,6 +91,11 @@ app.get('/', (c) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>축제 디지털방명록 시스템</title>
+        
+        <!-- PWA 설정 -->
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#4F46E5">
+        
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     </head>

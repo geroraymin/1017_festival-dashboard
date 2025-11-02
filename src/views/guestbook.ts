@@ -9,9 +9,21 @@ export const guestbookPage = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>방명록 작성 - 축제 디지털방명록 시스템</title>
+    
+    <!-- PWA 설정 -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4F46E5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="방명록">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    
+    <!-- 오프라인 모드 스크립트 -->
+    <script src="/static/offline-db.js"></script>
+    <script src="/static/sync-manager.js"></script>
     <style>
         body, html {
             overflow: hidden;
@@ -992,7 +1004,7 @@ export const guestbookPage = `
             document.getElementById(sectionId).classList.add('active')
         }
 
-        // 폼 제출
+        // 폼 제출 (오프라인 모드 지원)
         async function submitForm() {
             // 년/월/일 개별 검증
             const year = document.getElementById('birthYear').value
@@ -1028,20 +1040,52 @@ export const guestbookPage = `
             submitBtn.disabled = true
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>제출 중...'
 
+            // 참가자 데이터
+            const participantData = {
+                booth_id: boothId,
+                name: formData.name,
+                gender: formData.gender,
+                grade: formData.grade,
+                date_of_birth: formData.dateOfBirth,
+                has_consented: true
+            }
+
             try {
+                // 온라인 상태 확인
+                const isOnline = syncManager.isNetworkOnline()
+                
+                if (!isOnline) {
+                    // 오프라인 모드 - IndexedDB에 저장
+                    console.log('[Guestbook] Offline mode: Saving to local storage')
+                    await offlineDB.addPendingParticipant(participantData)
+                    
+                    // 성공 메시지 표시
+                    showSection('section6')
+                    updateProgress(6)
+                    currentStep = 6
+                    isFormCompleted = true
+                    
+                    // 오프라인 저장 안내 메시지
+                    syncManager.showNotification(
+                        '오프라인 상태입니다. 데이터가 로컬에 저장되었으며, 온라인 시 자동 전송됩니다.',
+                        'warning'
+                    )
+                    
+                    // 3초 후 새로고침
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 3000)
+                    
+                    return
+                }
+                
+                // 온라인 모드 - 서버로 직접 전송
                 const response = await fetch('/api/participants', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        booth_id: boothId,
-                        name: formData.name,
-                        gender: formData.gender,
-                        grade: formData.grade,
-                        date_of_birth: formData.dateOfBirth,
-                        has_consented: true
-                    })
+                    body: JSON.stringify(participantData)
                 })
 
                 // 응답 텍스트를 먼저 확인
@@ -1054,11 +1098,48 @@ export const guestbookPage = `
                 } catch (jsonError) {
                     console.error('JSON 파싱 실패:', jsonError)
                     console.error('서버 응답:', responseText)
-                    throw new Error('서버 응답을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.')
+                    
+                    // 파싱 실패 시 오프라인 저장으로 폴백
+                    console.log('[Guestbook] Server error: Falling back to offline storage')
+                    await offlineDB.addPendingParticipant(participantData)
+                    
+                    showSection('section6')
+                    updateProgress(6)
+                    currentStep = 6
+                    isFormCompleted = true
+                    
+                    syncManager.showNotification(
+                        '서버 오류가 발생했습니다. 데이터가 로컬에 저장되었으며, 나중에 자동 전송됩니다.',
+                        'warning'
+                    )
+                    
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 3000)
+                    
+                    return
                 }
 
                 if (!response.ok) {
-                    throw new Error(data.error || '등록에 실패했습니다.')
+                    // 서버 오류 - 오프라인 저장으로 폴백
+                    console.log('[Guestbook] Server error:', data.error)
+                    await offlineDB.addPendingParticipant(participantData)
+                    
+                    showSection('section6')
+                    updateProgress(6)
+                    currentStep = 6
+                    isFormCompleted = true
+                    
+                    syncManager.showNotification(
+                        '서버 오류가 발생했습니다. 데이터가 로컬에 저장되었으며, 나중에 자동 전송됩니다.',
+                        'warning'
+                    )
+                    
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 3000)
+                    
+                    return
                 }
 
                 // 성공 - Step 6으로 이동
@@ -1075,11 +1156,58 @@ export const guestbookPage = `
                 }, 3000)
             } catch (error) {
                 console.error('참가자 등록 실패:', error)
-                alert('등록에 실패했습니다: ' + error.message)
                 
-                submitBtn.disabled = false
-                submitBtn.innerHTML = '제출하기 <i class="fas fa-check ml-2"></i>'
+                // 네트워크 오류 - 오프라인 저장으로 폴백
+                try {
+                    console.log('[Guestbook] Network error: Falling back to offline storage')
+                    await offlineDB.addPendingParticipant(participantData)
+                    
+                    showSection('section6')
+                    updateProgress(6)
+                    currentStep = 6
+                    isFormCompleted = true
+                    
+                    syncManager.showNotification(
+                        '네트워크 오류가 발생했습니다. 데이터가 로컬에 저장되었으며, 온라인 시 자동 전송됩니다.',
+                        'warning'
+                    )
+                    
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 3000)
+                } catch (offlineError) {
+                    console.error('오프라인 저장 실패:', offlineError)
+                    alert('등록에 실패했습니다. 브라우저 설정을 확인해주세요.')
+                    
+                    submitBtn.disabled = false
+                    submitBtn.innerHTML = '제출하기 <i class="fas fa-check ml-2"></i>'
+                }
             }
+        }
+        
+        // Service Worker 등록 (PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js')
+                    console.log('[SW] Service Worker registered:', registration.scope)
+                    
+                    // 업데이트 확인
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing
+                        console.log('[SW] New Service Worker found')
+                        
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('[SW] New Service Worker available')
+                                // 새 버전 알림 (선택사항)
+                            }
+                        })
+                    })
+                } catch (error) {
+                    console.error('[SW] Service Worker registration failed:', error)
+                }
+            })
         }
     </script>
 </body>
