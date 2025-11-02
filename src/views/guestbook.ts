@@ -26,9 +26,28 @@ export const guestbookPage = `
     <script src="/static/sync-manager.js"></script>
     <style>
         body, html {
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 세로 모드 (모바일 기본) */
+        @media (orientation: portrait) {
+            body, html {
+                overflow: hidden;
+                height: 100vh;
+                width: 100vw;
+            }
+        }
+        
+        /* 가로 모드 - 스크롤 허용 */
+        @media (orientation: landscape) {
+            body {
+                overflow-y: auto;
+                overflow-x: hidden;
+                min-height: 100vh;
+            }
         }
         
         /* 스크린 리더 전용 텍스트 */
@@ -144,10 +163,24 @@ export const guestbookPage = `
         
         /* 뷰포트 높이 기반 레이아웃 */
         .container-wrapper {
-            height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+        }
+        
+        /* 세로 모드 - 고정 높이 */
+        @media (orientation: portrait) {
+            .container-wrapper {
+                height: 100vh;
+                overflow: hidden;
+            }
+        }
+        
+        /* 가로 모드 - 최소 높이 + 스크롤 */
+        @media (orientation: landscape) {
+            .container-wrapper {
+                min-height: 100vh;
+                padding-bottom: 2rem;
+            }
         }
         
         .content-area {
@@ -155,8 +188,21 @@ export const guestbookPage = `
             display: flex;
             flex-direction: column;
             justify-content: center;
-            overflow-y: auto;
             padding: 1rem 0;
+        }
+        
+        /* 세로 모드 - 스크롤 */
+        @media (orientation: portrait) {
+            .content-area {
+                overflow-y: auto;
+            }
+        }
+        
+        /* 가로 모드 - 자동 높이 */
+        @media (orientation: landscape) {
+            .content-area {
+                overflow-y: visible;
+            }
         }
         
         /* 모바일 최적화 */
