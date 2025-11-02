@@ -181,6 +181,87 @@ stats.get('/event/:event_id', async (c) => {
 })
 
 /**
+ * GET /api/stats/leaderboard/:event_id
+ * 행사별 부스 순위 리더보드 (관리자 전용)
+ */
+stats.get('/leaderboard/:event_id', async (c) => {
+  try {
+    const user = c.get('user')
+
+    if (user.role !== 'admin') {
+      return c.json({ error: '관리자 권한이 필요합니다.' }, 403)
+    }
+
+    const eventId = c.req.param('event_id')
+    const supabase = createSupabaseClient(c.env)
+
+    // 행사 정보 조회
+    const { data: event, error: eventError } = await supabase
+      .from('events')
+      .select('id, name')
+      .eq('id', eventId)
+      .single()
+
+    if (eventError || !event) {
+      return c.json({ error: '행사를 찾을 수 없습니다.' }, 404)
+    }
+
+    // 행사의 모든 부스와 참가자 수 조회
+    const { data: booths, error: boothsError } = await supabase
+      .from('booths')
+      .select('id, name, booth_code, is_active')
+      .eq('event_id', eventId)
+
+    if (boothsError) {
+      console.error('Error fetching booths:', boothsError)
+      return c.json({ error: '리더보드 데이터를 불러오는데 실패했습니다.' }, 500)
+    }
+
+    // 각 부스별 참가자 수 계산
+    const boothRankings = await Promise.all(
+      (booths || []).map(async (booth) => {
+        const { count } = await supabase
+          .from('participants')
+          .select('*', { count: 'exact', head: true })
+          .eq('booth_id', booth.id)
+
+        return {
+          booth_id: booth.id,
+          booth_name: booth.name,
+          booth_code: booth.booth_code,
+          is_active: booth.is_active,
+          participant_count: count || 0
+        }
+      })
+    )
+
+    // 참가자 수 기준 내림차순 정렬
+    boothRankings.sort((a, b) => b.participant_count - a.participant_count)
+
+    // 순위 추가
+    const rankedBooths = boothRankings.map((booth, index) => ({
+      ...booth,
+      rank: index + 1
+    }))
+
+    const totalParticipants = boothRankings.reduce((sum, b) => sum + b.participant_count, 0)
+    const maxParticipants = boothRankings.length > 0 ? boothRankings[0].participant_count : 0
+
+    return c.json({
+      event_id: event.id,
+      event_name: event.name,
+      total_participants: totalParticipants,
+      total_booths: booths?.length || 0,
+      max_participants: maxParticipants,
+      leaderboard: rankedBooths
+    })
+  } catch (error) {
+    console.error('Leaderboard error:', error)
+    return c.json({ error: '리더보드 데이터를 불러오는데 실패했습니다.' }, 500)
+  }
+})
+
+/**
  * GET /api/stats/all
  * 전체 통계 조회 (관리자 전용)
  */

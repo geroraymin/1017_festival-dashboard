@@ -302,6 +302,36 @@ export const adminDashboardPage = `
                     <canvas id="overallBoothChart"></canvas>
                 </div>
             </div>
+
+            <!-- 부스 리더보드 -->
+            <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl shadow-lg p-5 mb-6" id="leaderboardSection" style="display: none;">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-trophy text-yellow-500 mr-2"></i>
+                        부스 순위 리더보드
+                    </h3>
+                    <div class="text-sm text-gray-600" id="leaderboardEventName"></div>
+                </div>
+                
+                <div id="leaderboardContent">
+                    <!-- 로딩 중 -->
+                    <div id="leaderboardLoading" class="text-center py-8">
+                        <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
+                        <p class="text-gray-600 mt-2">순위를 불러오는 중...</p>
+                    </div>
+                    
+                    <!-- 리더보드 목록 -->
+                    <div id="leaderboardList" style="display: none;">
+                        <!-- 동적으로 추가됨 -->
+                    </div>
+                    
+                    <!-- 데이터 없음 -->
+                    <div id="leaderboardEmpty" style="display: none;" class="text-center py-8 text-gray-600">
+                        <i class="fas fa-inbox text-4xl mb-2"></i>
+                        <p>참가자 데이터가 없습니다</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 행사 관리 탭 -->

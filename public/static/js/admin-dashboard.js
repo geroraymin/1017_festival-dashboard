@@ -973,6 +973,14 @@ function filterByEvent() {
     selectedEventId = document.getElementById('eventFilter').value
     loadOverview()
     
+    // 리더보드 업데이트
+    if (selectedEventId) {
+        loadLeaderboard(selectedEventId)
+    } else {
+        // 전체 행사 선택 시 리더보드 숨김
+        document.getElementById('leaderboardSection').style.display = 'none'
+    }
+    
     // 차트 모드가 활성화되어 있으면 차트 모드도 업데이트
     if (document.getElementById('chartMode').classList.contains('active')) {
         updateChartMode()
@@ -1706,4 +1714,106 @@ function selectEventFromCard(eventId) {
     
     // 카드 모드 업데이트
     updateCardMode()
+}
+
+// 부스 리더보드 로드
+async function loadLeaderboard(eventId) {
+    const section = document.getElementById('leaderboardSection')
+    const loading = document.getElementById('leaderboardLoading')
+    const list = document.getElementById('leaderboardList')
+    const empty = document.getElementById('leaderboardEmpty')
+    const eventName = document.getElementById('leaderboardEventName')
+    
+    // 섹션 표시
+    section.style.display = 'block'
+    loading.style.display = 'block'
+    list.style.display = 'none'
+    empty.style.display = 'none'
+    
+    try {
+        const response = await fetch(`/api/stats/leaderboard/${eventId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        
+        if (!response.ok) throw new Error('리더보드를 불러오는데 실패했습니다')
+        
+        const data = await response.json()
+        
+        // 행사명 표시
+        eventName.textContent = data.event_name
+        
+        if (data.leaderboard && data.leaderboard.length > 0) {
+            renderLeaderboard(data.leaderboard, data.max_participants)
+            loading.style.display = 'none'
+            list.style.display = 'block'
+        } else {
+            loading.style.display = 'none'
+            empty.style.display = 'block'
+        }
+    } catch (error) {
+        console.error('Leaderboard error:', error)
+        loading.style.display = 'none'
+        empty.style.display = 'block'
+        empty.innerHTML = `
+            <i class="fas fa-exclamation-triangle text-4xl mb-2 text-red-500"></i>
+            <p>${error.message}</p>
+        `
+    }
+}
+
+// 리더보드 렌더링
+function renderLeaderboard(booths, maxCount) {
+    const list = document.getElementById('leaderboardList')
+    
+    list.innerHTML = booths.map((booth, index) => {
+        const percentage = maxCount > 0 ? (booth.participant_count / maxCount * 100) : 0
+        const isTop3 = index < 3
+        
+        // 순위별 메달/색상
+        let rankBadge, rankColor
+        if (booth.rank === 1) {
+            rankBadge = '<i class="fas fa-trophy text-yellow-500"></i>'
+            rankColor = 'border-yellow-500'
+        } else if (booth.rank === 2) {
+            rankBadge = '<i class="fas fa-medal text-gray-400"></i>'
+            rankColor = 'border-gray-400'
+        } else if (booth.rank === 3) {
+            rankBadge = '<i class="fas fa-medal text-orange-600"></i>'
+            rankColor = 'border-orange-600'
+        } else {
+            rankBadge = `<span class="text-gray-600 font-bold">${booth.rank}</span>`
+            rankColor = 'border-gray-300'
+        }
+        
+        return `
+            <div class="bg-white rounded-lg p-4 mb-3 shadow-md border-l-4 ${rankColor} hover:shadow-lg transition">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 flex items-center justify-center text-2xl">
+                            ${rankBadge}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">${booth.booth_name}</h4>
+                            <p class="text-xs text-gray-500">코드: ${booth.booth_code}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-indigo-600">${booth.participant_count}</div>
+                        <div class="text-xs text-gray-500">참가자</div>
+                    </div>
+                </div>
+                
+                <!-- 진행률 바 -->
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full transition-all duration-500" 
+                         style="width: ${percentage}%"></div>
+                </div>
+                <div class="text-right text-xs text-gray-500 mt-1">${percentage.toFixed(1)}%</div>
+                
+                ${!booth.is_active ? '<div class="mt-2 text-xs text-red-600"><i class="fas fa-ban mr-1"></i>비활성</div>' : ''}
+            </div>
+        `
+    }).join('')
 }
