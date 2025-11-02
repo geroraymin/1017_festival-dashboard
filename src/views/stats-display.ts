@@ -87,54 +87,139 @@ export const statsDisplayPage = `
             }
         }
         
-        /* 가로모드 최적화 */
+        /* 가로모드 최적화 - 모든 요소 크기 축소 */
         @media (orientation: landscape) {
+            body {
+                overflow-y: auto !important;
+            }
+            
+            /* 헤더 축소 */
+            .container > div:first-child {
+                margin-bottom: 1rem !important;
+            }
+            
+            .container > div:first-child h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+            
+            .container > div:first-child p {
+                font-size: 1rem !important;
+            }
+            
+            .container > div:first-child .inline-block {
+                padding: 0.5rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .container > div:first-child i {
+                font-size: 1.5rem !important;
+            }
+            
+            /* 총 참가자 수 축소 */
+            .container > div:nth-child(2) {
+                margin-bottom: 1rem !important;
+            }
+            
+            .container > div:nth-child(2) .inline-block {
+                padding: 1rem 2rem !important;
+            }
+            
+            .container > div:nth-child(2) p:first-child {
+                font-size: 1rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+            
             .stat-number {
-                font-size: 5rem;
+                font-size: 2.5rem !important;
+            }
+            
+            .container > div:nth-child(2) p:last-child {
+                font-size: 0.875rem !important;
+                margin-top: 0.25rem !important;
+            }
+            
+            /* 차트 영역 */
+            .grid.gap-6.flex-1 {
+                gap: 1rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .bg-white.rounded-3xl.shadow-xl.p-6 {
+                padding: 1rem !important;
+            }
+            
+            .bg-white.rounded-3xl.shadow-xl h3 {
+                font-size: 1rem !important;
+                margin-bottom: 0.5rem !important;
             }
             
             .chart-container {
-                height: 300px;
+                height: 180px !important;
             }
             
+            /* 업데이트 정보 */
+            .container > div:last-child {
+                padding: 0.5rem !important;
+                font-size: 0.75rem !important;
+            }
+            
+            /* 컨테이너 패딩 */
             .container {
-                padding-top: 1rem !important;
-                padding-bottom: 1rem !important;
-            }
-            
-            /* 차트 영역 높이 최적화 */
-            .grid.gap-6.flex-1 {
-                min-height: auto !important;
+                padding: 0.5rem 1rem !important;
             }
         }
         
-        /* 태블릿 가로모드 (1024px 이상) */
-        @media (orientation: landscape) and (min-width: 1024px) {
+        /* 태블릿 가로모드 (768px 이상) */
+        @media (orientation: landscape) and (min-width: 768px) {
             .stat-number {
-                font-size: 6rem;
+                font-size: 3rem !important;
             }
             
             .chart-container {
-                height: 350px;
+                height: 200px !important;
+            }
+            
+            .container > div:first-child h1 {
+                font-size: 1.75rem !important;
+            }
+        }
+        
+        /* 대형 태블릿 가로모드 (1024px 이상) */
+        @media (orientation: landscape) and (min-width: 1024px) {
+            .stat-number {
+                font-size: 3.5rem !important;
+            }
+            
+            .chart-container {
+                height: 220px !important;
+            }
+            
+            .container > div:first-child h1 {
+                font-size: 2rem !important;
+            }
+            
+            .bg-white.rounded-3xl.shadow-xl h3 {
+                font-size: 1.25rem !important;
             }
         }
         
         /* 대형 디스플레이 (1920px 이상) */
         @media (orientation: landscape) and (min-width: 1920px) {
             .stat-number {
-                font-size: 8rem;
+                font-size: 4rem !important;
             }
             
             .chart-container {
-                height: 450px;
+                height: 280px !important;
             }
             
-            h1 {
-                font-size: 3rem !important;
+            .container > div:first-child h1 {
+                font-size: 2.5rem !important;
             }
             
-            h3 {
-                font-size: 2rem !important;
+            .bg-white.rounded-3xl.shadow-xl h3 {
+                font-size: 1.5rem !important;
             }
         }
     </style>
