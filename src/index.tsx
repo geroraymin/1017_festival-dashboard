@@ -39,9 +39,8 @@ app.route('/api/stats', stats)
 // 정적 파일 서빙
 app.use('/static/*', serveStatic({ root: './public' }))
 
-// PWA 관련 파일 서빙 (dist 폴더 루트에서)
-app.get('/sw.js', serveStatic({ root: './dist', path: './sw.js' }))
-app.get('/offline.html', serveStatic({ root: './dist', path: './offline.html' }))
+// PWA Service Worker - Cloudflare Pages에서 자동으로 dist 루트 파일 제공
+// sw.js와 offline.html은 빌드 시 dist/에 복사되어 자동 서빙됨
 
 // PWA 매니페스트 (JSON 직접 반환)
 app.get('/manifest.json', (c) => {
