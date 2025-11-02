@@ -39,6 +39,10 @@ app.route('/api/stats', stats)
 // 정적 파일 서빙
 app.use('/static/*', serveStatic({ root: './public' }))
 
+// PWA 관련 파일 서빙 (dist 폴더 루트에서)
+app.get('/sw.js', serveStatic({ root: './dist', path: './sw.js' }))
+app.get('/offline.html', serveStatic({ root: './dist', path: './offline.html' }))
+
 // PWA 매니페스트 (JSON 직접 반환)
 app.get('/manifest.json', (c) => {
   return c.json({

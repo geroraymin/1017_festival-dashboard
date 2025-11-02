@@ -10,5 +10,10 @@ export default defineConfig({
       adapter,
       entry: 'src/index.tsx'
     })
-  ]
+  ],
+  publicDir: 'public',
+  build: {
+    outDir: 'dist',
+    emptyOutDir: false // Preserve public files in dist
+  }
 })
