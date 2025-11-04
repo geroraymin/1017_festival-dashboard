@@ -1,5 +1,5 @@
 import { sign, verify } from 'hono/jwt'
-import type { Env } from './supabase'
+import type { Env } from './d1'
 
 export interface JWTPayload {
   id: string

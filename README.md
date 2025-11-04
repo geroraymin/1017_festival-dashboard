@@ -38,7 +38,7 @@ webapp/
 ├── src/
 │   ├── index.tsx              # 메인 애플리케이션
 │   ├── lib/
-│   │   ├── supabase.ts        # Supabase 클라이언트
+│   │   ├── d1.ts              # D1 데이터베이스 타입
 │   │   ├── jwt.ts             # JWT 토큰 관리
 │   │   └── password.ts        # 비밀번호 해싱
 │   ├── middlewares/
@@ -57,9 +57,8 @@ webapp/
 │   └── static/
 │       └── js/
 │           └── api.js         # 프론트엔드 API 클라이언트
-├── supabase/
-│   └── migrations/
-│       └── 001_initial_schema.sql  # 데이터베이스 스키마
+├── migrations/
+│   └── 0001_initial_schema.sql  # D1 데이터베이스 스키마
 ├── .dev.vars                  # 개발 환경 변수
 ├── wrangler.jsonc             # Cloudflare 설정
 ├── ecosystem.config.cjs       # PM2 설정
@@ -253,9 +252,9 @@ pm2 restart webapp
 ```
 
 ### 7. 서비스 접속
-- **Production**: https://dee25d1b.guestbook-system.pages.dev
+- **Production**: https://guestbook-system.pages.dev
 - **로컬**: http://localhost:3000
-- **디스플레이 모드**: https://dee25d1b.guestbook-system.pages.dev/display?booth_id=1
+- **디스플레이 모드**: https://guestbook-system.pages.dev/display?booth_id=1
 
 ## 📦 배포 (Cloudflare Pages)
 
@@ -303,7 +302,7 @@ npm run deploy:prod
 npx wrangler d1 execute guestbook-production --remote --command="SELECT COUNT(*) as admin_count FROM admins;"
 
 # 프로덕션 URL 접속
-curl https://9b6902d2.guestbook-system.pages.dev/api/events
+curl https://guestbook-system.pages.dev/api/events
 ```
 
 ## 🔒 보안
@@ -323,10 +322,16 @@ curl https://9b6902d2.guestbook-system.pages.dev/api/events
   - 통합 단일 플랫폼 아키텍처 (Cloudflare Pages + Workers + D1)
   
 - **프로덕션 환경 배포**
-  - Production URL: https://9b6902d2.guestbook-system.pages.dev
+  - Production URL: https://guestbook-system.pages.dev
   - D1 Database ID: d95d9a6a-d558-4ddc-8a2c-d7a8fd822acf
   - 모든 샘플/테스트 데이터 삭제 완료
   - 관리자 계정만 남은 깨끗한 상태
+
+- **코드 정리 및 최적화 완료**
+  - 사용하지 않는 Supabase 코드 및 의존성 제거 (~50KB 번들 크기 감소)
+  - 프로덕션 debug console.log 24개 제거
+  - .dev.vars 환경 변수 정리
+  - TypeScript 타입 import 수정 (jwt.ts)
 
 - **모든 핵심 기능 구현 완료**
   - Phase 1-1: 생년월일 3단계 드롭다운 UX 개선 ✅
@@ -337,14 +342,17 @@ curl https://9b6902d2.guestbook-system.pages.dev/api/events
     - 전체화면 버튼 (브라우저 UI 숨김)
     - 10초마다 자동 새로고침
   
-- **관리자 대시보드 데이터 표시 버그 수정**
-  - 프론트엔드 API 응답 파싱 로직 수정
-  - 참가자 목록 실시간 표시 정상화
+- **버그 수정 완료**
+  - 관리자 대시보드 데이터 표시 버그 수정
+  - 통계 차트 렌더링 문제 해결
+  - 행사 필터 타입 불일치 수정
+  - 관리자 로그인 인증 실패 문제 해결
 
 - **행사 사용 준비 완료**
   - 데이터베이스 깨끗한 상태
   - 프로덕션 배포 안정화
   - 모든 기능 테스트 완료
+  - 프로덕션 코드 최적화 완료
 
 ### 🔄 다음 단계
 - **Phase 1-3**: 오프라인 모드 (PWA + IndexedDB)

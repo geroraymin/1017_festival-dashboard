@@ -83,37 +83,23 @@ async function loadOverview() {
                 const eventId = String(event.id || event.event_id)
                 return eventId === String(selectedEventId)
             })
-            console.log('🔍 선택된 행사 ID:', selectedEventId)
-            console.log('🔍 필터링된 행사:', filteredEvents)
         }
 
         // 총 참가자 계산 (필터링된 행사 기준)
         let totalParticipants = 0
-        console.log('📊 [통계 개요] 데이터 구조 분석 시작')
-        console.log('전체 행사 수:', filteredEvents.length)
         
         filteredEvents.forEach((event, eventIndex) => {
-            console.log(`\n행사 ${eventIndex + 1}:`, event.name || event.event_name)
-            console.log('  - 행사 ID:', event.id || event.event_id)
-            console.log('  - 부스 수:', event.booths?.length || 0)
             
             if (event.booths) {
                 event.booths.forEach((booth, boothIndex) => {
                     // total_participants 또는 participant_count 사용
                     const count = booth.total_participants || booth.participant_count || 0
-                    console.log(`    부스 ${boothIndex + 1}:`, booth.name || booth.booth_name)
-                    console.log('      - total_participants:', booth.total_participants)
-                    console.log('      - participant_count:', booth.participant_count)
-                    console.log('      - 사용할 값:', count)
                     
                     totalParticipants += count
                 })
             }
         })
         
-        console.log('\n✅ 총 참가자 수:', totalParticipants)
-        console.log('타입:', typeof totalParticipants)
-        console.log('isNaN:', isNaN(totalParticipants))
         
         // Fallback: NaN이면 0으로 표시
         const displayValue = isNaN(totalParticipants) ? 0 : totalParticipants
@@ -162,11 +148,7 @@ async function loadOverview() {
             }
         })
         
-        console.log('📊 성별 분포:', genderDistribution)
-        console.log('📊 교급 분포:', gradeDistribution)
         
-        console.log('📊 성별 분포:', genderDistribution)
-        console.log('📊 교급 분포:', gradeDistribution)
 
         // 부스별 데이터 수집
         let boothData = []
@@ -189,7 +171,6 @@ async function loadOverview() {
         // 상위 10개만 표시
         boothData = boothData.slice(0, 10)
         
-        console.log('📊 부스별 데이터 (loadOverview):', boothData)
 
         updateOverallGenderChart(genderDistribution)
         updateOverallGradeChart(gradeDistribution)
@@ -1074,7 +1055,6 @@ async function checkAndUpdateChartMode() {
         
         // 데이터가 변경된 경우에만 업데이트
         if (currentSnapshot !== lastDataSnapshot) {
-            console.log('📊 새로운 데이터 감지 - 차트 업데이트 중...')
             lastDataSnapshot = currentSnapshot
             updateChartMode()
         } else {
@@ -1219,8 +1199,6 @@ async function updateChartMode() {
         // 상위 10개만 표시
         boothData = boothData.slice(0, 10)
         
-        console.log('📊 [차트 모드] 총 참가자:', totalParticipants)
-        console.log('📊 [차트 모드] 부스별 데이터:', boothData)
         
         // 차트 업데이트
         updateChartModeGenderChart(genderDistribution)
@@ -1507,7 +1485,6 @@ document.addEventListener('visibilitychange', () => {
         // 현재 활성화된 탭에 따라 새로고침
         const activeTab = document.querySelector('.tab-content.active')
         if (activeTab && activeTab.id === 'tab-overview') {
-            console.log('📊 페이지 포커스 - 통계 데이터 새로고침')
             loadOverview()
         }
     }
@@ -1517,7 +1494,6 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('focus', () => {
     const activeTab = document.querySelector('.tab-content.active')
     if (activeTab && activeTab.id === 'tab-overview') {
-        console.log('📊 창 포커스 - 통계 데이터 새로고침')
         loadOverview()
     }
 })

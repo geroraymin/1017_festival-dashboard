@@ -51,7 +51,7 @@ CREATE INDEX IF NOT EXISTS idx_participants_booth_id ON participants(booth_id);
 CREATE INDEX IF NOT EXISTS idx_participants_created_at ON participants(created_at);
 CREATE INDEX IF NOT EXISTS idx_events_dates ON events(start_date, end_date);
 
--- 기본 관리자 계정 생성 (username: admin, password: admin1234)
+-- 기본 관리자 계정 생성 (username: admin, password: admin123)
 INSERT INTO admins (username, password_hash) VALUES 
     ('admin', 'pbkdf2:/EZG8mUs5gdNdFRFC6Eztw==:hlC98+Y7Jp5XgBeeKbW9Saa9G9UbUMObDbZq3G8rHbY=');
 
