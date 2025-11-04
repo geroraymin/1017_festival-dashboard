@@ -18,7 +18,8 @@
 
 ### Backend
 - **Hono** - 경량 웹 프레임워크 (Cloudflare Workers 최적화)
-- **Supabase** - PostgreSQL 기반 백엔드 서비스 (데이터베이스 + 인증)
+- **Cloudflare D1** - SQLite 기반 엣지 데이터베이스
+- **Supabase** - PostgreSQL 기반 백엔드 서비스 (기존 데이터베이스, 마이그레이션 중)
 - **JWT** - 토큰 기반 인증 시스템
 - **Web Crypto API** - 비밀번호 해싱 (PBKDF2)
 
@@ -103,6 +104,11 @@ webapp/
   - 성별 분포 도넛 차트 (남성/여성)
   - 교급 분포 바 차트 (유아/초등/중등/고등/성인/기타)
 - ✅ **스켈레톤 로더** (로딩 상태 UX 개선)
+- ✅ **디스플레이 모드** (외부 모니터/태블릿용 통계 화면)
+  - 가로 모드 전용 3컬럼 레이아웃
+  - 세로 모드 차단 + 회전 경고
+  - 전체화면 버튼 (브라우저 UI 숨김)
+  - 10초마다 자동 새로고침
 
 ### 6. 사용자 인터페이스
 - ✅ 로그인 페이지 (관리자/운영자)
@@ -193,9 +199,10 @@ webapp/
 - `DELETE /api/participants/:id` - 참가자 삭제 (관리자)
 
 ### 통계 (Statistics)
-- `GET /api/stats/booth/:booth_id` - 부스별 통계
+- `GET /api/stats/booth/:booth_id` - 부스별 통계 (인증 필요)
 - `GET /api/stats/event/:event_id` - 행사별 통계 (관리자)
 - `GET /api/stats/all` - 전체 통계 (관리자)
+- `GET /api/public/stats/booth/:booth_id` - 부스 공개 통계 (인증 불필요, 디스플레이용) 🆕
 
 ## 🛠️ 설치 및 실행
 
@@ -214,7 +221,7 @@ npm install
 `.dev.vars` 파일을 생성하고 다음 내용을 입력:
 
 ```bash
-# Supabase 설정
+# Supabase 설정 (기존 데이터베이스, 선택사항)
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
@@ -226,8 +233,14 @@ JWT_SECRET=your-super-secret-jwt-key-change-this
 APP_ENV=development
 ```
 
-### 4. Supabase 데이터베이스 설정
-Supabase 프로젝트에서 SQL 에디터를 열고 `supabase/migrations/001_initial_schema.sql` 파일의 내용을 실행합니다.
+### 4. D1 데이터베이스 설정 (로컬)
+```bash
+# 마이그레이션 적용
+npx wrangler d1 migrations apply guestbook-production --local
+
+# 테스트 데이터 삽입
+npx wrangler d1 execute guestbook-production --local --file=./seed.sql
+```
 
 ### 5. 빌드
 ```bash
@@ -236,17 +249,22 @@ npm run build
 
 ### 6. 개발 서버 실행
 ```bash
-npm run dev:sandbox
-```
-
-또는 PM2 사용:
-```bash
+# PM2로 서비스 시작 (권장)
 pm2 start ecosystem.config.cjs
+
+# 상태 확인
+pm2 list
+pm2 logs guestbook --nostream
+
+# 재시작
+fuser -k 3000/tcp 2>/dev/null || true
+pm2 restart guestbook
 ```
 
 ### 7. 서비스 접속
 - 로컬: http://localhost:3000
 - 샌드박스: https://3000-iaqxp5qo7pnmy906zkbmt-8f57ffe2.sandbox.novita.ai
+- 디스플레이 (부스 1): http://localhost:3000/display?booth_id=1
 
 ## 📦 배포 (Cloudflare Pages)
 
@@ -280,12 +298,17 @@ npm run deploy:prod
 - **Row Level Security**: Supabase RLS 정책으로 데이터 접근 제어
 - **CORS**: API 엔드포인트에 CORS 설정 적용
 
-## 📊 현재 상태 (2025-10-30)
+## 📊 현재 상태 (2025-11-04)
 
-### ✅ 완료된 기능 (Phase 1-2 완료! 🎉)
+### ✅ 완료된 기능 (Phase 1-2 + 디스플레이 모드 완료! 🎉)
 - 모든 핵심 기능 구현 완료
 - **Phase 1-1**: 생년월일 3단계 드롭다운 UX 개선 ✅
 - **Phase 1-2**: 부스 코드 찾기 셀프서비스 기능 ✅
+- **디스플레이 모드**: 외부 모니터/태블릿용 통계 화면 ✅
+  - 가로모드 3컬럼 레이아웃 (Flexbox)
+  - 세로모드 차단 + 회전 경고
+  - 전체화면 버튼 (F11 대체)
+  - D1 데이터베이스 연동
 - UI/UX 개선 (접근성 준수 WCAG 2.1 AA)
 - 반응형 디자인 적용
 - 테스트 환경 구축
