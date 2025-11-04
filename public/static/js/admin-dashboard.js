@@ -786,11 +786,16 @@ function exportCSV() {
         return
     }
 
-    // 필터링된 참가자 확인
-    const searchName = document.getElementById('searchName').value.toLowerCase().trim()
-    const filterGender = document.getElementById('filterGender').value
-    const filterGrade = document.getElementById('filterGrade').value
-    const filterBooth = document.getElementById('filterBooth').value
+    // 필터링된 참가자 확인 (null-safe)
+    const searchNameEl = document.getElementById('searchName')
+    const filterGenderEl = document.getElementById('filterGender')
+    const filterGradeEl = document.getElementById('filterGrade')
+    const filterBoothEl = document.getElementById('filterBooth')
+    
+    const searchName = searchNameEl ? searchNameEl.value.toLowerCase().trim() : ''
+    const filterGender = filterGenderEl ? filterGenderEl.value : ''
+    const filterGrade = filterGradeEl ? filterGradeEl.value : ''
+    const filterBooth = filterBoothEl ? filterBoothEl.value : ''
 
     // 필터 적용
     let participantsToExport = allParticipants
