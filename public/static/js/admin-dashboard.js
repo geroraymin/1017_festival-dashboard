@@ -80,8 +80,8 @@ async function loadOverview() {
         let filteredEvents = data.events
         if (selectedEventId) {
             filteredEvents = data.events.filter(event => {
-                const eventId = event.id || event.event_id
-                return eventId === selectedEventId
+                const eventId = String(event.id || event.event_id)
+                return eventId === String(selectedEventId)
             })
             console.log('🔍 선택된 행사 ID:', selectedEventId)
             console.log('🔍 필터링된 행사:', filteredEvents)
@@ -1145,8 +1145,8 @@ async function updateChartMode() {
         let filteredEvents = data.events
         if (selectedEventId) {
             filteredEvents = data.events.filter(event => {
-                const eventId = event.id || event.event_id
-                return eventId === selectedEventId
+                const eventId = String(event.id || event.event_id)
+                return eventId === String(selectedEventId)
             })
         }
         
@@ -1565,8 +1565,8 @@ async function updateCardMode() {
         let filteredEvents = data.events
         if (selectedEventId) {
             filteredEvents = data.events.filter(event => {
-                const eventId = event.id || event.event_id
-                return eventId === selectedEventId
+                const eventId = String(event.id || event.event_id)
+                return eventId === String(selectedEventId)
             })
         }
         
