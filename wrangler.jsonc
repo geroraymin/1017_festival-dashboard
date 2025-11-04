@@ -10,7 +10,7 @@
     {
       "binding": "DB",
       "database_name": "guestbook-production",
-      "database_id": "local-only"
+      "database_id": "d95d9a6a-d558-4ddc-8a2c-d7a8fd822acf"
     }
   ]
 }
