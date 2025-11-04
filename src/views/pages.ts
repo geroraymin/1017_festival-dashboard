@@ -136,7 +136,7 @@ export const operatorLoginPage = `
                     </label>
                     <input type="text" id="boothCode" required maxlength="6"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-center text-2xl font-mono tracking-wider uppercase"
-                        placeholder="ABC123"
+                        placeholder="GEMI01"
                         style="text-transform: uppercase">
                 </div>
 

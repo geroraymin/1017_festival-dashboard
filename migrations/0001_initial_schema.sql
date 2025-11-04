@@ -59,8 +59,8 @@ INSERT INTO admins (username, password_hash) VALUES
 INSERT INTO events (name, start_date, end_date) VALUES 
     ('2025 제미나이 페스티벌', '2025-01-15', '2025-01-17');
 
--- 샘플 부스 데이터
+-- 샘플 부스 데이터 (부스 코드는 6자리 영숫자)
 INSERT INTO booths (event_id, name, booth_code, description) VALUES 
-    (1, '제미나이 AI 체험 부스', 'GEMINI-001', 'AI 기술 체험 및 질의응답'),
-    (1, 'VR 체험 부스', 'VR-002', '가상현실 체험존'),
-    (1, '로봇 코딩 부스', 'ROBOT-003', '로봇 프로그래밍 체험');
+    (1, '제미나이 AI 체험 부스', 'GEMI01', 'AI 기술 체험 및 질의응답'),
+    (1, 'VR 체험 부스', 'VR2023', '가상현실 체험존'),
+    (1, '로봇 코딩 부스', 'ROBOT3', '로봇 프로그래밍 체험');
