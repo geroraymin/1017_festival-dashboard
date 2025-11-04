@@ -53,7 +53,7 @@ CREATE INDEX IF NOT EXISTS idx_events_dates ON events(start_date, end_date);
 
 -- 기본 관리자 계정 생성 (username: admin, password: admin1234)
 INSERT INTO admins (username, password_hash) VALUES 
-    ('admin', 'pbkdf2:uPe5QgXRQNPPHllF2phDqg==:OGmU6qdLfZHKL4U+kyXJBI3XwXB7MKrsT/awJuxKwR0=');
+    ('admin', 'pbkdf2:/EZG8mUs5gdNdFRFC6Eztw==:hlC98+Y7Jp5XgBeeKbW9Saa9G9UbUMObDbZq3G8rHbY=');
 
 -- 샘플 행사 데이터
 INSERT INTO events (name, start_date, end_date) VALUES 
