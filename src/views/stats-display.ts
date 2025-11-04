@@ -103,9 +103,63 @@ export const statsDisplayPage = `
         canvas {
             max-height: 100%;
         }
+        
+        /* 세로모드 차단 */
+        .portrait-warning {
+            display: none;
+        }
+        
+        @media (orientation: portrait) {
+            .container {
+                display: none !important;
+            }
+            
+            .portrait-warning {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                text-align: center;
+                padding: 2rem;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+            
+            .portrait-warning i {
+                font-size: 5rem;
+                margin-bottom: 2rem;
+                animation: rotate 2s ease-in-out infinite;
+            }
+            
+            @keyframes rotate {
+                0%, 100% { transform: rotate(0deg); }
+                50% { transform: rotate(90deg); }
+            }
+            
+            .portrait-warning h2 {
+                font-size: 2rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+            }
+            
+            .portrait-warning p {
+                font-size: 1.25rem;
+                opacity: 0.9;
+                line-height: 1.6;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- 세로모드 경고 화면 -->
+    <div class="portrait-warning">
+        <i class="fas fa-mobile-screen-button"></i>
+        <h2>화면을 가로로 회전해주세요</h2>
+        <p>디스플레이 모드는 가로 화면 전용입니다<br>태블릿을 90도 회전해주세요</p>
+    </div>
+    
+    <!-- 가로모드 정상 화면 -->
     <div class="container">
         <div class="header">
             <h1 id="boothName">부스명 로딩 중...</h1>
