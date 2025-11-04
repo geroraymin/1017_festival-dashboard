@@ -626,8 +626,8 @@ async function loadParticipants() {
         const boothMap = {}
         
         allParticipants.forEach(p => {
-            if (p.booth_id && p.booths?.name) {
-                boothMap[p.booth_id] = p.booths.name
+            if (p.booth_id && p.booth_name) {
+                boothMap[p.booth_id] = p.booth_name
             }
         })
 
@@ -828,7 +828,7 @@ function exportCSV() {
 
     // CSV 데이터
     participantsToExport.forEach(p => {
-        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booths?.name || '-'},${formatDateTime(p.created_at)}\n`
+        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booth_name || '-'},${formatDateTime(p.created_at)}\n`
     })
 
     // 다운로드
@@ -998,7 +998,7 @@ function renderParticipantsTable(participants) {
                 </span>
             </td>
             <td class="px-6 py-4 text-gray-600" data-label="부스">
-                ${p.booths?.name || '-'}
+                ${p.booth_name || '-'}
             </td>
             <td class="px-6 py-4 text-gray-600" data-label="등록일시">
                 ${formatDateTime(p.created_at)}

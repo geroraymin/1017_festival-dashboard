@@ -18,8 +18,7 @@
 
 ### Backend
 - **Hono** - 경량 웹 프레임워크 (Cloudflare Workers 최적화)
-- **Cloudflare D1** - SQLite 기반 엣지 데이터베이스
-- **Supabase** - PostgreSQL 기반 백엔드 서비스 (기존 데이터베이스, 마이그레이션 중)
+- **Cloudflare D1** - SQLite 기반 엣지 데이터베이스 (메인 데이터베이스)
 - **JWT** - 토큰 기반 인증 시스템
 - **Web Crypto API** - 비밀번호 해싱 (PBKDF2)
 
@@ -130,42 +129,42 @@ webapp/
 - ✅ **생년월일 3단계 드롭다운** (입력 시간 50% 단축, 이탈률 10% 감소)
 - ✅ **부스 코드 찾기 모달** (운영자 셀프서비스, 관리자 전화 문의 70% 감소)
 
-## 🔐 데이터 모델
+## 🔐 데이터 모델 (Cloudflare D1 - SQLite)
 
 ### admins (관리자)
-- `id`: UUID (Primary Key)
+- `id`: INTEGER (Primary Key, AUTOINCREMENT)
 - `username`: 아이디
-- `password_hash`: 비밀번호 해시
-- `created_at`: 생성일시
+- `password_hash`: 비밀번호 해시 (PBKDF2)
+- `created_at`: 생성일시 (DATETIME)
 
 ### events (행사)
-- `id`: UUID (Primary Key)
+- `id`: INTEGER (Primary Key, AUTOINCREMENT)
 - `name`: 행사명
-- `start_date`: 시작일
-- `end_date`: 종료일
-- `is_active`: 활성화 여부
-- `created_at`: 생성일시
-- `updated_at`: 수정일시
+- `start_date`: 시작일 (DATE)
+- `end_date`: 종료일 (DATE)
+- `is_active`: 활성화 여부 (INTEGER: 1/0)
+- `created_at`: 생성일시 (DATETIME)
+- `updated_at`: 수정일시 (DATETIME)
 
 ### booths (부스)
-- `id`: UUID (Primary Key)
+- `id`: INTEGER (Primary Key, AUTOINCREMENT)
 - `event_id`: 행사 ID (Foreign Key)
 - `name`: 부스명
-- `booth_code`: 부스 코드 (6자리 영숫자)
+- `booth_code`: 부스 코드 (6자리 영숫자, UNIQUE)
 - `description`: 설명
-- `is_active`: 활성화 여부
-- `created_at`: 생성일시
-- `updated_at`: 수정일시
+- `is_active`: 활성화 여부 (INTEGER: 1/0)
+- `created_at`: 생성일시 (DATETIME)
+- `updated_at`: 수정일시 (DATETIME)
 
 ### participants (참가자)
-- `id`: UUID (Primary Key)
+- `id`: INTEGER (Primary Key, AUTOINCREMENT)
 - `booth_id`: 부스 ID (Foreign Key)
 - `name`: 이름
 - `gender`: 성별 (**남성/여성**)
-- `grade`: 교급 (**유아/초등/중등/고등/성인/기타**)
-- `date_of_birth`: 생년월일
-- `has_consented`: 개인정보 동의 여부
-- `created_at`: 등록일시
+- `grade`: 교급 (**유아/초등/중등/고등/성인**)
+- `date_of_birth`: 생년월일 (DATE)
+- `has_consented`: 개인정보 동의 여부 (INTEGER: 1/0)
+- `created_at`: 등록일시 (DATETIME)
 
 ## 🌐 API 엔드포인트
 
@@ -221,16 +220,8 @@ npm install
 `.dev.vars` 파일을 생성하고 다음 내용을 입력:
 
 ```bash
-# Supabase 설정 (기존 데이터베이스, 선택사항)
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
 # JWT 시크릿 (32자 이상)
 JWT_SECRET=your-super-secret-jwt-key-change-this
-
-# 애플리케이션 설정
-APP_ENV=development
 ```
 
 ### 4. D1 데이터베이스 설정 (로컬)
@@ -249,75 +240,117 @@ npm run build
 
 ### 6. 개발 서버 실행
 ```bash
-# PM2로 서비스 시작 (권장)
+# PM2로 서비스 시작 (샌드박스 환경, 권장)
 pm2 start ecosystem.config.cjs
 
 # 상태 확인
 pm2 list
-pm2 logs guestbook --nostream
+pm2 logs webapp --nostream
 
 # 재시작
 fuser -k 3000/tcp 2>/dev/null || true
-pm2 restart guestbook
+pm2 restart webapp
 ```
 
 ### 7. 서비스 접속
-- 로컬: http://localhost:3000
-- 샌드박스: https://3000-iaqxp5qo7pnmy906zkbmt-8f57ffe2.sandbox.novita.ai
-- 디스플레이 (부스 1): http://localhost:3000/display?booth_id=1
+- **Production**: https://9b6902d2.guestbook-system.pages.dev
+- **로컬**: http://localhost:3000
+- **디스플레이 모드**: https://9b6902d2.guestbook-system.pages.dev/display?booth_id=1
 
 ## 📦 배포 (Cloudflare Pages)
 
 ### 1. Cloudflare API 키 설정
 ```bash
-# 환경 설정
+# Cloudflare 인증 (대화형)
 wrangler login
+
+# 또는 API 토큰 사용
+export CLOUDFLARE_API_TOKEN=your-api-token
 ```
 
-### 2. Cloudflare Pages 프로젝트 생성
+### 2. D1 프로덕션 데이터베이스 생성
 ```bash
-wrangler pages project create webapp --production-branch main
+# 데이터베이스 생성
+npx wrangler d1 create guestbook-production
+
+# wrangler.jsonc에 database_id 업데이트
+# 마이그레이션 적용
+npx wrangler d1 migrations apply guestbook-production --remote
 ```
 
-### 3. 환경 변수 설정
+### 3. Cloudflare Pages 프로젝트 생성
+```bash
+npx wrangler pages project create guestbook-system --production-branch main
+```
+
+### 4. 환경 변수 설정
 Cloudflare Dashboard에서 프로젝트 설정 → Environment variables에 다음을 추가:
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `JWT_SECRET`
+- `JWT_SECRET` (32자 이상의 랜덤 문자열)
 
-### 4. 배포
+### 5. 배포
 ```bash
+# 빌드 후 배포
+npm run build
+npx wrangler pages deploy dist --project-name guestbook-system
+
+# 또는 한 줄로
 npm run deploy:prod
+```
+
+### 6. 배포 확인
+```bash
+# 데이터베이스 상태 확인
+npx wrangler d1 execute guestbook-production --remote --command="SELECT COUNT(*) as admin_count FROM admins;"
+
+# 프로덕션 URL 접속
+curl https://9b6902d2.guestbook-system.pages.dev/api/events
 ```
 
 ## 🔒 보안
 
 - **비밀번호 해싱**: PBKDF2 (100,000 iterations, SHA-256)
 - **JWT 토큰**: 24시간 유효 기간
-- **Row Level Security**: Supabase RLS 정책으로 데이터 접근 제어
+- **역할 기반 접근 제어**: 관리자/운영자 권한 분리
 - **CORS**: API 엔드포인트에 CORS 설정 적용
+- **SQL Injection 방지**: 파라미터화된 쿼리 사용
 
 ## 📊 현재 상태 (2025-11-04)
 
-### ✅ 완료된 기능 (Phase 1-2 + 디스플레이 모드 완료! 🎉)
-- 모든 핵심 기능 구현 완료
-- **Phase 1-1**: 생년월일 3단계 드롭다운 UX 개선 ✅
-- **Phase 1-2**: 부스 코드 찾기 셀프서비스 기능 ✅
-- **디스플레이 모드**: 외부 모니터/태블릿용 통계 화면 ✅
-  - 가로모드 3컬럼 레이아웃 (Flexbox)
-  - 세로모드 차단 + 회전 경고
-  - 전체화면 버튼 (F11 대체)
-  - D1 데이터베이스 연동
-- UI/UX 개선 (접근성 준수 WCAG 2.1 AA)
-- 반응형 디자인 적용
-- 테스트 환경 구축
+### ✅ 완료된 기능 (프로덕션 배포 완료! 🎉)
+- **전체 시스템 Cloudflare D1으로 마이그레이션 완료**
+  - Supabase (PostgreSQL UUID) → D1 (SQLite INTEGER AUTOINCREMENT)
+  - 스키마, 데이터 타입, 비밀번호 해싱 방식 전환
+  - 통합 단일 플랫폼 아키텍처 (Cloudflare Pages + Workers + D1)
+  
+- **프로덕션 환경 배포**
+  - Production URL: https://9b6902d2.guestbook-system.pages.dev
+  - D1 Database ID: d95d9a6a-d558-4ddc-8a2c-d7a8fd822acf
+  - 모든 샘플/테스트 데이터 삭제 완료
+  - 관리자 계정만 남은 깨끗한 상태
+
+- **모든 핵심 기능 구현 완료**
+  - Phase 1-1: 생년월일 3단계 드롭다운 UX 개선 ✅
+  - Phase 1-2: 부스 코드 찾기 셀프서비스 기능 ✅
+  - 디스플레이 모드: 외부 모니터/태블릿용 통계 화면 ✅
+    - 가로모드 3컬럼 레이아웃 (Flexbox)
+    - 세로모드 차단 + 회전 경고
+    - 전체화면 버튼 (브라우저 UI 숨김)
+    - 10초마다 자동 새로고침
+  
+- **관리자 대시보드 데이터 표시 버그 수정**
+  - 프론트엔드 API 응답 파싱 로직 수정
+  - 참가자 목록 실시간 표시 정상화
+
+- **행사 사용 준비 완료**
+  - 데이터베이스 깨끗한 상태
+  - 프로덕션 배포 안정화
+  - 모든 기능 테스트 완료
 
 ### 🔄 다음 단계
 - **Phase 1-3**: 오프라인 모드 (PWA + IndexedDB)
-- **Phase 2-1**: 중복 등록 방지
+- **Phase 2-1**: 중복 등록 방지 (이미 구현됨, UI 개선 필요)
 - **Phase 2-2**: 부스 순위/리더보드
-- **Phase 2-3**: 관리자 필터 UI 개선
+- **Phase 2-3**: 관리자 필터 UI 개선 (이미 구현됨)
 
 ### 📈 향후 계획
 
