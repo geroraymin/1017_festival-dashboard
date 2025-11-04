@@ -253,9 +253,9 @@ pm2 restart webapp
 ```
 
 ### 7. 서비스 접속
-- **Production**: https://9b6902d2.guestbook-system.pages.dev
+- **Production**: https://dee25d1b.guestbook-system.pages.dev
 - **로컬**: http://localhost:3000
-- **디스플레이 모드**: https://9b6902d2.guestbook-system.pages.dev/display?booth_id=1
+- **디스플레이 모드**: https://dee25d1b.guestbook-system.pages.dev/display?booth_id=1
 
 ## 📦 배포 (Cloudflare Pages)
 
