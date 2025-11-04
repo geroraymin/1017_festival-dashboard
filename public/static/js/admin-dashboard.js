@@ -830,6 +830,9 @@ function exportCSV() {
     alert(`${participantsToExport.length}명의 참가자 데이터를 내보냈습니다.`)
 }
 
+// exportCSV를 전역으로 노출 (HTML onclick에서 사용)
+window.exportCSV = exportCSV
+
 // 날짜 포맷
 function formatDate(dateStr) {
     const date = new Date(dateStr)
@@ -1833,3 +1836,19 @@ function renderLeaderboard(booths, maxCount) {
         `
     }).join('')
 }
+
+// HTML onclick에서 사용하는 함수들을 전역으로 노출
+window.logout = logout
+window.switchTab = switchTab
+window.loadOverview = loadOverview
+window.openEventModal = openEventModal
+window.closeEventModal = closeEventModal
+window.openBoothModal = openBoothModal
+window.closeBoothModal = closeBoothModal
+window.resetFilters = resetFilters
+window.setGenderFilter = setGenderFilter
+window.setGradeFilter = setGradeFilter
+window.enterChartMode = enterChartMode
+window.exitChartMode = exitChartMode
+window.enterCardMode = enterCardMode
+window.exitCardMode = exitCardMode
