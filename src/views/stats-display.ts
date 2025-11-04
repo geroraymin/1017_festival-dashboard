@@ -250,7 +250,7 @@ export const statsDisplayPage = `
 
         async function loadStats() {
             try {
-                const response = await fetch(\`/api/stats/booth/\${boothId}\`)
+                const response = await fetch(\`/api/public/stats/booth/\${boothId}\`)
                 const data = await response.json()
 
                 document.getElementById('boothName').textContent = data.booth_name || '부스명'

@@ -9,6 +9,7 @@ import events from './routes/events'
 import booths from './routes/booths'
 import participants from './routes/participants'
 import stats from './routes/stats'
+import publicStats from './routes/public-stats'
 
 // 페이지 템플릿 임포트
 import { adminLoginPage, operatorLoginPage } from './views/pages'
@@ -35,6 +36,7 @@ app.route('/api/events', events)
 app.route('/api/booths', booths)
 app.route('/api/participants', participants)
 app.route('/api/stats', stats)
+app.route('/api/public/stats', publicStats)
 
 // 정적 파일 서빙
 app.use('/static/*', serveStatic({ root: './public' }))
