@@ -90,7 +90,7 @@ export const operatorDashboardPage = `
         </div>
 
         <!-- 액션 버튼 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <a href="#" onclick="openGuestbook(); return false;" 
                 class="bg-white hover:bg-gray-50 rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:scale-105">
                 <div>
@@ -102,6 +102,18 @@ export const operatorDashboardPage = `
                 </div>
                 <i class="fas fa-chevron-right text-2xl text-gray-400"></i>
             </a>
+
+            <button onclick="exportBoothCSV()" 
+                class="bg-white hover:bg-gray-50 rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:scale-105">
+                <div class="text-left">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-file-csv text-green-500 mr-2"></i>
+                        CSV 다운로드
+                    </h3>
+                    <p class="text-gray-600">참가자 명단 저장</p>
+                </div>
+                <i class="fas fa-chevron-right text-2xl text-gray-400"></i>
+            </button>
 
             <button onclick="openDisplayMode()" 
                 class="bg-white hover:bg-gray-50 rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:scale-105">
@@ -437,6 +449,59 @@ export const operatorDashboardPage = `
                     }
                 }
             })
+        }
+
+        // CSV 내보내기 (부스 운영자용)
+        async function exportBoothCSV() {
+            try {
+                // 해당 부스의 참가자 데이터 가져오기
+                const response = await ParticipantsAPI.getAll()
+                const allParticipants = response.participants
+                
+                // 자신의 부스 참가자만 필터링
+                const boothParticipants = allParticipants.filter(p => p.booth_id === boothId)
+                
+                if (boothParticipants.length === 0) {
+                    alert('내보낼 참가자 데이터가 없습니다.')
+                    return
+                }
+                
+                // CSV 헤더 (UTF-8 BOM 추가)
+                let csv = '\\uFEFF이름,성별,교급,생년월일,등록일시\\n'
+                
+                // CSV 데이터 (부스명 제외 - 자신의 부스니까 불필요)
+                boothParticipants.forEach(p => {
+                    const createdAt = new Date(p.created_at).toLocaleString('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    })
+                    csv += \`\${p.name},\${p.gender},\${p.grade},\${p.date_of_birth},\${createdAt}\\n\`
+                })
+                
+                // 다운로드
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+                const link = document.createElement('a')
+                const url = URL.createObjectURL(blob)
+                link.setAttribute('href', url)
+                
+                // 파일명: booth_부스명_날짜.csv
+                const boothName = document.getElementById('boothNameLarge').textContent
+                const filename = \`booth_\${boothName}_\${new Date().toISOString().split('T')[0]}.csv\`
+                link.setAttribute('download', filename)
+                link.style.visibility = 'hidden'
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+                
+                alert(\`\${boothParticipants.length}명의 참가자 데이터를 내보냈습니다.\`)
+            } catch (error) {
+                console.error('CSV 내보내기 실패:', error)
+                alert('CSV 다운로드에 실패했습니다: ' + error.message)
+            }
         }
 
         // 초기 로드
