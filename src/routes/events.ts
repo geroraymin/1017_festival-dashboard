@@ -1,143 +1,142 @@
 import { Hono } from 'hono'
-import { createSupabaseClient, type Env } from '../lib/supabase'
+import { type Env } from '../lib/d1'
 import { authMiddleware, adminOnly } from '../middlewares/auth'
-import type { CreateEventRequest, Event } from '../types/database'
+import type { CreateEventRequest } from '../types/database'
 
 const events = new Hono<{ Bindings: Env }>()
 
-// 모든 라우트에 인증 미들웨어 적용
-events.use('/*', authMiddleware)
-
 /**
  * GET /api/events
- * 모든 행사 목록 조회
+ * 행사 목록 조회
  */
-events.get('/', async (c) => {
+events.get('/', authMiddleware, async (c) => {
   try {
-    const supabase = createSupabaseClient(c.env)
-    const { data, error } = await supabase
-      .from('events')
-      .select('*')
-      .order('created_at', { ascending: false })
+    const db = c.env.DB
 
-    if (error) {
-      console.error('Error fetching events:', error)
-      return c.json({ error: '행사 목록을 불러오는데 실패했습니다.' }, 500)
-    }
+    const result = await db
+      .prepare('SELECT * FROM events ORDER BY created_at DESC')
+      .all()
 
-    return c.json({ events: data || [] })
+    return c.json({ events: result.results || [] })
   } catch (error) {
-    console.error('Events fetch error:', error)
+    console.error('Error fetching events:', error)
     return c.json({ error: '행사 목록을 불러오는데 실패했습니다.' }, 500)
   }
 })
 
 /**
  * GET /api/events/:id
- * 특정 행사 상세 조회
+ * 행사 상세 조회
  */
-events.get('/:id', async (c) => {
+events.get('/:id', authMiddleware, async (c) => {
   try {
-    const eventId = c.req.param('id')
-    const supabase = createSupabaseClient(c.env)
-    
-    const { data: event, error } = await supabase
-      .from('events')
-      .select('*')
-      .eq('id', eventId)
-      .single()
+    const id = c.req.param('id')
+    const db = c.env.DB
 
-    if (error || !event) {
+    const event = await db
+      .prepare('SELECT * FROM events WHERE id = ?')
+      .bind(id)
+      .first()
+
+    if (!event) {
       return c.json({ error: '행사를 찾을 수 없습니다.' }, 404)
     }
 
-    return c.json({ event })
+    // 부스 수 조회
+    const boothCount = await db
+      .prepare('SELECT COUNT(*) as count FROM booths WHERE event_id = ?')
+      .bind(id)
+      .first()
+
+    // 참가자 수 조회
+    const participantCount = await db
+      .prepare(`
+        SELECT COUNT(*) as count 
+        FROM participants p 
+        JOIN booths b ON p.booth_id = b.id 
+        WHERE b.event_id = ?
+      `)
+      .bind(id)
+      .first()
+
+    return c.json({ 
+      event: {
+        ...event,
+        booth_count: boothCount?.count || 0,
+        participant_count: participantCount?.count || 0
+      }
+    })
   } catch (error) {
-    console.error('Event fetch error:', error)
-    return c.json({ error: '행사 정보를 불러오는데 실패했습니다.' }, 500)
+    console.error('Error fetching event:', error)
+    return c.json({ error: '행사를 불러오는데 실패했습니다.' }, 500)
   }
 })
 
 /**
  * POST /api/events
- * 새 행사 생성 (관리자 전용)
+ * 행사 생성 (관리자 전용)
  */
-events.post('/', adminOnly, async (c) => {
+events.post('/', authMiddleware, adminOnly, async (c) => {
   try {
     const body = await c.req.json<CreateEventRequest>()
     const { name, start_date, end_date } = body
 
-    if (!name || !start_date || !end_date) {
-      return c.json({ error: '행사명, 시작일, 종료일을 모두 입력해주세요.' }, 400)
+    if (!name) {
+      return c.json({ error: '행사명은 필수입니다.' }, 400)
     }
 
-    // 날짜 유효성 검증
-    const startDate = new Date(start_date)
-    const endDate = new Date(end_date)
+    const db = c.env.DB
 
-    if (startDate > endDate) {
-      return c.json({ error: '종료일은 시작일 이후여야 합니다.' }, 400)
-    }
+    const result = await db
+      .prepare('INSERT INTO events (name, start_date, end_date) VALUES (?, ?, ?)')
+      .bind(name, start_date || null, end_date || null)
+      .run()
 
-    const supabase = createSupabaseClient(c.env)
-    const { data, error } = await supabase
-      .from('events')
-      .insert([{ name, start_date, end_date }])
-      .select()
-      .single()
-
-    if (error) {
-      console.error('Error creating event:', error)
+    if (!result.success) {
       return c.json({ error: '행사 생성에 실패했습니다.' }, 500)
     }
 
-    return c.json({ event: data }, 201)
+    const newEvent = await db
+      .prepare('SELECT * FROM events WHERE id = ?')
+      .bind(result.meta.last_row_id)
+      .first()
+
+    return c.json({ event: newEvent }, 201)
   } catch (error) {
-    console.error('Event creation error:', error)
+    console.error('Error creating event:', error)
     return c.json({ error: '행사 생성에 실패했습니다.' }, 500)
   }
 })
 
 /**
  * PUT /api/events/:id
- * 행사 정보 수정 (관리자 전용)
+ * 행사 수정 (관리자 전용)
  */
-events.put('/:id', adminOnly, async (c) => {
+events.put('/:id', authMiddleware, adminOnly, async (c) => {
   try {
-    const eventId = c.req.param('id')
+    const id = c.req.param('id')
     const body = await c.req.json<Partial<CreateEventRequest>>()
     const { name, start_date, end_date } = body
 
-    if (!name && !start_date && !end_date) {
-      return c.json({ error: '수정할 내용을 입력해주세요.' }, 400)
+    const db = c.env.DB
+
+    const result = await db
+      .prepare('UPDATE events SET name = COALESCE(?, name), start_date = COALESCE(?, start_date), end_date = COALESCE(?, end_date), updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+      .bind(name || null, start_date || null, end_date || null, id)
+      .run()
+
+    if (!result.success) {
+      return c.json({ error: '행사를 찾을 수 없습니다.' }, 404)
     }
 
-    // 날짜 유효성 검증
-    if (start_date && end_date) {
-      const startDate = new Date(start_date)
-      const endDate = new Date(end_date)
+    const updatedEvent = await db
+      .prepare('SELECT * FROM events WHERE id = ?')
+      .bind(id)
+      .first()
 
-      if (startDate > endDate) {
-        return c.json({ error: '종료일은 시작일 이후여야 합니다.' }, 400)
-      }
-    }
-
-    const supabase = createSupabaseClient(c.env)
-    const { data, error } = await supabase
-      .from('events')
-      .update({ name, start_date, end_date })
-      .eq('id', eventId)
-      .select()
-      .single()
-
-    if (error || !data) {
-      console.error('Error updating event:', error)
-      return c.json({ error: '행사 수정에 실패했습니다.' }, 500)
-    }
-
-    return c.json({ event: data })
+    return c.json({ event: updatedEvent })
   } catch (error) {
-    console.error('Event update error:', error)
+    console.error('Error updating event:', error)
     return c.json({ error: '행사 수정에 실패했습니다.' }, 500)
   }
 })
@@ -145,66 +144,78 @@ events.put('/:id', adminOnly, async (c) => {
 /**
  * DELETE /api/events/:id
  * 행사 삭제 (관리자 전용)
- * CASCADE로 연결된 부스와 참가자도 함께 삭제됨
  */
-events.delete('/:id', adminOnly, async (c) => {
+events.delete('/:id', authMiddleware, adminOnly, async (c) => {
   try {
-    const eventId = c.req.param('id')
-    const supabase = createSupabaseClient(c.env)
+    const id = c.req.param('id')
+    const db = c.env.DB
 
-    const { error } = await supabase
-      .from('events')
-      .delete()
-      .eq('id', eventId)
+    // 연관된 부스가 있는지 확인
+    const boothCount = await db
+      .prepare('SELECT COUNT(*) as count FROM booths WHERE event_id = ?')
+      .bind(id)
+      .first()
 
-    if (error) {
-      console.error('Error deleting event:', error)
-      return c.json({ error: '행사 삭제에 실패했습니다.' }, 500)
+    if (boothCount && boothCount.count > 0) {
+      return c.json({ 
+        error: '이 행사에 등록된 부스가 있어 삭제할 수 없습니다.',
+        message: '먼저 모든 부스를 삭제해주세요.'
+      }, 400)
+    }
+
+    const result = await db
+      .prepare('DELETE FROM events WHERE id = ?')
+      .bind(id)
+      .run()
+
+    if (!result.success) {
+      return c.json({ error: '행사를 찾을 수 없습니다.' }, 404)
     }
 
     return c.json({ message: '행사가 삭제되었습니다.' })
   } catch (error) {
-    console.error('Event deletion error:', error)
+    console.error('Error deleting event:', error)
     return c.json({ error: '행사 삭제에 실패했습니다.' }, 500)
   }
 })
 
 /**
  * PATCH /api/events/:id/toggle
- * 행사 활성화/비활성화 토글 (관리자 전용)
+ * 행사 활성화/비활성화 (관리자 전용)
  */
-events.patch('/:id/toggle', adminOnly, async (c) => {
+events.patch('/:id/toggle', authMiddleware, adminOnly, async (c) => {
   try {
-    const eventId = c.req.param('id')
-    const supabase = createSupabaseClient(c.env)
+    const id = c.req.param('id')
+    const db = c.env.DB
 
     // 현재 상태 조회
-    const { data: event, error: fetchError } = await supabase
-      .from('events')
-      .select('is_active')
-      .eq('id', eventId)
-      .single()
+    const event = await db
+      .prepare('SELECT is_active FROM events WHERE id = ?')
+      .bind(id)
+      .first()
 
-    if (fetchError || !event) {
+    if (!event) {
       return c.json({ error: '행사를 찾을 수 없습니다.' }, 404)
     }
 
-    // 상태 반전
-    const { data, error } = await supabase
-      .from('events')
-      .update({ is_active: !event.is_active })
-      .eq('id', eventId)
-      .select()
-      .single()
+    const newStatus = event.is_active ? 0 : 1
 
-    if (error) {
-      console.error('Error toggling event:', error)
-      return c.json({ error: '행사 상태 변경에 실패했습니다.' }, 500)
-    }
+    await db
+      .prepare('UPDATE events SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+      .bind(newStatus, id)
+      .run()
 
-    return c.json({ event: data })
+    const updatedEvent = await db
+      .prepare('SELECT * FROM events WHERE id = ?')
+      .bind(id)
+      .first()
+
+    return c.json({ 
+      message: `행사가 ${newStatus ? '활성화' : '비활성화'}되었습니다.`,
+      event: updatedEvent 
+    })
   } catch (error) {
-    console.error('Event toggle error:', error)
+    console.error('Error toggling event:', error)
     return c.json({ error: '행사 상태 변경에 실패했습니다.' }, 500)
   }
 })

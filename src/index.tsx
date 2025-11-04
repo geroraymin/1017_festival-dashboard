@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serveStatic } from 'hono/cloudflare-workers'
-import type { Env } from './lib/supabase'
+import type { Env } from './lib/d1'
 
 // 라우트 임포트
 import auth from './routes/auth'

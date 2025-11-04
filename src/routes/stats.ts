@@ -1,7 +1,6 @@
 import { Hono } from 'hono'
-import { createSupabaseClient, type Env } from '../lib/supabase'
+import { type Env } from '../lib/d1'
 import { authMiddleware, operatorOrAdmin } from '../middlewares/auth'
-import type { BoothStats, EventStats } from '../types/database'
 
 const stats = new Hono<{ Bindings: Env }>()
 
@@ -22,64 +21,94 @@ stats.get('/booth/:booth_id', async (c) => {
       return c.json({ error: '권한이 없습니다.' }, 403)
     }
 
-    const supabase = createSupabaseClient(c.env)
+    const db = c.env.DB
 
     // 부스 정보 조회
-    const { data: booth, error: boothError } = await supabase
-      .from('booths')
-      .select('id, name, booth_code')
-      .eq('id', boothId)
-      .single()
+    const booth = await db
+      .prepare('SELECT id, name, booth_code FROM booths WHERE id = ?')
+      .bind(boothId)
+      .first()
 
-    if (boothError || !booth) {
+    if (!booth) {
       return c.json({ error: '부스를 찾을 수 없습니다.' }, 404)
     }
 
-    // 참가자 데이터 조회
-    const { data: participants, error: participantsError } = await supabase
-      .from('participants')
-      .select('*')
-      .eq('booth_id', boothId)
+    // 총 참가자 수
+    const totalResult = await db
+      .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ?')
+      .bind(boothId)
+      .first()
 
-    if (participantsError) {
-      console.error('Error fetching participants:', participantsError)
-      return c.json({ error: '통계 데이터를 불러오는데 실패했습니다.' }, 500)
-    }
+    // 성별 분포
+    const genderResult = await db
+      .prepare(`
+        SELECT gender, COUNT(*) as count 
+        FROM participants 
+        WHERE booth_id = ? 
+        GROUP BY gender
+      `)
+      .bind(boothId)
+      .all()
 
-    // 통계 계산
-    const totalParticipants = participants?.length || 0
-    
-    const genderDistribution = {
-      '남성': participants?.filter(p => p.gender === '남성').length || 0,
-      '여성': participants?.filter(p => p.gender === '여성').length || 0
-    }
-
-    const gradeDistribution = {
-      '유아': participants?.filter(p => p.grade === '유아').length || 0,
-      '초등': participants?.filter(p => p.grade === '초등').length || 0,
-      '중등': participants?.filter(p => p.grade === '중등').length || 0,
-      '고등': participants?.filter(p => p.grade === '고등').length || 0,
-      '성인': participants?.filter(p => p.grade === '성인').length || 0
-    }
-
-    // 시간대별 분포 (시간별 참가자 수)
-    const hourlyDistribution: Record<string, number> = {}
-    participants?.forEach(p => {
-      const hour = new Date(p.created_at).getHours()
-      const hourKey = `${hour}:00`
-      hourlyDistribution[hourKey] = (hourlyDistribution[hourKey] || 0) + 1
+    const genderDistribution: Record<string, number> = { '남성': 0, '여성': 0 }
+    genderResult.results?.forEach((row: any) => {
+      genderDistribution[row.gender] = row.count
     })
 
-    const boothStats: BoothStats = {
-      booth_id: booth.id,
-      booth_name: booth.name,
-      total_participants: totalParticipants,
-      gender_distribution: genderDistribution,
-      grade_distribution: gradeDistribution,
-      hourly_distribution: hourlyDistribution
-    }
+    // 교급 분포
+    const gradeResult = await db
+      .prepare(`
+        SELECT grade, COUNT(*) as count 
+        FROM participants 
+        WHERE booth_id = ? 
+        GROUP BY grade
+      `)
+      .bind(boothId)
+      .all()
 
-    return c.json({ stats: boothStats })
+    const gradeDistribution: Record<string, number> = {
+      '유아': 0,
+      '초등': 0,
+      '중등': 0,
+      '고등': 0,
+      '성인': 0
+    }
+    gradeResult.results?.forEach((row: any) => {
+      if (row.grade in gradeDistribution) {
+        gradeDistribution[row.grade] = row.count
+      }
+    })
+
+    // 시간대별 분포
+    const hourlyResult = await db
+      .prepare(`
+        SELECT 
+          strftime('%H', created_at) as hour,
+          COUNT(*) as count 
+        FROM participants 
+        WHERE booth_id = ? 
+        GROUP BY hour
+        ORDER BY hour
+      `)
+      .bind(boothId)
+      .all()
+
+    const hourlyDistribution: Record<string, number> = {}
+    hourlyResult.results?.forEach((row: any) => {
+      const hourKey = `${row.hour}:00`
+      hourlyDistribution[hourKey] = row.count
+    })
+
+    return c.json({
+      stats: {
+        booth_id: booth.id,
+        booth_name: booth.name,
+        total_participants: totalResult?.count || 0,
+        gender_distribution: genderDistribution,
+        grade_distribution: gradeDistribution,
+        hourly_distribution: hourlyDistribution
+      }
+    })
   } catch (error) {
     console.error('Booth stats error:', error)
     return c.json({ error: '통계 데이터를 불러오는데 실패했습니다.' }, 500)
@@ -99,165 +128,89 @@ stats.get('/event/:event_id', async (c) => {
     }
 
     const eventId = c.req.param('event_id')
-    const supabase = createSupabaseClient(c.env)
+    const db = c.env.DB
 
     // 행사 정보 조회
-    const { data: event, error: eventError } = await supabase
-      .from('events')
-      .select('id, name')
-      .eq('id', eventId)
-      .single()
+    const event = await db
+      .prepare('SELECT id, name FROM events WHERE id = ?')
+      .bind(eventId)
+      .first()
 
-    if (eventError || !event) {
+    if (!event) {
       return c.json({ error: '행사를 찾을 수 없습니다.' }, 404)
     }
 
     // 행사의 모든 부스 조회
-    const { data: booths, error: boothsError } = await supabase
-      .from('booths')
-      .select('id, name')
-      .eq('event_id', eventId)
+    const boothsResult = await db
+      .prepare('SELECT id, name FROM booths WHERE event_id = ?')
+      .bind(eventId)
+      .all()
 
-    if (boothsError) {
-      console.error('Error fetching booths:', boothsError)
-      return c.json({ error: '통계 데이터를 불러오는데 실패했습니다.' }, 500)
-    }
+    const booths = boothsResult.results || []
 
     // 각 부스별 통계 계산
-    const boothStatsPromises = (booths || []).map(async (booth) => {
-      const { data: participants } = await supabase
-        .from('participants')
-        .select('*')
-        .eq('booth_id', booth.id)
+    const boothsStats = await Promise.all(
+      booths.map(async (booth: any) => {
+        // 총 참가자 수
+        const totalResult = await db
+          .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ?')
+          .bind(booth.id)
+          .first()
 
-      const totalParticipants = participants?.length || 0
-      
-      const genderDistribution = {
-        '남성': participants?.filter(p => p.gender === '남성').length || 0,
-        '여성': participants?.filter(p => p.gender === '여성').length || 0
-      }
+        // 성별 분포
+        const genderResult = await db
+          .prepare('SELECT gender, COUNT(*) as count FROM participants WHERE booth_id = ? GROUP BY gender')
+          .bind(booth.id)
+          .all()
 
-      const gradeDistribution = {
-        '유아': participants?.filter(p => p.grade === '유아').length || 0,
-        '초등': participants?.filter(p => p.grade === '초등').length || 0,
-        '중등': participants?.filter(p => p.grade === '중등').length || 0,
-        '고등': participants?.filter(p => p.grade === '고등').length || 0,
-        '성인': participants?.filter(p => p.grade === '성인').length || 0
-      }
+        const genderDistribution: Record<string, number> = { '남성': 0, '여성': 0 }
+        genderResult.results?.forEach((row: any) => {
+          genderDistribution[row.gender] = row.count
+        })
 
-      const hourlyDistribution: Record<string, number> = {}
-      participants?.forEach(p => {
-        const hour = new Date(p.created_at).getHours()
-        const hourKey = `${hour}:00`
-        hourlyDistribution[hourKey] = (hourlyDistribution[hourKey] || 0) + 1
-      })
+        // 교급 분포
+        const gradeResult = await db
+          .prepare('SELECT grade, COUNT(*) as count FROM participants WHERE booth_id = ? GROUP BY grade')
+          .bind(booth.id)
+          .all()
 
-      return {
-        id: booth.id,
-        name: booth.name,
-        total_participants: totalParticipants,
-        gender_distribution: genderDistribution,
-        grade_distribution: gradeDistribution,
-        hourly_distribution: hourlyDistribution
-      }
-    })
-
-    const boothsStats = await Promise.all(boothStatsPromises)
-    const totalParticipants = boothsStats.reduce((sum, b) => sum + b.total_participants, 0)
-
-    const eventStats: EventStats = {
-      event_id: event.id,
-      event_name: event.name,
-      total_participants: totalParticipants,
-      booth_count: booths?.length || 0,
-      booths: boothsStats
-    }
-
-    return c.json({ stats: eventStats })
-  } catch (error) {
-    console.error('Event stats error:', error)
-    return c.json({ error: '통계 데이터를 불러오는데 실패했습니다.' }, 500)
-  }
-})
-
-/**
- * GET /api/stats/leaderboard/:event_id
- * 행사별 부스 순위 리더보드 (관리자 전용)
- */
-stats.get('/leaderboard/:event_id', async (c) => {
-  try {
-    const user = c.get('user')
-
-    if (user.role !== 'admin') {
-      return c.json({ error: '관리자 권한이 필요합니다.' }, 403)
-    }
-
-    const eventId = c.req.param('event_id')
-    const supabase = createSupabaseClient(c.env)
-
-    // 행사 정보 조회
-    const { data: event, error: eventError } = await supabase
-      .from('events')
-      .select('id, name')
-      .eq('id', eventId)
-      .single()
-
-    if (eventError || !event) {
-      return c.json({ error: '행사를 찾을 수 없습니다.' }, 404)
-    }
-
-    // 행사의 모든 부스와 참가자 수 조회
-    const { data: booths, error: boothsError } = await supabase
-      .from('booths')
-      .select('id, name, booth_code, is_active')
-      .eq('event_id', eventId)
-
-    if (boothsError) {
-      console.error('Error fetching booths:', boothsError)
-      return c.json({ error: '리더보드 데이터를 불러오는데 실패했습니다.' }, 500)
-    }
-
-    // 각 부스별 참가자 수 계산
-    const boothRankings = await Promise.all(
-      (booths || []).map(async (booth) => {
-        const { count } = await supabase
-          .from('participants')
-          .select('*', { count: 'exact', head: true })
-          .eq('booth_id', booth.id)
+        const gradeDistribution: Record<string, number> = {
+          '유아': 0,
+          '초등': 0,
+          '중등': 0,
+          '고등': 0,
+          '성인': 0
+        }
+        gradeResult.results?.forEach((row: any) => {
+          if (row.grade in gradeDistribution) {
+            gradeDistribution[row.grade] = row.count
+          }
+        })
 
         return {
-          booth_id: booth.id,
-          booth_name: booth.name,
-          booth_code: booth.booth_code,
-          is_active: booth.is_active,
-          participant_count: count || 0
+          id: booth.id,
+          name: booth.name,
+          total_participants: totalResult?.count || 0,
+          gender_distribution: genderDistribution,
+          grade_distribution: gradeDistribution
         }
       })
     )
 
-    // 참가자 수 기준 내림차순 정렬
-    boothRankings.sort((a, b) => b.participant_count - a.participant_count)
-
-    // 순위 추가
-    const rankedBooths = boothRankings.map((booth, index) => ({
-      ...booth,
-      rank: index + 1
-    }))
-
-    const totalParticipants = boothRankings.reduce((sum, b) => sum + b.participant_count, 0)
-    const maxParticipants = boothRankings.length > 0 ? boothRankings[0].participant_count : 0
+    const totalParticipants = boothsStats.reduce((sum, b) => sum + b.total_participants, 0)
 
     return c.json({
-      event_id: event.id,
-      event_name: event.name,
-      total_participants: totalParticipants,
-      total_booths: booths?.length || 0,
-      max_participants: maxParticipants,
-      leaderboard: rankedBooths
+      stats: {
+        event_id: event.id,
+        event_name: event.name,
+        total_participants: totalParticipants,
+        booth_count: booths.length,
+        booths: boothsStats
+      }
     })
   } catch (error) {
-    console.error('Leaderboard error:', error)
-    return c.json({ error: '리더보드 데이터를 불러오는데 실패했습니다.' }, 500)
+    console.error('Event stats error:', error)
+    return c.json({ error: '통계 데이터를 불러오는데 실패했습니다.' }, 500)
   }
 })
 
@@ -273,82 +226,56 @@ stats.get('/all', async (c) => {
       return c.json({ error: '관리자 권한이 필요합니다.' }, 403)
     }
 
-    const supabase = createSupabaseClient(c.env)
+    const db = c.env.DB
 
-    // 모든 행사 조회
-    const { data: events, error: eventsError } = await supabase
-      .from('events')
-      .select('id, name')
-      .eq('is_active', true)
+    // 모든 활성 행사 조회
+    const eventsResult = await db
+      .prepare('SELECT id, name FROM events WHERE is_active = 1')
+      .all()
 
-    if (eventsError) {
-      console.error('Error fetching events:', eventsError)
-      return c.json({ error: '통계 데이터를 불러오는데 실패했습니다.' }, 500)
-    }
+    const events = eventsResult.results || []
 
-    // 각 행사별 통계 계산
-    const eventStatsPromises = (events || []).map(async (event) => {
-      const { data: booths } = await supabase
-        .from('booths')
-        .select('id, name')
-        .eq('event_id', event.id)
+    // 각 행사별 통계
+    const eventStats = await Promise.all(
+      events.map(async (event: any) => {
+        // 행사의 부스들
+        const boothsResult = await db
+          .prepare('SELECT id FROM booths WHERE event_id = ?')
+          .bind(event.id)
+          .all()
 
-      const boothStatsPromises = (booths || []).map(async (booth) => {
-        const { data: participants } = await supabase
-          .from('participants')
-          .select('*')
-          .eq('booth_id', booth.id)
+        const boothIds = (boothsResult.results || []).map((b: any) => b.id)
 
-        const totalParticipants = participants?.length || 0
-        
-        const genderDistribution = {
-          '남성': participants?.filter(p => p.gender === '남성').length || 0,
-          '여성': participants?.filter(p => p.gender === '여성').length || 0
+        if (boothIds.length === 0) {
+          return {
+            id: event.id,
+            name: event.name,
+            total_participants: 0,
+            booth_count: 0
+          }
         }
 
-        const gradeDistribution = {
-          '유아': participants?.filter(p => p.grade === '유아').length || 0,
-          '초등': participants?.filter(p => p.grade === '초등').length || 0,
-          '중등': participants?.filter(p => p.grade === '중등').length || 0,
-          '고등': participants?.filter(p => p.grade === '고등').length || 0,
-          '성인': participants?.filter(p => p.grade === '성인').length || 0
-        }
-
-        const hourlyDistribution: Record<string, number> = {}
-        participants?.forEach(p => {
-          const hour = new Date(p.created_at).getHours()
-          const hourKey = `${hour}:00`
-          hourlyDistribution[hourKey] = (hourlyDistribution[hourKey] || 0) + 1
-        })
+        // 참가자 수 (모든 부스 합계)
+        const placeholders = boothIds.map(() => '?').join(',')
+        const totalResult = await db
+          .prepare(`SELECT COUNT(*) as count FROM participants WHERE booth_id IN (${placeholders})`)
+          .bind(...boothIds)
+          .first()
 
         return {
-          id: booth.id,
-          name: booth.name,
-          total_participants: totalParticipants,
-          gender_distribution: genderDistribution,
-          grade_distribution: gradeDistribution,
-          hourly_distribution: hourlyDistribution
+          id: event.id,
+          name: event.name,
+          total_participants: totalResult?.count || 0,
+          booth_count: boothIds.length
         }
       })
+    )
 
-      const boothsStats = await Promise.all(boothStatsPromises)
-      const totalParticipants = boothsStats.reduce((sum, b) => sum + b.total_participants, 0)
+    const grandTotal = eventStats.reduce((sum: number, e: any) => sum + e.total_participants, 0)
 
-      return {
-        id: event.id,
-        name: event.name,
-        total_participants: totalParticipants,
-        booth_count: booths?.length || 0,
-        booths: boothsStats
-      }
-    })
-
-    const allStats = await Promise.all(eventStatsPromises)
-    const grandTotal = allStats.reduce((sum, e) => sum + e.total_participants, 0)
-
-    return c.json({ 
+    return c.json({
       total_participants: grandTotal,
-      events: allStats 
+      events: eventStats
     })
   } catch (error) {
     console.error('All stats error:', error)

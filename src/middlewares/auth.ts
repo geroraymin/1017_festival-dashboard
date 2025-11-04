@@ -1,6 +1,6 @@
 import { Context, Next } from 'hono'
 import { verifyToken, extractToken, JWTPayload } from '../lib/jwt'
-import type { Env } from '../lib/supabase'
+import type { Env } from '../lib/d1'
 
 // Context에 user 정보 추가
 declare module 'hono' {

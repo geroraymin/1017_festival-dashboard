@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
-import { createSupabaseClient, type Env } from '../lib/supabase'
-import { authMiddleware, operatorOrAdmin } from '../middlewares/auth'
-import type { CreateParticipantRequest, Participant } from '../types/database'
+import { type Env, getAll } from '../lib/d1'
+import { authMiddleware, operatorOrAdmin, adminOnly } from '../middlewares/auth'
+import type { CreateParticipantRequest } from '../types/database'
 
 const participants = new Hono<{ Bindings: Env }>()
 
@@ -34,39 +34,31 @@ participants.post('/', async (c) => {
       return c.json({ error: '유효하지 않은 교급입니다.' }, 400)
     }
 
-    const supabase = createSupabaseClient(c.env)
+    const db = c.env.DB
 
     // 부스 존재 및 활성화 상태 확인
-    const { data: booth, error: boothError } = await supabase
-      .from('booths')
-      .select('id, is_active')
-      .eq('id', booth_id)
-      .single()
+    const boothResult = await db
+      .prepare('SELECT id, is_active FROM booths WHERE id = ?')
+      .bind(booth_id)
+      .first()
 
-    if (boothError || !booth) {
+    if (!boothResult) {
       return c.json({ error: '존재하지 않는 부스입니다.' }, 404)
     }
 
-    if (!booth.is_active) {
+    if (!boothResult.is_active) {
       return c.json({ error: '현재 비활성화된 부스입니다.' }, 400)
     }
 
     // 중복 등록 체크 (이름 + 생년월일 + 부스 조합)
-    const { data: existingParticipant, error: checkError } = await supabase
-      .from('participants')
-      .select('id, name, created_at')
-      .eq('booth_id', booth_id)
-      .eq('name', name)
-      .eq('date_of_birth', date_of_birth)
-      .maybeSingle()
+    const existingResult = await db
+      .prepare('SELECT id, name, created_at FROM participants WHERE booth_id = ? AND name = ? AND date_of_birth = ?')
+      .bind(booth_id, name, date_of_birth)
+      .first()
 
-    if (checkError) {
-      console.error('Error checking duplicate:', checkError)
-    }
-
-    if (existingParticipant) {
+    if (existingResult) {
       // 중복 등록 감지 - 이미 등록된 사용자
-      const createdAt = new Date(existingParticipant.created_at)
+      const createdAt = new Date(existingResult.created_at as string)
       const timeDiff = Date.now() - createdAt.getTime()
       const minutesAgo = Math.floor(timeDiff / 60000)
       
@@ -81,37 +73,35 @@ participants.post('/', async (c) => {
       }
       
       return c.json({ 
-        error: `이미 등록된 참가자입니다.\n${existingParticipant.name}님은 ${timeMessage}에 등록하셨습니다.`,
+        error: `이미 등록된 참가자입니다.\n${existingResult.name}님은 ${timeMessage}에 등록하셨습니다.`,
         duplicate: true,
         existing_participant: {
-          name: existingParticipant.name,
-          created_at: existingParticipant.created_at
+          name: existingResult.name,
+          created_at: existingResult.created_at
         }
       }, 409)
     }
 
     // 참가자 등록
-    const { data, error } = await supabase
-      .from('participants')
-      .insert([{
-        booth_id,
-        name,
-        gender,
-        grade,
-        date_of_birth,
-        has_consented
-      }])
-      .select()
-      .single()
+    const insertResult = await db
+      .prepare('INSERT INTO participants (booth_id, name, gender, grade, date_of_birth, has_consented) VALUES (?, ?, ?, ?, ?, ?)')
+      .bind(booth_id, name, gender, grade, date_of_birth, has_consented ? 1 : 0)
+      .run()
 
-    if (error) {
-      console.error('Error creating participant:', error)
+    if (!insertResult.success) {
+      console.error('Error creating participant:', insertResult)
       return c.json({ error: '참가자 등록에 실패했습니다.' }, 500)
     }
 
+    // 방금 등록한 참가자 정보 조회
+    const newParticipant = await db
+      .prepare('SELECT * FROM participants WHERE id = ?')
+      .bind(insertResult.meta.last_row_id)
+      .first()
+
     return c.json({ 
       message: '방명록 작성이 완료되었습니다. 감사합니다!',
-      participant: data 
+      participant: newParticipant 
     }, 201)
   } catch (error) {
     console.error('Participant creation error:', error)
@@ -131,50 +121,95 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
     const limit = parseInt(c.req.query('limit') || '100')
     const offset = parseInt(c.req.query('offset') || '0')
 
-    const supabase = createSupabaseClient(c.env)
+    const db = c.env.DB
     const user = c.get('user')
 
     // 운영자는 자신의 부스 참가자만 조회 가능
     if (user.role === 'operator' && user.booth_id) {
-      const { data, error, count } = await supabase
-        .from('participants')
-        .select('*, booths(name, booth_code)', { count: 'exact' })
-        .eq('booth_id', user.booth_id)
-        .order('created_at', { ascending: false })
-        .range(offset, offset + limit - 1)
+      const participantsResult = await db
+        .prepare(`
+          SELECT p.*, b.name as booth_name, b.booth_code 
+          FROM participants p 
+          LEFT JOIN booths b ON p.booth_id = b.id 
+          WHERE p.booth_id = ? 
+          ORDER BY p.created_at DESC 
+          LIMIT ? OFFSET ?
+        `)
+        .bind(user.booth_id, limit, offset)
+        .all()
 
-      if (error) {
-        console.error('Error fetching participants:', error)
-        return c.json({ error: '참가자 목록을 불러오는데 실패했습니다.' }, 500)
-      }
+      // 전체 카운트
+      const countResult = await db
+        .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ?')
+        .bind(user.booth_id)
+        .first()
 
-      return c.json({ participants: data || [], total: count || 0 })
+      return c.json({
+        participants: participantsResult.results || [],
+        total: countResult?.count || 0,
+        limit,
+        offset
+      })
     }
 
     // 관리자는 모든 참가자 조회 가능
-    let query = supabase
-      .from('participants')
-      .select('*, booths(name, booth_code, event_id)', { count: 'exact' })
-      .order('created_at', { ascending: false })
+    if (user.role === 'admin') {
+      let query = `
+        SELECT p.*, b.name as booth_name, b.booth_code 
+        FROM participants p 
+        LEFT JOIN booths b ON p.booth_id = b.id 
+        WHERE 1=1
+      `
+      const bindings: any[] = []
 
-    if (boothId) {
-      query = query.eq('booth_id', boothId)
+      if (boothId) {
+        query += ' AND p.booth_id = ?'
+        bindings.push(boothId)
+      }
+
+      if (eventId) {
+        query += ' AND b.event_id = ?'
+        bindings.push(eventId)
+      }
+
+      query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?'
+      bindings.push(limit, offset)
+
+      const participantsResult = await db
+        .prepare(query)
+        .bind(...bindings)
+        .all()
+
+      // 전체 카운트
+      let countQuery = 'SELECT COUNT(*) as count FROM participants p LEFT JOIN booths b ON p.booth_id = b.id WHERE 1=1'
+      const countBindings: any[] = []
+
+      if (boothId) {
+        countQuery += ' AND p.booth_id = ?'
+        countBindings.push(boothId)
+      }
+
+      if (eventId) {
+        countQuery += ' AND b.event_id = ?'
+        countBindings.push(eventId)
+      }
+
+      const countResult = await db
+        .prepare(countQuery)
+        .bind(...countBindings)
+        .first()
+
+      return c.json({
+        participants: participantsResult.results || [],
+        total: countResult?.count || 0,
+        limit,
+        offset
+      })
     }
 
-    if (eventId) {
-      query = query.eq('booths.event_id', eventId)
-    }
-
-    const { data, error, count } = await query.range(offset, offset + limit - 1)
-
-    if (error) {
-      console.error('Error fetching participants:', error)
-      return c.json({ error: '참가자 목록을 불러오는데 실패했습니다.' }, 500)
-    }
-
-    return c.json({ participants: data || [], total: count || 0 })
+    return c.json({ error: '권한이 없습니다.' }, 403)
   } catch (error) {
-    console.error('Participants fetch error:', error)
+    console.error('Error fetching participants:', error)
     return c.json({ error: '참가자 목록을 불러오는데 실패했습니다.' }, 500)
   }
 })
@@ -183,30 +218,23 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
  * DELETE /api/participants/:id
  * 참가자 삭제 (관리자 전용)
  */
-participants.delete('/:id', authMiddleware, async (c) => {
+participants.delete('/:id', authMiddleware, adminOnly, async (c) => {
   try {
-    const user = c.get('user')
-    
-    if (user.role !== 'admin') {
-      return c.json({ error: '관리자 권한이 필요합니다.' }, 403)
-    }
+    const id = c.req.param('id')
+    const db = c.env.DB
 
-    const participantId = c.req.param('id')
-    const supabase = createSupabaseClient(c.env)
+    const result = await db
+      .prepare('DELETE FROM participants WHERE id = ?')
+      .bind(id)
+      .run()
 
-    const { error } = await supabase
-      .from('participants')
-      .delete()
-      .eq('id', participantId)
-
-    if (error) {
-      console.error('Error deleting participant:', error)
-      return c.json({ error: '참가자 삭제에 실패했습니다.' }, 500)
+    if (!result.success) {
+      return c.json({ error: '참가자를 찾을 수 없습니다.' }, 404)
     }
 
     return c.json({ message: '참가자가 삭제되었습니다.' })
   } catch (error) {
-    console.error('Participant deletion error:', error)
+    console.error('Error deleting participant:', error)
     return c.json({ error: '참가자 삭제에 실패했습니다.' }, 500)
   }
 })
