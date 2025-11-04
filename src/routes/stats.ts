@@ -228,54 +228,101 @@ stats.get('/all', async (c) => {
 
     const db = c.env.DB
 
-    // 모든 활성 행사 조회
+    // 모든 활성 행사 조회 (is_active = 1)
     const eventsResult = await db
-      .prepare('SELECT id, name FROM events WHERE is_active = 1')
+      .prepare('SELECT id, name, start_date, end_date FROM events WHERE is_active = 1')
       .all()
 
     const events = eventsResult.results || []
 
-    // 각 행사별 통계
+    // 각 행사별 통계 (부스별 상세 포함)
     const eventStats = await Promise.all(
       events.map(async (event: any) => {
-        // 행사의 부스들
+        // 행사의 모든 부스 조회
         const boothsResult = await db
-          .prepare('SELECT id FROM booths WHERE event_id = ?')
+          .prepare('SELECT id, name, booth_code FROM booths WHERE event_id = ?')
           .bind(event.id)
           .all()
 
-        const boothIds = (boothsResult.results || []).map((b: any) => b.id)
+        const booths = boothsResult.results || []
 
-        if (boothIds.length === 0) {
-          return {
-            id: event.id,
-            name: event.name,
-            total_participants: 0,
-            booth_count: 0
-          }
-        }
+        // 각 부스별 통계 계산
+        const boothsStats = await Promise.all(
+          booths.map(async (booth: any) => {
+            // 총 참가자 수
+            const totalResult = await db
+              .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ?')
+              .bind(booth.id)
+              .first()
 
-        // 참가자 수 (모든 부스 합계)
-        const placeholders = boothIds.map(() => '?').join(',')
-        const totalResult = await db
-          .prepare(`SELECT COUNT(*) as count FROM participants WHERE booth_id IN (${placeholders})`)
-          .bind(...boothIds)
-          .first()
+            // 성별 분포
+            const genderResult = await db
+              .prepare('SELECT gender, COUNT(*) as count FROM participants WHERE booth_id = ? GROUP BY gender')
+              .bind(booth.id)
+              .all()
+
+            const genderDistribution: Record<string, number> = { '남성': 0, '여성': 0 }
+            genderResult.results?.forEach((row: any) => {
+              genderDistribution[row.gender] = row.count
+            })
+
+            // 교급 분포
+            const gradeResult = await db
+              .prepare('SELECT grade, COUNT(*) as count FROM participants WHERE booth_id = ? GROUP BY grade')
+              .bind(booth.id)
+              .all()
+
+            const gradeDistribution: Record<string, number> = {
+              '유아': 0,
+              '초등': 0,
+              '중등': 0,
+              '고등': 0,
+              '성인': 0
+            }
+            gradeResult.results?.forEach((row: any) => {
+              if (row.grade in gradeDistribution) {
+                gradeDistribution[row.grade] = row.count
+              }
+            })
+
+            const participantCount = totalResult?.count || 0
+
+            return {
+              id: booth.id,
+              name: booth.name,
+              booth_name: booth.name,
+              booth_code: booth.booth_code,
+              total_participants: participantCount,
+              participant_count: participantCount,  // 프론트엔드 호환성
+              gender_distribution: genderDistribution,
+              grade_distribution: gradeDistribution
+            }
+          })
+        )
+
+        const totalParticipants = boothsStats.reduce((sum, b) => sum + b.total_participants, 0)
 
         return {
           id: event.id,
+          event_id: event.id,  // 프론트엔드 호환성
           name: event.name,
-          total_participants: totalResult?.count || 0,
-          booth_count: boothIds.length
+          event_name: event.name,  // 프론트엔드 호환성
+          start_date: event.start_date,
+          end_date: event.end_date,
+          booth_count: booths.length,
+          booths: boothsStats
         }
       })
     )
 
-    const grandTotal = eventStats.reduce((sum: number, e: any) => sum + e.total_participants, 0)
+    const grandTotal = eventStats.reduce((sum: number, e: any) => sum + e.booth_count, 0)
 
     return c.json({
-      total_participants: grandTotal,
-      events: eventStats
+      events: eventStats,
+      total_participants: eventStats.reduce((sum: number, e: any) => 
+        sum + e.booths.reduce((s: number, b: any) => s + b.total_participants, 0), 0
+      ),
+      total_booths: grandTotal
     })
   } catch (error) {
     console.error('All stats error:', error)
