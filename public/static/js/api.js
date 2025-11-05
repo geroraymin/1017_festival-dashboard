@@ -239,3 +239,16 @@ function checkAuth() {
   
   return true
 }
+
+/**
+ * 이메일 API
+ */
+const EmailAPI = {
+  // CSV를 이메일로 전송
+  sendCSV: (recipient_email) => {
+    return request('/email/send-csv', {
+      method: 'POST',
+      body: JSON.stringify({ recipient_email })
+    })
+  }
+}

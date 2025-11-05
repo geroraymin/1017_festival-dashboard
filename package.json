@@ -15,12 +15,13 @@
   },
   "dependencies": {
     "hono": "^4.10.0",
-    "nanoid": "^5.1.6"
+    "nanoid": "^5.1.6",
+    "resend": "^6.4.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250105.0",
     "@hono/vite-build": "^1.2.0",
     "@hono/vite-dev-server": "^0.18.2",
-    "@cloudflare/workers-types": "^4.20250105.0",
     "typescript": "^5.3.3",
     "vite": "^6.3.5",
     "wrangler": "^4.4.0"

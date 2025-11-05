@@ -90,7 +90,7 @@ export const operatorDashboardPage = `
         </div>
 
         <!-- 액션 버튼 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
             <a href="#" onclick="openGuestbook(); return false;" 
                 class="bg-white hover:bg-gray-50 rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:scale-105">
                 <div>
@@ -111,6 +111,18 @@ export const operatorDashboardPage = `
                         CSV 다운로드
                     </h3>
                     <p class="text-gray-600">참가자 명단 저장</p>
+                </div>
+                <i class="fas fa-chevron-right text-2xl text-gray-400"></i>
+            </button>
+
+            <button onclick="sendCSVEmail()" 
+                class="bg-white hover:bg-gray-50 rounded-xl shadow-lg p-6 flex items-center justify-between transition transform hover:scale-105">
+                <div class="text-left">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-envelope text-blue-500 mr-2"></i>
+                        이메일로 받기
+                    </h3>
+                    <p class="text-gray-600">CSV를 이메일로 전송</p>
                 </div>
                 <i class="fas fa-chevron-right text-2xl text-gray-400"></i>
             </button>
@@ -454,12 +466,13 @@ export const operatorDashboardPage = `
         // CSV 내보내기 (부스 운영자용)
         async function exportBoothCSV() {
             try {
-                // 해당 부스의 참가자 데이터 가져오기
+                // 해당 부스의 참가자 데이터 가져오기 (서버에서 이미 필터링됨)
                 const response = await ParticipantsAPI.getAll()
-                const allParticipants = response.participants
+                const boothParticipants = response.participants || []
                 
-                // 자신의 부스 참가자만 필터링
-                const boothParticipants = allParticipants.filter(p => p.booth_id === boothId)
+                console.log('CSV Export - boothId:', boothId)
+                console.log('CSV Export - participants:', boothParticipants.length)
+                console.log('CSV Export - first participant:', boothParticipants[0])
                 
                 if (boothParticipants.length === 0) {
                     alert('내보낼 참가자 데이터가 없습니다.')
@@ -501,6 +514,30 @@ export const operatorDashboardPage = `
             } catch (error) {
                 console.error('CSV 내보내기 실패:', error)
                 alert('CSV 다운로드에 실패했습니다: ' + error.message)
+            }
+        }
+
+        // 이메일로 CSV 전송
+        async function sendCSVEmail() {
+            // 이메일 주소 입력 받기
+            const email = prompt('CSV를 받을 이메일 주소를 입력하세요:')
+            
+            if (!email) {
+                return // 취소한 경우
+            }
+            
+            // 간단한 이메일 형식 검증
+            if (!email.includes('@') || !email.includes('.')) {
+                alert('유효한 이메일 주소를 입력해주세요.')
+                return
+            }
+            
+            try {
+                const response = await EmailAPI.sendCSV(email)
+                alert(response.message || '이메일이 전송되었습니다!')
+            } catch (error) {
+                console.error('이메일 전송 실패:', error)
+                alert('이메일 전송에 실패했습니다: ' + error.message)
             }
         }
 

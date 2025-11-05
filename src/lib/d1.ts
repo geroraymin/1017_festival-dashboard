@@ -6,6 +6,7 @@ import type { D1Database } from '@cloudflare/workers-types'
 export type Env = {
   DB: D1Database
   JWT_SECRET: string
+  RESEND_API_KEY?: string
 }
 
 /**
