@@ -522,21 +522,28 @@ export const operatorDashboardPage = `
             // 이메일 주소 입력 받기
             const email = prompt('CSV를 받을 이메일 주소를 입력하세요:')
             
+            console.log('📧 이메일 전송 시작 - 입력된 이메일:', email)
+            
             if (!email) {
+                console.log('📧 이메일 전송 취소됨')
                 return // 취소한 경우
             }
             
             // 간단한 이메일 형식 검증
             if (!email.includes('@') || !email.includes('.')) {
+                console.error('📧 이메일 형식 오류:', email)
                 alert('유효한 이메일 주소를 입력해주세요.')
                 return
             }
             
             try {
+                console.log('📧 EmailAPI.sendCSV 호출 중...')
                 const response = await EmailAPI.sendCSV(email)
+                console.log('📧 이메일 전송 성공:', response)
                 alert(response.message || '이메일이 전송되었습니다!')
             } catch (error) {
-                console.error('이메일 전송 실패:', error)
+                console.error('📧 이메일 전송 실패 (catch):', error)
+                console.error('📧 에러 상세:', error.message, error.stack)
                 alert('이메일 전송에 실패했습니다: ' + error.message)
             }
         }

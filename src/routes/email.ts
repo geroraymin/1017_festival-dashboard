@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { Resend } from 'resend'
+import sgMail from '@sendgrid/mail'
 import { type Env } from '../lib/d1'
 import { authMiddleware, operatorOrAdmin } from '../middlewares/auth'
 
@@ -7,7 +7,7 @@ const email = new Hono<{ Bindings: Env }>()
 
 /**
  * POST /api/email/send-csv
- * 부스 참가자 CSV를 이메일로 전송
+ * 부스 참가자 CSV를 이메일로 전송 (SendGrid)
  */
 email.post('/send-csv', authMiddleware, operatorOrAdmin, async (c) => {
   try {
@@ -20,14 +20,16 @@ email.post('/send-csv', authMiddleware, operatorOrAdmin, async (c) => {
       return c.json({ error: '유효한 이메일 주소를 입력해주세요.' }, 400)
     }
 
-    // Resend API 키 확인
-    const resendApiKey = c.env.RESEND_API_KEY
-    if (!resendApiKey) {
-      console.error('RESEND_API_KEY not found in environment')
+    // SendGrid API 키 확인
+    const sendgridApiKey = c.env.SENDGRID_API_KEY
+    if (!sendgridApiKey) {
+      console.error('SENDGRID_API_KEY not found in environment')
       return c.json({ error: '이메일 서비스가 설정되지 않았습니다.' }, 500)
     }
 
-    const resend = new Resend(resendApiKey)
+    // SendGrid 초기화
+    sgMail.setApiKey(sendgridApiKey)
+    
     const db = c.env.DB
 
     // 운영자는 자신의 부스 참가자만 조회 가능
@@ -83,16 +85,16 @@ email.post('/send-csv', authMiddleware, operatorOrAdmin, async (c) => {
     })
 
     // CSV를 Base64로 인코딩
-    const csvBase64 = btoa(unescape(encodeURIComponent(csv)))
+    const csvBase64 = Buffer.from(csv, 'utf-8').toString('base64')
 
     // 현재 날짜
     const today = new Date().toISOString().split('T')[0]
     const filename = `booth_${boothName}_${today}.csv`
 
-    // 이메일 전송
-    const { data, error } = await resend.emails.send({
-      from: 'Guestbook System <onboarding@resend.dev>',
+    // SendGrid로 이메일 전송
+    const msg = {
       to: recipient_email,
+      from: c.env.SENDGRID_FROM_EMAIL || 'noreply@yourdomain.com', // 인증된 발신자 이메일
       subject: `[${boothName}] 참가자 명단`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -116,25 +118,30 @@ email.post('/send-csv', authMiddleware, operatorOrAdmin, async (c) => {
       `,
       attachments: [
         {
-          filename: filename,
           content: csvBase64,
-        },
-      ],
-    })
-
-    if (error) {
-      console.error('Resend API error:', error)
-      return c.json({ error: '이메일 전송에 실패했습니다: ' + error.message }, 500)
+          filename: filename,
+          type: 'text/csv',
+          disposition: 'attachment'
+        }
+      ]
     }
+
+    const response = await sgMail.send(msg)
 
     return c.json({
       success: true,
       message: `${recipient_email}로 ${participants.length}명의 참가자 명단을 전송했습니다.`,
-      email_id: data?.id
+      email_id: response[0].headers['x-message-id']
     })
 
   } catch (error: any) {
     console.error('이메일 전송 실패:', error)
+    
+    // SendGrid 에러 상세 정보
+    if (error.response) {
+      console.error('SendGrid Error Body:', error.response.body)
+    }
+    
     return c.json({ 
       error: '이메일 전송 중 오류가 발생했습니다.',
       details: error.message 

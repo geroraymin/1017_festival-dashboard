@@ -14,9 +14,9 @@
     "git:commit": "git add . && git commit -m"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
     "hono": "^4.10.0",
-    "nanoid": "^5.1.6",
-    "resend": "^6.4.1"
+    "nanoid": "^5.1.6"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250105.0",
