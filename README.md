@@ -11,22 +11,24 @@
 - **역할 기반 접근 제어**: 관리자와 부스 운영자 권한 분리
 - **실시간 통계 대시보드**: 성별, 교급, 시간대별 참가자 현황 실시간 조회
 - **부스 코드 시스템**: 간단한 6자리 코드로 운영자 인증
-- **개인정보 보호**: RLS(Row Level Security) 정책 적용 및 자동 삭제 기능
+- **중복 방문 추적**: 실인원/연인원 분리 집계
+- **데이터 백업**: 원클릭 전체 데이터 백업 (JSON)
 - **엣지 기반 배포**: Cloudflare Workers를 통한 전 세계 빠른 응답 속도
 
 ## 🚀 기술 스택
 
 ### Backend
 - **Hono** - 경량 웹 프레임워크 (Cloudflare Workers 최적화)
-- **Cloudflare D1** - SQLite 기반 엣지 데이터베이스 (메인 데이터베이스)
+- **Cloudflare D1** - SQLite 기반 엣지 데이터베이스
 - **JWT** - 토큰 기반 인증 시스템
 - **Web Crypto API** - 비밀번호 해싱 (PBKDF2)
-- **Resend API** - 이메일 전송 서비스 (CSV 전송용)
+- **SendGrid API** - 이메일 전송 서비스 (CSV 전송용)
 
 ### Frontend
 - **Vanilla JavaScript** - 라이브러리 없이 순수 JavaScript
 - **TailwindCSS** - 유틸리티 우선 CSS 프레임워크
 - **Font Awesome** - 아이콘 라이브러리
+- **Chart.js** - 차트 시각화
 
 ### Deployment
 - **Cloudflare Pages** - 엣지 기반 정적 사이트 호스팅
@@ -49,86 +51,83 @@ webapp/
 │   │   ├── events.ts          # 행사 관리 API
 │   │   ├── booths.ts          # 부스 관리 API
 │   │   ├── participants.ts    # 참가자 API
-│   │   └── stats.ts           # 통계 API
-│   ├── types/
-│   │   └── database.ts        # 타입 정의
+│   │   ├── stats.ts           # 통계 API
+│   │   ├── email.ts           # 이메일 전송 API
+│   │   └── backup.ts          # 데이터 백업 API
 │   └── views/
 │       └── pages.ts           # HTML 페이지 템플릿
 ├── public/
 │   └── static/
 │       └── js/
-│           └── api.js         # 프론트엔드 API 클라이언트
+│           ├── api.js         # 프론트엔드 API 클라이언트
+│           ├── admin-dashboard.js
+│           └── operator-dashboard.js
 ├── migrations/
-│   └── 0001_initial_schema.sql  # D1 데이터베이스 스키마
+│   ├── 0001_initial_schema.sql
+│   └── 0002_add_duplicate_tracking.sql
 ├── .dev.vars                  # 개발 환경 변수
 ├── wrangler.jsonc             # Cloudflare 설정
-├── ecosystem.config.cjs       # PM2 설정
 └── package.json
 ```
 
-## 🎯 핵심 기능 (모두 완료! ✅)
+## 배포 상태
 
-### 1. 인증 시스템
-- ✅ 관리자 로그인 (아이디/비밀번호)
-- ✅ 운영자 로그인 (6자리 부스 코드)
-- ✅ JWT 토큰 기반 세션 관리 (24시간 유효)
+- **플랫폼**: Cloudflare Pages
+- **상태**: ✅ 활성
+- **프로덕션 URL**: https://ae0a53bc.guestbook-system.pages.dev
+- **GitHub**: https://github.com/geroraymin/1017_festival-dashboard
+- **기술 스택**: Hono + TypeScript + TailwindCSS + Cloudflare D1 + SendGrid
+- **최종 업데이트**: 2025-11-06 14:55 KST
 
-### 2. 행사 관리
-- ✅ 행사 생성, 조회, 수정, 삭제
-- ✅ 행사 활성화/비활성화 토글
-- ✅ 행사별 통계 조회
+## 현재 완료된 기능
 
-### 3. 부스 관리
-- ✅ 부스 생성 및 6자리 코드 자동 발급
-- ✅ 부스 정보 수정, 삭제
-- ✅ 부스 코드 재발급
-- ✅ 부스 활성화/비활성화 토글
-- ✅ 부스별 통계 조회
+### 1. ✅ 관리자 대시보드
+   - 전체 통계 조회 (행사별/부스별)
+   - 행사, 부스, 참가자 관리
+   - CSV 내보내기 (전체 데이터)
+   - **데이터 백업 시스템 (JSON 형식)** 🆕
+   - 차트 및 카드 모드 (실시간 통계 모니터링)
+   - 실인원/연인원 집계 시스템
 
-### 4. 참가자 관리
-- ✅ **6단계 방명록 작성 폼** (개인정보 동의 → 이름 → 성별 → 교급 → 생년월일 → 완료)
-- ✅ 참가자 정보 등록 (이름, 성별, 교급, 생년월일)
-- ✅ **성별**: 남성/여성 (기타 제거)
-- ✅ **교급**: 유아/초등/중등/고등/성인/기타
-- ✅ 개인정보 수집 동의 관리
-- ✅ **참가자 검색/필터 기능** (이름, 성별, 교급, 부스)
-- ✅ **CSV 다운로드** (관리자: 전체/필터링, 운영자: 자기 부스만)
-- ✅ **이메일로 CSV 전송** (운영자: 매번 이메일 주소 입력, Resend API)
-- ✅ 참가자 목록 조회 (권한별 필터링)
+### 2. ✅ 부스 운영자 대시보드
+   - 부스 코드 로그인
+   - 실시간 방문자 통계
+   - CSV 내보내기 (본인 부스만)
+   - 이메일 전송 기능 (SendGrid)
+   - 교급별 분포 차트 (5개 교급)
 
-### 5. 통계 및 시각화
-- ✅ 부스별 실시간 통계 (참가자 수, 성별/교급 분포)
-- ✅ 행사별 통계 집계
-- ✅ 전체 통계 대시보드
-- ✅ Chart.js를 사용한 차트 시각화
-  - 성별 분포 도넛 차트 (남성/여성)
-  - 교급 분포 바 차트 (유아/초등/중등/고등/성인/기타)
-- ✅ **스켈레톤 로더** (로딩 상태 UX 개선)
-- ✅ **디스플레이 모드** (외부 모니터/태블릿용 통계 화면)
-  - 가로 모드 전용 3컬럼 레이아웃
-  - 세로 모드 차단 + 회전 경고
-  - 전체화면 버튼 (브라우저 UI 숨김)
-  - 10초마다 자동 새로고침
+### 3. ✅ 방명록 작성 페이지
+   - 6단계 참가자 정보 입력
+   - 중복 방문 감지 (동일인 다른 부스 방문 허용)
+   - 개인정보 동의
+   - 생년월일 3단계 드롭다운 (년/월/일)
 
-### 6. 사용자 인터페이스
-- ✅ 로그인 페이지 (관리자/운영자)
-- ✅ 관리자 대시보드 (행사/부스/참가자 관리)
-- ✅ 운영자 대시보드 (부스 통계, 방명록 작성, CSV 다운로드, 이메일 전송)
-- ✅ 방명록 작성 폼 (6단계 프로세스)
-- ✅ **반응형 디자인** (모바일 카드 뷰)
-- ✅ **페이지 이탈 경고** (작성 중 데이터 손실 방지)
-- ✅ **접근성 개선** (ARIA 라벨, 키보드 네비게이션, WCAG 2.1 AA)
-- ✅ **부스 코드 찾기** (셀프서비스 모달, 관리자 문의 70% 감소)
+### 4. ✅ 중복 방문 추적 시스템
+   - name + date_of_birth 조합으로 실인원 식별
+   - 동일 부스 재방문 차단
+   - 다른 부스 방문 허용 (재방문 메시지 표시)
+   - 실인원/연인원 분리 집계
+   - CSV 내보내기 시 방문형태(첫방문/재방문) 표시
 
-### 7. 사용자 경험 (UX) 개선 🆕
-- ✅ **실시간 검색/필터링** (참가자 목록)
-- ✅ **스켈레톤 로더** (데이터 로딩 상태 표시)
-- ✅ **상세한 에러 메시지** (사용자 친화적 가이드)
-- ✅ **페이지 이탈 경고** (Step 2-5 사이)
-- ✅ **접근성 준수** (스크린 리더, 키보드 네비게이션)
-- ✅ **포커스 인디케이터** (명확한 시각적 피드백)
-- ✅ **생년월일 3단계 드롭다운** (입력 시간 50% 단축, 이탈률 10% 감소)
-- ✅ **부스 코드 찾기 모달** (운영자 셀프서비스, 관리자 전화 문의 70% 감소)
+### 5. ✅ 데이터 백업 시스템 🆕
+   - **원클릭 전체 데이터 백업** (JSON)
+   - 행사, 부스, 참가자, 관리자 정보 포함
+   - 통계 정보 자동 계산 (실인원/연인원)
+   - 타임스탬프 파일명 자동 생성
+   - 상세한 에러 로깅 및 처리
+   - 백업 파일 다운로드
+
+### 6. ✅ 이메일 기능 (SendGrid)
+   - 부스별 CSV 파일 이메일 전송
+   - 무료 플랜: 일 100통, 월 3,000통
+   - 타블렛 환경 지원
+
+### 7. ✅ 통계 및 시각화
+   - 부스별 실시간 통계 (참가자 수, 성별/교급 분포)
+   - 행사별 통계 집계
+   - 전체 통계 대시보드
+   - Chart.js 차트 시각화
+   - 디스플레이 모드 (외부 모니터/태블릿)
 
 ## 🔐 데이터 모델 (Cloudflare D1 - SQLite)
 
@@ -136,79 +135,63 @@ webapp/
 - `id`: INTEGER (Primary Key, AUTOINCREMENT)
 - `username`: 아이디
 - `password_hash`: 비밀번호 해시 (PBKDF2)
-- `created_at`: 생성일시 (DATETIME)
+- `created_at`: 생성일시
 
 ### events (행사)
 - `id`: INTEGER (Primary Key, AUTOINCREMENT)
 - `name`: 행사명
-- `start_date`: 시작일 (DATE)
-- `end_date`: 종료일 (DATE)
-- `is_active`: 활성화 여부 (INTEGER: 1/0)
-- `created_at`: 생성일시 (DATETIME)
-- `updated_at`: 수정일시 (DATETIME)
+- `start_date`: 시작일
+- `end_date`: 종료일
+- `is_active`: 활성화 여부
+- `created_at`, `updated_at`: 생성/수정일시
 
 ### booths (부스)
 - `id`: INTEGER (Primary Key, AUTOINCREMENT)
 - `event_id`: 행사 ID (Foreign Key)
 - `name`: 부스명
-- `booth_code`: 부스 코드 (6자리 영숫자, UNIQUE)
+- `booth_code`: 부스 코드 (6자리, UNIQUE)
 - `description`: 설명
-- `is_active`: 활성화 여부 (INTEGER: 1/0)
-- `created_at`: 생성일시 (DATETIME)
-- `updated_at`: 수정일시 (DATETIME)
+- `is_active`: 활성화 여부
+- `created_at`, `updated_at`: 생성/수정일시
 
 ### participants (참가자)
 - `id`: INTEGER (Primary Key, AUTOINCREMENT)
 - `booth_id`: 부스 ID (Foreign Key)
 - `name`: 이름
-- `gender`: 성별 (**남성/여성**)
-- `grade`: 교급 (**유아/초등/중등/고등/성인**)
-- `date_of_birth`: 생년월일 (DATE)
-- `has_consented`: 개인정보 동의 여부 (INTEGER: 1/0)
-- `created_at`: 등록일시 (DATETIME)
+- `gender`: 성별 (남성/여성)
+- `grade`: 교급 (유아/초등/중등/고등/성인)
+- `date_of_birth`: 생년월일
+- `has_consented`: 개인정보 동의 여부
+- `is_duplicate`: 중복 방문 여부 (0=첫방문, 1=재방문)
+- `created_at`: 등록일시
 
-## 🌐 API 엔드포인트
+## 🌐 주요 API 엔드포인트
 
 ### 인증 (Authentication)
 - `POST /api/auth/admin` - 관리자 로그인
 - `POST /api/auth/operator` - 운영자 로그인 (부스 코드)
-- `POST /api/auth/verify` - 토큰 검증
-
-### 행사 (Events)
-- `GET /api/events` - 행사 목록 조회
-- `GET /api/events/:id` - 행사 상세 조회
-- `POST /api/events` - 행사 생성 (관리자)
-- `PUT /api/events/:id` - 행사 수정 (관리자)
-- `DELETE /api/events/:id` - 행사 삭제 (관리자)
-- `PATCH /api/events/:id/toggle` - 행사 활성화/비활성화 (관리자)
-
-### 부스 (Booths)
-- `GET /api/booths?event_id=<id>` - 부스 목록 조회
-- `GET /api/booths/:id` - 부스 상세 조회
-- `GET /api/booths/:id/public-stats` - 부스 공개 통계 (인증 불필요)
-- `POST /api/booths/find-code` - 부스 코드 찾기 (인증 불필요) 🆕
-- `POST /api/booths` - 부스 생성 (관리자)
-- `PUT /api/booths/:id` - 부스 수정 (관리자)
-- `DELETE /api/booths/:id` - 부스 삭제 (관리자)
-- `POST /api/booths/:id/regenerate-code` - 부스 코드 재발급 (관리자)
-- `PATCH /api/booths/:id/toggle` - 부스 활성화/비활성화 (관리자)
 
 ### 참가자 (Participants)
 - `POST /api/participants` - 참가자 등록 (인증 불필요)
 - `GET /api/participants` - 참가자 목록 조회 (인증 필요)
-- `DELETE /api/participants/:id` - 참가자 삭제 (관리자)
 
 ### 통계 (Statistics)
-- `GET /api/stats/booth/:booth_id` - 부스별 통계 (인증 필요)
-- `GET /api/stats/event/:event_id` - 행사별 통계 (관리자)
-- `GET /api/stats/all` - 전체 통계 (관리자)
-- `GET /api/public/stats/booth/:booth_id` - 부스 공개 통계 (인증 불필요, 디스플레이용) 🆕
+- `GET /api/stats/booth/:booth_id` - 부스별 통계
+- `GET /api/stats/event/:event_id` - 행사별 통계
+- `GET /api/stats/all` - 전체 통계
+
+### 이메일 (Email)
+- `POST /api/email/send-csv` - CSV 파일 이메일 전송
+
+### 백업 (Backup) 🆕
+- `GET /api/backup/export` - 전체 데이터 백업 (JSON)
+- `POST /api/backup/import` - 백업 데이터 복원
 
 ## 🛠️ 설치 및 실행
 
 ### 1. 프로젝트 클론
 ```bash
-git clone <repository-url>
+git clone https://github.com/geroraymin/1017_festival-dashboard.git
 cd webapp
 ```
 
@@ -218,93 +201,52 @@ npm install
 ```
 
 ### 3. 환경 변수 설정
-`.dev.vars` 파일을 생성하고 다음 내용을 입력:
-
+`.dev.vars` 파일 생성:
 ```bash
-# JWT 시크릿 (32자 이상)
 JWT_SECRET=your-super-secret-jwt-key-change-this
+SENDGRID_API_KEY=your-sendgrid-api-key
+SENDGRID_FROM_EMAIL=noreply@yourdomain.com
 ```
 
 ### 4. D1 데이터베이스 설정 (로컬)
 ```bash
 # 마이그레이션 적용
 npx wrangler d1 migrations apply guestbook-production --local
-
-# 테스트 데이터 삽입
-npx wrangler d1 execute guestbook-production --local --file=./seed.sql
 ```
 
-### 5. 빌드
+### 5. 빌드 및 실행
 ```bash
+# 빌드
 npm run build
-```
 
-### 6. 개발 서버 실행
-```bash
-# PM2로 서비스 시작 (샌드박스 환경, 권장)
+# PM2로 서비스 시작
 pm2 start ecosystem.config.cjs
 
-# 상태 확인
-pm2 list
+# 로그 확인
 pm2 logs webapp --nostream
-
-# 재시작
-fuser -k 3000/tcp 2>/dev/null || true
-pm2 restart webapp
 ```
 
-### 7. 서비스 접속
-- **Production**: https://guestbook-system.pages.dev
+### 6. 서비스 접속
 - **로컬**: http://localhost:3000
-- **디스플레이 모드**: https://guestbook-system.pages.dev/display?booth_id=1
+- **프로덕션**: https://ae0a53bc.guestbook-system.pages.dev
 
 ## 📦 배포 (Cloudflare Pages)
 
-### 1. Cloudflare API 키 설정
+### 1. D1 프로덕션 데이터베이스 생성
 ```bash
-# Cloudflare 인증 (대화형)
-wrangler login
-
-# 또는 API 토큰 사용
-export CLOUDFLARE_API_TOKEN=your-api-token
-```
-
-### 2. D1 프로덕션 데이터베이스 생성
-```bash
-# 데이터베이스 생성
 npx wrangler d1 create guestbook-production
-
-# wrangler.jsonc에 database_id 업데이트
-# 마이그레이션 적용
 npx wrangler d1 migrations apply guestbook-production --remote
 ```
 
-### 3. Cloudflare Pages 프로젝트 생성
-```bash
-npx wrangler pages project create guestbook-system --production-branch main
-```
+### 2. 환경 변수 설정 (Cloudflare Dashboard)
+- `JWT_SECRET`
+- `SENDGRID_API_KEY`
+- `SENDGRID_FROM_EMAIL`
 
-### 4. 환경 변수 설정
-Cloudflare Dashboard에서 프로젝트 설정 → Environment variables에 다음을 추가:
-- `JWT_SECRET` (32자 이상의 랜덤 문자열)
-
-### 5. 배포
+### 3. 배포
 ```bash
-# 빌드 후 배포
 npm run build
 npx wrangler pages deploy dist --project-name guestbook-system
-
-# 또는 한 줄로
-npm run deploy:prod
-```
-
-### 6. 배포 확인
-```bash
-# 데이터베이스 상태 확인
-npx wrangler d1 execute guestbook-production --remote --command="SELECT COUNT(*) as admin_count FROM admins;"
-
-# 프로덕션 URL 접속
-curl https://guestbook-system.pages.dev/api/events
 ```
 
 ## 🔒 보안
@@ -315,79 +257,44 @@ curl https://guestbook-system.pages.dev/api/events
 - **CORS**: API 엔드포인트에 CORS 설정 적용
 - **SQL Injection 방지**: 파라미터화된 쿼리 사용
 
-## 📊 현재 상태 (2025-11-04)
+## 📊 사용 가이드
 
-### ✅ 완료된 기능 (프로덕션 배포 완료! 🎉)
-- **전체 시스템 Cloudflare D1으로 마이그레이션 완료**
-  - Supabase (PostgreSQL UUID) → D1 (SQLite INTEGER AUTOINCREMENT)
-  - 스키마, 데이터 타입, 비밀번호 해싱 방식 전환
-  - 통합 단일 플랫폼 아키텍처 (Cloudflare Pages + Workers + D1)
-  
-- **프로덕션 환경 배포**
-  - Production URL: https://guestbook-system.pages.dev
-  - D1 Database ID: d95d9a6a-d558-4ddc-8a2c-d7a8fd822acf
-  - 모든 샘플/테스트 데이터 삭제 완료
-  - 관리자 계정만 남은 깨끗한 상태
+### 관리자
+1. `/admin`에서 로그인
+2. 행사 및 부스 생성
+3. 대시보드에서 실시간 통계 확인
+4. CSV 다운로드 또는 데이터 백업
 
-- **코드 정리 및 최적화 완료**
-  - 사용하지 않는 Supabase 코드 및 의존성 제거 (~50KB 번들 크기 감소)
-  - 프로덕션 debug console.log 24개 제거
-  - .dev.vars 환경 변수 정리
-  - TypeScript 타입 import 수정 (jwt.ts)
+### 부스 운영자
+1. `/operator`에서 부스 코드로 로그인
+2. 방명록 작성 페이지로 이동
+3. 참가자 정보 입력
+4. 통계 확인 및 CSV/이메일 전송
 
-- **모든 핵심 기능 구현 완료**
-  - Phase 1-1: 생년월일 3단계 드롭다운 UX 개선 ✅
-  - Phase 1-2: 부스 코드 찾기 셀프서비스 기능 ✅
-  - 디스플레이 모드: 외부 모니터/태블릿용 통계 화면 ✅
-    - 가로모드 3컬럼 레이아웃 (Flexbox)
-    - 세로모드 차단 + 회전 경고
-    - 전체화면 버튼 (브라우저 UI 숨김)
-    - 10초마다 자동 새로고침
-  
-- **버그 수정 완료**
-  - 관리자 대시보드 데이터 표시 버그 수정
-  - 통계 차트 렌더링 문제 해결
-  - 행사 필터 타입 불일치 수정
-  - 관리자 로그인 인증 실패 문제 해결
-  - CSV 다운로드 전역 함수 노출 문제 해결
-  - CSV 다운로드 null 참조 에러 해결
+### 참가자
+1. 태블릿에서 방명록 작성 페이지 접속
+2. 6단계 정보 입력
+3. 개인정보 동의 후 제출
 
-- **신규 기능 추가**
-  - 부스 운영자 CSV 다운로드 기능 (자기 부스 참가자만)
-  - 이메일로 CSV 전송 기능 (Resend API 연동, 태블릿 환경 지원)
+## 추천 다음 단계
 
-- **행사 사용 준비 완료**
-  - 데이터베이스 깨끗한 상태
-  - 프로덕션 배포 안정화
-  - 모든 기능 테스트 완료
-  - 프로덕션 코드 최적화 완료
+1. **백업 복원 기능 (선택사항)**
+   - 백업 파일 업로드 UI
+   - 데이터 복원 기능
+   - 복원 전 데이터 검증
 
-### 🔄 다음 단계
-- **Phase 1-3**: 오프라인 모드 (PWA + IndexedDB)
-- **Phase 2-1**: 중복 등록 방지 (이미 구현됨, UI 개선 필요)
-- **Phase 2-2**: 부스 순위/리더보드
-- **Phase 2-3**: 관리자 필터 UI 개선 (이미 구현됨)
+2. **데이터 분석 기능 강화**
+   - 시간대별 방문자 추이 분석
+   - 교급-성별 교차 분석
+   - 부스별 인기도 분석
 
-### 📈 향후 계획
+3. **알림 시스템**
+   - 목표 달성 알림 (100명, 200명 등)
+   - 이상 패턴 감지
 
-#### Phase 1 (긴급 개선사항)
-1. ✅ ~~생년월일 입력 UX 개선~~ (완료 - 3단계 드롭다운)
-2. ✅ ~~부스 코드 찾기 기능~~ (완료 - 셀프서비스 모달)
-3. ⏳ **오프라인 모드** - PWA + IndexedDB 동기화
-
-#### Phase 2 (중요 기능)
-4. ⏳ **중복 등록 방지** - 이름 + 생년월일 조합 검증
-5. ⏳ **부스 순위/리더보드** - 실시간 참가자 수 기준 순위
-6. ⏳ **관리자 필터 UI 개선** - 드롭다운 → 선택형 버튼
-
-#### Phase 3 (UX 강화)
-7. ⏳ **실시간 업데이트** - Supabase Realtime 연동
-8. ⏳ **데이터 자동 삭제** - 90일 후 개인정보 자동 파기
-9. ⏳ **다국어 지원** - 영어, 일본어 등 추가
-
-#### Phase 4 (미래 기능)
-10. ⏳ **브라우저 자동화 테스트** - Playwright/Cypress 도입
-11. ⏳ **고급 통계 대시보드** - 시간대별, 일별 트렌드 분석
+4. **QR 코드 체크인**
+   - 빠른 방문자 등록
+   - 모바일 최적화
 
 ## 📄 라이선스
 
