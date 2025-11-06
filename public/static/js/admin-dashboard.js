@@ -86,24 +86,31 @@ async function loadOverview() {
         }
 
         // 총 참가자 계산 (필터링된 행사 기준)
-        let totalParticipants = 0
+        let totalParticipants = 0  // 연인원
+        let uniqueParticipants = 0  // 실인원
         
         filteredEvents.forEach((event, eventIndex) => {
             
             if (event.booths) {
                 event.booths.forEach((booth, boothIndex) => {
-                    // total_participants 또는 participant_count 사용
+                    // 연인원 (total_participants)
                     const count = booth.total_participants || booth.participant_count || 0
-                    
                     totalParticipants += count
+                    
+                    // 실인원 (unique_participants)
+                    const uniqueCount = booth.unique_participants || count  // fallback: unique가 없으면 total 사용
+                    uniqueParticipants += uniqueCount
                 })
             }
         })
         
         
         // Fallback: NaN이면 0으로 표시
-        const displayValue = isNaN(totalParticipants) ? 0 : totalParticipants
-        document.getElementById('totalParticipants').textContent = displayValue
+        const displayTotal = isNaN(totalParticipants) ? 0 : totalParticipants
+        const displayUnique = isNaN(uniqueParticipants) ? 0 : uniqueParticipants
+        
+        document.getElementById('totalParticipants').textContent = displayTotal
+        document.getElementById('uniqueParticipants').textContent = displayUnique
 
         // 행사 및 부스 수 (필터링된 기준)
         document.getElementById('totalEvents').textContent = filteredEvents.length
@@ -809,12 +816,13 @@ function exportCSV() {
         })
     }
 
-    // CSV 헤더 (UTF-8 BOM 추가)
-    let csv = '\uFEFF이름,성별,교급,생년월일,부스명,등록일시\n'
+    // CSV 헤더 (UTF-8 BOM 추가 + 중복방문 컬럼)
+    let csv = '\uFEFF이름,성별,교급,생년월일,부스명,등록일시,방문형태\n'
 
     // CSV 데이터
     participantsToExport.forEach(p => {
-        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booth_name || '-'},${formatDateTime(p.created_at)}\n`
+        const visitType = p.is_duplicate === 1 ? '재방문' : '첫방문'
+        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booth_name || '-'},${formatDateTime(p.created_at)},${visitType}\n`
     })
 
     // 다운로드
@@ -1698,12 +1706,32 @@ function renderBoothCards(event) {
         const totalGender = maleCount + femaleCount
         const genderRatio = totalGender > 0 ? `${Math.round(maleCount/totalGender*100)}% / ${Math.round(femaleCount/totalGender*100)}%` : '-'
         
-        // 최다 교급
+        // 교급 분포
         const gradeDist = booth.grade_distribution || {}
-        const gradeEntries = Object.entries(gradeDist)
-        const topGrade = gradeEntries.length > 0 
-            ? gradeEntries.reduce((max, curr) => curr[1] > max[1] ? curr : max, gradeEntries[0])[0]
-            : '-'
+        const gradeLabels = ['유아', '초등', '중등', '고등', '성인']
+        const gradeIcons = {
+            '유아': 'fa-baby',
+            '초등': 'fa-child',
+            '중등': 'fa-user-graduate',
+            '고등': 'fa-user-tie',
+            '성인': 'fa-user'
+        }
+        
+        // 교급별 카드 HTML 생성
+        const gradeCards = gradeLabels.map(grade => {
+            const count = gradeDist[grade] || 0
+            const icon = gradeIcons[grade] || 'fa-user'
+            const percentage = participantCount > 0 ? Math.round(count / participantCount * 100) : 0
+            
+            return `
+                <div class="text-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fas ${icon} text-lg text-gray-600 mb-1"></i>
+                    <div class="text-xs text-gray-500">${grade}</div>
+                    <div class="text-sm font-bold text-gray-800">${count}명</div>
+                    <div class="text-xs text-gray-400">${percentage}%</div>
+                </div>
+            `
+        }).join('')
         
         return `
             <div class="bg-white rounded-xl shadow-2xl p-6 border-t-4 border-${color.bg.replace('bg-', '')} transform transition hover:scale-105 hover:shadow-3xl">
@@ -1715,14 +1743,22 @@ function renderBoothCards(event) {
                     </div>
                 </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-3 line-clamp-2">${boothName}</h3>
-                <div class="space-y-2 text-sm">
-                    <div class="flex items-center justify-between text-gray-600">
+                
+                <!-- 성별 분포 -->
+                <div class="mb-3 pb-3 border-b border-gray-200">
+                    <div class="flex items-center justify-between text-sm text-gray-600">
                         <span><i class="fas fa-venus-mars mr-1"></i>성별</span>
                         <span class="font-semibold">${genderRatio}</span>
                     </div>
-                    <div class="flex items-center justify-between text-gray-600">
-                        <span><i class="fas fa-graduation-cap mr-1"></i>최다 교급</span>
-                        <span class="font-semibold">${topGrade}</span>
+                </div>
+                
+                <!-- 교급 분포 카드 -->
+                <div class="space-y-2">
+                    <div class="text-xs font-medium text-gray-700 flex items-center">
+                        <i class="fas fa-graduation-cap mr-1"></i>교급 분포
+                    </div>
+                    <div class="grid grid-cols-5 gap-1">
+                        ${gradeCards}
                     </div>
                 </div>
             </div>

@@ -83,8 +83,20 @@ export const operatorDashboardPage = `
                     </div>
                 </div>
                 <div class="text-right">
-                    <div class="text-5xl font-bold mb-2" id="totalParticipants">0</div>
-                    <div class="text-teal-100">총 참가자</div>
+                    <div class="flex items-baseline justify-end space-x-3 mb-2">
+                        <div>
+                            <div class="text-5xl font-bold" id="totalParticipants">0</div>
+                            <div class="text-teal-100 text-sm">연인원</div>
+                        </div>
+                        <div class="text-white/60">/</div>
+                        <div>
+                            <div class="text-3xl font-bold" id="uniqueParticipants">0</div>
+                            <div class="text-teal-100 text-xs">실인원</div>
+                        </div>
+                    </div>
+                    <div class="text-teal-100 text-sm">
+                        <span id="duplicateVisits">0</span>명 중복 방문
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,53 +165,115 @@ export const operatorDashboardPage = `
         </div>
 
         <!-- 통계 카드 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="statsCards">
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <i class="fas fa-mars text-3xl text-blue-500"></i>
-                    <span class="text-3xl font-bold text-gray-800" id="maleCount">0</span>
+        <!-- 성별 카드 -->
+        <div class="mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-3">
+                <i class="fas fa-venus-mars text-teal-500 mr-2"></i>
+                성별 분포
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-mars text-3xl text-blue-500"></i>
+                        <span class="text-3xl font-bold text-gray-800" id="maleCount">0</span>
+                    </div>
+                    <h3 class="text-gray-600 font-medium">남성</h3>
                 </div>
-                <h3 class="text-gray-600 font-medium">남성</h3>
-            </div>
 
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <i class="fas fa-venus text-3xl text-pink-500"></i>
-                    <span class="text-3xl font-bold text-gray-800" id="femaleCount">0</span>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-venus text-3xl text-pink-500"></i>
+                        <span class="text-3xl font-bold text-gray-800" id="femaleCount">0</span>
+                    </div>
+                    <h3 class="text-gray-600 font-medium">여성</h3>
                 </div>
-                <h3 class="text-gray-600 font-medium">여성</h3>
             </div>
+        </div>
 
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <i class="fas fa-baby text-3xl text-yellow-500"></i>
-                    <span class="text-3xl font-bold text-gray-800" id="infantCount">0</span>
+        <!-- 교급 카드 -->
+        <div class="mb-8">
+            <h3 class="text-lg font-bold text-gray-800 mb-3">
+                <i class="fas fa-graduation-cap text-purple-500 mr-2"></i>
+                교급 분포
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" id="statsCards">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-baby text-3xl text-yellow-500"></i>
+                        <span class="text-3xl font-bold text-gray-800" id="infantCount">0</span>
+                    </div>
+                    <h3 class="text-gray-600 font-medium">유아</h3>
                 </div>
-                <h3 class="text-gray-600 font-medium">유아</h3>
-            </div>
 
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <i class="fas fa-user-tie text-3xl text-indigo-500"></i>
-                    <span class="text-3xl font-bold text-gray-800" id="adultCount">0</span>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-child text-3xl text-green-500"></i>
+                        <span class="text-3xl font-bold text-gray-800" id="elementaryCount">0</span>
+                    </div>
+                    <h3 class="text-gray-600 font-medium">초등</h3>
                 </div>
-                <h3 class="text-gray-600 font-medium">성인</h3>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-user-graduate text-3xl text-blue-500"></i>
+                        <span class="text-3xl font-bold text-gray-800" id="middleCount">0</span>
+                    </div>
+                    <h3 class="text-gray-600 font-medium">중등</h3>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-user-tie text-3xl text-purple-500"></i>
+                        <span class="text-3xl font-bold text-gray-800" id="highCount">0</span>
+                    </div>
+                    <h3 class="text-gray-600 font-medium">고등</h3>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <i class="fas fa-user text-3xl text-indigo-500"></i>
+                        <span class="text-3xl font-bold text-gray-800" id="adultCount">0</span>
+                    </div>
+                    <h3 class="text-gray-600 font-medium">성인</h3>
+                </div>
             </div>
         </div>
 
         <!-- 로딩 스켈레톤 (초기 상태) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 hidden" id="statsCardsLoading">
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="skeleton skeleton-card"></div>
+        <div class="hidden" id="statsCardsLoading">
+            <!-- 성별 로딩 -->
+            <div class="mb-6">
+                <div class="skeleton skeleton-text w-32 mb-3"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                </div>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="skeleton skeleton-card"></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="skeleton skeleton-card"></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <div class="skeleton skeleton-card"></div>
+            
+            <!-- 교급 로딩 -->
+            <div class="mb-8">
+                <div class="skeleton skeleton-text w-32 mb-3"></div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -286,12 +360,12 @@ export const operatorDashboardPage = `
 
         // 로딩 상태 토글
         function showLoading() {
-            document.getElementById('statsCards').classList.add('hidden')
+            document.getElementById('statsCards').parentElement.classList.add('hidden')
             document.getElementById('statsCardsLoading').classList.remove('hidden')
         }
 
         function hideLoading() {
-            document.getElementById('statsCards').classList.remove('hidden')
+            document.getElementById('statsCards').parentElement.classList.remove('hidden')
             document.getElementById('statsCardsLoading').classList.add('hidden')
         }
 
@@ -321,15 +395,24 @@ export const operatorDashboardPage = `
                 const response = await StatsAPI.getBooth(boothId)
                 const stats = response.stats
 
-                // 총 참가자
+                // 연인원 (총 방문 수)
                 document.getElementById('totalParticipants').textContent = stats.total_participants
+                
+                // 실인원 (고유 참가자)
+                document.getElementById('uniqueParticipants').textContent = stats.unique_participants || stats.total_participants
+                
+                // 중복 방문 수
+                document.getElementById('duplicateVisits').textContent = stats.duplicate_visits || 0
 
                 // 성별 통계
                 document.getElementById('maleCount').textContent = stats.gender_distribution['남성'] || 0
                 document.getElementById('femaleCount').textContent = stats.gender_distribution['여성'] || 0
 
-                // 교급 통계
+                // 교급 통계 (모든 학년)
                 document.getElementById('infantCount').textContent = stats.grade_distribution['유아'] || 0
+                document.getElementById('elementaryCount').textContent = stats.grade_distribution['초등'] || 0
+                document.getElementById('middleCount').textContent = stats.grade_distribution['중등'] || 0
+                document.getElementById('highCount').textContent = stats.grade_distribution['고등'] || 0
                 document.getElementById('adultCount').textContent = stats.grade_distribution['성인'] || 0
 
                 // 차트 업데이트
@@ -479,8 +562,8 @@ export const operatorDashboardPage = `
                     return
                 }
                 
-                // CSV 헤더 (UTF-8 BOM 추가)
-                let csv = '\\uFEFF이름,성별,교급,생년월일,등록일시\\n'
+                // CSV 헤더 (UTF-8 BOM 추가 + 중복방문 컬럼)
+                let csv = '\\uFEFF이름,성별,교급,생년월일,등록일시,방문형태\\n'
                 
                 // CSV 데이터 (부스명 제외 - 자신의 부스니까 불필요)
                 boothParticipants.forEach(p => {
@@ -492,7 +575,8 @@ export const operatorDashboardPage = `
                         minute: '2-digit',
                         second: '2-digit'
                     })
-                    csv += \`\${p.name},\${p.gender},\${p.grade},\${p.date_of_birth},\${createdAt}\\n\`
+                    const visitType = p.is_duplicate === 1 ? '재방문' : '첫방문'
+                    csv += \`\${p.name},\${p.gender},\${p.grade},\${p.date_of_birth},\${createdAt},\${visitType}\\n\`
                 })
                 
                 // 다운로드

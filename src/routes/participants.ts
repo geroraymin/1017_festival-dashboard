@@ -50,15 +50,15 @@ participants.post('/', async (c) => {
       return c.json({ error: '현재 비활성화된 부스입니다.' }, 400)
     }
 
-    // 중복 등록 체크 (이름 + 생년월일 + 부스 조합)
-    const existingResult = await db
+    // 동일 부스 중복 등록 체크 (이름 + 생년월일 + 부스 조합)
+    const sameBoothCheck = await db
       .prepare('SELECT id, name, created_at FROM participants WHERE booth_id = ? AND name = ? AND date_of_birth = ?')
       .bind(booth_id, name, date_of_birth)
       .first()
 
-    if (existingResult) {
-      // 중복 등록 감지 - 이미 등록된 사용자
-      const createdAt = new Date(existingResult.created_at as string)
+    if (sameBoothCheck) {
+      // 동일 부스 중복 등록 감지 - 차단
+      const createdAt = new Date(sameBoothCheck.created_at as string)
       const timeDiff = Date.now() - createdAt.getTime()
       const minutesAgo = Math.floor(timeDiff / 60000)
       
@@ -73,19 +73,35 @@ participants.post('/', async (c) => {
       }
       
       return c.json({ 
-        error: `이미 등록된 참가자입니다.\n${existingResult.name}님은 ${timeMessage}에 등록하셨습니다.`,
+        error: `이미 등록된 참가자입니다.\n${sameBoothCheck.name}님은 ${timeMessage}에 등록하셨습니다.`,
         duplicate: true,
         existing_participant: {
-          name: existingResult.name,
-          created_at: existingResult.created_at
+          name: sameBoothCheck.name,
+          created_at: sameBoothCheck.created_at
         }
       }, 409)
     }
 
-    // 참가자 등록
+    // 다른 부스 방문 이력 확인 (실인원 vs 연인원 체크용)
+    const previousVisit = await db
+      .prepare(`
+        SELECT p.id, p.name, p.created_at, b.name as booth_name, b.id as previous_booth_id
+        FROM participants p
+        LEFT JOIN booths b ON p.booth_id = b.id
+        WHERE p.name = ? AND p.date_of_birth = ? AND p.booth_id != ?
+        ORDER BY p.created_at DESC
+        LIMIT 1
+      `)
+      .bind(name, date_of_birth, booth_id)
+      .first()
+
+    // is_duplicate 플래그 결정 (이전 방문 이력이 있으면 1, 없으면 0)
+    const isDuplicate = previousVisit ? 1 : 0
+
+    // 참가자 등록 (is_duplicate 플래그 포함)
     const insertResult = await db
-      .prepare('INSERT INTO participants (booth_id, name, gender, grade, date_of_birth, has_consented) VALUES (?, ?, ?, ?, ?, ?)')
-      .bind(booth_id, name, gender, grade, date_of_birth, has_consented ? 1 : 0)
+      .prepare('INSERT INTO participants (booth_id, name, gender, grade, date_of_birth, has_consented, is_duplicate) VALUES (?, ?, ?, ?, ?, ?, ?)')
+      .bind(booth_id, name, gender, grade, date_of_birth, has_consented ? 1 : 0, isDuplicate)
       .run()
 
     if (!insertResult.success) {
@@ -99,9 +115,35 @@ participants.post('/', async (c) => {
       .bind(insertResult.meta.last_row_id)
       .first()
 
+    // 응답 메시지 구성 (재방문자 환영 메시지)
+    let message = '방명록 작성이 완료되었습니다. 감사합니다!'
+    let isRevisit = false
+    let previousBoothName = ''
+
+    if (previousVisit) {
+      isRevisit = true
+      previousBoothName = previousVisit.booth_name as string
+      
+      const createdAt = new Date(previousVisit.created_at as string)
+      const timeDiff = Date.now() - createdAt.getTime()
+      const minutesAgo = Math.floor(timeDiff / 60000)
+      
+      let timeMessage = ''
+      if (minutesAgo < 60) {
+        timeMessage = `${minutesAgo}분 전`
+      } else {
+        const hoursAgo = Math.floor(minutesAgo / 60)
+        timeMessage = `${hoursAgo}시간 전`
+      }
+
+      message = `다시 방문해주셔서 감사합니다! 🎉\n[이전 방문] ${previousBoothName} (${timeMessage})`
+    }
+
     return c.json({ 
-      message: '방명록 작성이 완료되었습니다. 감사합니다!',
-      participant: newParticipant 
+      message,
+      participant: newParticipant,
+      is_revisit: isRevisit,
+      previous_booth: previousBoothName || null
     }, 201)
   } catch (error) {
     console.error('Participant creation error:', error)

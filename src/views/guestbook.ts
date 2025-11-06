@@ -1262,6 +1262,19 @@ export const guestbookPage = `
                 updateProgress(6)
                 currentStep = 6
                 
+                // 재방문 메시지 표시
+                if (data.is_revisit && data.previous_booth) {
+                    const heading = document.getElementById('step6-heading')
+                    heading.innerHTML = '다시 방문해주셔서 감사합니다! 🎉'
+                    
+                    const messagePara = document.querySelector('#section6 p.text-gray-600')
+                    messagePara.innerHTML = \`
+                        소중한 시간 내어 방명록을 작성해주셔서 감사합니다.<br>
+                        <strong class="text-purple-600">[이전 방문] \${data.previous_booth}</strong><br>
+                        <strong>즐거운 시간 되세요!</strong> 🎉
+                    \`
+                }
+                
                 // 작성 완료 플래그 설정 (페이지 이탈 경고 비활성화)
                 isFormCompleted = true
                 

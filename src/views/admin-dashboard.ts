@@ -241,14 +241,24 @@ export const adminDashboardPage = `
             </div>
 
             <!-- 요약 카드 -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                 <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-blue-500">
                     <div class="flex items-center justify-between">
                         <div>
                             <div class="text-2xl font-bold text-gray-800" id="totalParticipants">0</div>
-                            <div class="text-xs text-gray-600 mt-1">총 참가자</div>
+                            <div class="text-xs text-gray-600 mt-1">연인원</div>
                         </div>
                         <i class="fas fa-users text-3xl text-blue-500 opacity-60"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-teal-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-2xl font-bold text-gray-800" id="uniqueParticipants">0</div>
+                            <div class="text-xs text-gray-600 mt-1">실인원</div>
+                        </div>
+                        <i class="fas fa-user-check text-3xl text-teal-500 opacity-60"></i>
                     </div>
                 </div>
 

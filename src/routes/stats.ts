@@ -33,9 +33,15 @@ stats.get('/booth/:booth_id', async (c) => {
       return c.json({ error: '부스를 찾을 수 없습니다.' }, 404)
     }
 
-    // 총 참가자 수
+    // 연인원 (총 방문 수)
     const totalResult = await db
       .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ?')
+      .bind(boothId)
+      .first()
+
+    // 실인원 (고유 참가자 수 - is_duplicate = 0인 경우만)
+    const uniqueResult = await db
+      .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ? AND is_duplicate = 0')
       .bind(boothId)
       .first()
 
@@ -99,11 +105,16 @@ stats.get('/booth/:booth_id', async (c) => {
       hourlyDistribution[hourKey] = row.count
     })
 
+    const totalCount = totalResult?.count || 0
+    const uniqueCount = uniqueResult?.count || 0
+
     return c.json({
       stats: {
         booth_id: booth.id,
         booth_name: booth.name,
-        total_participants: totalResult?.count || 0,
+        total_participants: totalCount,  // 연인원
+        unique_participants: uniqueCount,  // 실인원
+        duplicate_visits: totalCount - uniqueCount,  // 중복 방문 수
         gender_distribution: genderDistribution,
         grade_distribution: gradeDistribution,
         hourly_distribution: hourlyDistribution
@@ -151,9 +162,15 @@ stats.get('/event/:event_id', async (c) => {
     // 각 부스별 통계 계산
     const boothsStats = await Promise.all(
       booths.map(async (booth: any) => {
-        // 총 참가자 수
+        // 연인원 (총 방문 수)
         const totalResult = await db
           .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ?')
+          .bind(booth.id)
+          .first()
+
+        // 실인원 (고유 참가자 수)
+        const uniqueResult = await db
+          .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ? AND is_duplicate = 0')
           .bind(booth.id)
           .first()
 
@@ -187,10 +204,15 @@ stats.get('/event/:event_id', async (c) => {
           }
         })
 
+        const totalCount = totalResult?.count || 0
+        const uniqueCount = uniqueResult?.count || 0
+
         return {
           id: booth.id,
           name: booth.name,
-          total_participants: totalResult?.count || 0,
+          total_participants: totalCount,  // 연인원
+          unique_participants: uniqueCount,  // 실인원
+          duplicate_visits: totalCount - uniqueCount,  // 중복 방문 수
           gender_distribution: genderDistribution,
           grade_distribution: gradeDistribution
         }
@@ -249,9 +271,15 @@ stats.get('/all', async (c) => {
         // 각 부스별 통계 계산
         const boothsStats = await Promise.all(
           booths.map(async (booth: any) => {
-            // 총 참가자 수
+            // 연인원 (총 방문 수)
             const totalResult = await db
               .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ?')
+              .bind(booth.id)
+              .first()
+
+            // 실인원 (고유 참가자 수)
+            const uniqueResult = await db
+              .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ? AND is_duplicate = 0')
               .bind(booth.id)
               .first()
 
@@ -286,14 +314,17 @@ stats.get('/all', async (c) => {
             })
 
             const participantCount = totalResult?.count || 0
+            const uniqueCount = uniqueResult?.count || 0
 
             return {
               id: booth.id,
               name: booth.name,
               booth_name: booth.name,
               booth_code: booth.booth_code,
-              total_participants: participantCount,
-              participant_count: participantCount,  // 프론트엔드 호환성
+              total_participants: participantCount,  // 연인원
+              participant_count: participantCount,  // 프론트엔드 호환성 (연인원)
+              unique_participants: uniqueCount,  // 실인원
+              duplicate_visits: participantCount - uniqueCount,  // 중복 방문 수
               gender_distribution: genderDistribution,
               grade_distribution: gradeDistribution
             }

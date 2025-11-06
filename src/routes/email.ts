@@ -138,13 +138,17 @@ email.post('/send-csv', authMiddleware, operatorOrAdmin, async (c) => {
     console.error('이메일 전송 실패:', error)
     
     // SendGrid 에러 상세 정보
+    let errorDetails = error.message
     if (error.response) {
+      console.error('SendGrid Error Response:', error.response)
       console.error('SendGrid Error Body:', error.response.body)
+      errorDetails = JSON.stringify(error.response.body || error.response)
     }
     
     return c.json({ 
       error: '이메일 전송 중 오류가 발생했습니다.',
-      details: error.message 
+      details: errorDetails,
+      sendgrid_error: error.response?.body || null
     }, 500)
   }
 })
