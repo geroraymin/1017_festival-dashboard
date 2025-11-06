@@ -921,6 +921,9 @@ async function exportDataBackup() {
             errorMessage += '오류: ' + error.message
         }
         
+        // 추가 디버그 정보가 있으면 콘솔에 출력
+        console.error('[백업] 전체 에러 객체:', error)
+        
         alert(errorMessage)
         
         // 버튼 활성화

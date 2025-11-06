@@ -94,6 +94,25 @@ async function request(endpoint, options = {}) {
         console.error('[API] 권한 없음 (403)')
         throw new Error(data.error || '접근 권한이 없습니다.')
       }
+      // 500 서버 에러
+      else if (response.status === 500) {
+        console.error('[API] 서버 에러 (500):', data)
+        
+        // 상세 에러 정보가 있으면 표시
+        let errorMsg = data.error || '서버 오류가 발생했습니다.'
+        if (data.details) {
+          console.error('[API] 에러 상세:', data.details)
+          errorMsg += '\n\n상세: ' + data.details
+        }
+        if (data.error_type) {
+          console.error('[API] 에러 타입:', data.error_type)
+        }
+        if (data.stack) {
+          console.error('[API] 스택 트레이스:', data.stack)
+        }
+        
+        throw new Error(errorMsg)
+      }
       // 기타 에러
       else {
         console.error('[API] 에러 응답:', data)

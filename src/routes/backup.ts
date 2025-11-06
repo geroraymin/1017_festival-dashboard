@@ -98,9 +98,13 @@ backup.get('/export', async (c) => {
     console.error('Backup export error:', error)
     console.error('Error stack:', error?.stack)
     console.error('Error message:', error?.message)
+    
+    // 개발/디버그용: 상세한 에러 정보 반환
     return c.json({ 
       error: '백업 내보내기에 실패했습니다.', 
-      details: error?.message || 'Unknown error'
+      details: error?.message || 'Unknown error',
+      error_type: error?.name || 'Error',
+      stack: error?.stack?.split('\n').slice(0, 3).join('\n') || 'No stack trace'
     }, 500)
   }
 })
