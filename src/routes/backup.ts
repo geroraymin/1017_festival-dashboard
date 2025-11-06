@@ -51,12 +51,8 @@ backup.get('/export', async (c) => {
       .all()
     console.log('[백업] 관리자 데이터:', adminsResult.results?.length || 0, '건')
 
-    // 5. 운영자 데이터 (비밀번호 해시 포함)
-    console.log('[백업] 운영자 데이터 조회 중...')
-    const operatorsResult = await db
-      .prepare('SELECT * FROM operators')
-      .all()
-    console.log('[백업] 운영자 데이터:', operatorsResult.results?.length || 0, '건')
+    // 참고: operators 테이블은 별도로 존재하지 않음
+    // 운영자는 booths 테이블의 booth_code로 인증됨
 
     // 통계 계산
     console.log('[백업] 통계 계산 중...')
@@ -77,8 +73,7 @@ backup.get('/export', async (c) => {
         events: eventsResult.results || [],
         booths: boothsResult.results || [],
         participants: participantsResult.results || [],
-        admins: adminsResult.results || [],
-        operators: operatorsResult.results || []
+        admins: adminsResult.results || []
       },
       statistics: {
         total_events: eventsResult.results?.length || 0,
@@ -213,7 +208,8 @@ backup.post('/import', async (c) => {
       statistics: {
         events: data.events?.length || 0,
         booths: data.booths?.length || 0,
-        participants: data.participants?.length || 0
+        participants: data.participants?.length || 0,
+        admins: data.admins?.length || 0
       }
     })
   } catch (error) {
