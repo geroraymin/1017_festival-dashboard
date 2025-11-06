@@ -846,6 +846,58 @@ function exportCSV() {
 // exportCSV를 전역으로 노출 (HTML onclick에서 사용)
 window.exportCSV = exportCSV
 
+// 데이터 백업
+async function exportDataBackup() {
+    try {
+        // 백업 버튼 비활성화
+        const backupBtn = event.target
+        const originalHTML = backupBtn.innerHTML
+        backupBtn.disabled = true
+        backupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 백업 중...'
+        
+        // 백업 데이터 가져오기
+        const backupData = await BackupAPI.exportBackup()
+        
+        // JSON을 예쁘게 포맷
+        const jsonStr = JSON.stringify(backupData, null, 2)
+        
+        // Blob 생성 및 다운로드
+        const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' })
+        const link = document.createElement('a')
+        const url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        
+        // 파일명: backup_YYYY-MM-DD_HH-mm-ss.json
+        const now = new Date()
+        const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, -5)
+        const filename = `guestbook_backup_${timestamp}.json`
+        
+        link.setAttribute('download', filename)
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+        // 성공 메시지
+        alert(`백업이 완료되었습니다!\n\n파일명: ${filename}\n\n총 참가자: ${backupData.statistics.total_participants}명\n실인원: ${backupData.statistics.unique_participants}명\n행사: ${backupData.statistics.total_events}개\n부스: ${backupData.statistics.total_booths}개`)
+        
+        // 버튼 활성화
+        backupBtn.disabled = false
+        backupBtn.innerHTML = originalHTML
+    } catch (error) {
+        console.error('백업 실패:', error)
+        alert('백업에 실패했습니다: ' + error.message)
+        
+        // 버튼 활성화
+        if (event && event.target) {
+            event.target.disabled = false
+            event.target.innerHTML = '<i class="fas fa-database"></i> 백업'
+        }
+    }
+}
+
+window.exportDataBackup = exportDataBackup
+
 // 날짜 포맷
 function formatDate(dateStr) {
     const date = new Date(dateStr)

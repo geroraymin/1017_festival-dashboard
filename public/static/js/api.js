@@ -252,3 +252,23 @@ const EmailAPI = {
     })
   }
 }
+
+/**
+ * 백업 API
+ */
+const BackupAPI = {
+  // 전체 데이터 백업 내보내기
+  exportBackup: () => {
+    return request('/backup/export', {
+      method: 'GET'
+    })
+  },
+  
+  // 백업 파일 복원 (선택사항)
+  importBackup: (backupData) => {
+    return request('/backup/import', {
+      method: 'POST',
+      body: JSON.stringify(backupData)
+    })
+  }
+}

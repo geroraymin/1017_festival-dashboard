@@ -215,11 +215,16 @@ export const adminDashboardPage = `
                 </div>
                 
                 <!-- 버튼 그룹 (전체 너비, 균등 분할) -->
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <button onclick="loadOverview()" 
                         class="flex items-center justify-center gap-1 px-2 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium transition shadow-sm">
                         <i class="fas fa-sync-alt"></i>
                         <span class="hidden sm:inline">새로고침</span>
+                    </button>
+                    <button onclick="exportDataBackup()" 
+                        class="flex items-center justify-center gap-1 px-2 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg">
+                        <i class="fas fa-database"></i>
+                        <span>백업</span>
                     </button>
                     <button onclick="enterChartMode()" 
                         class="flex items-center justify-center gap-1 px-2 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg">
