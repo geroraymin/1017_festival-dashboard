@@ -855,11 +855,28 @@ async function exportDataBackup() {
         backupBtn.disabled = true
         backupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 백업 중...'
         
+        console.log('[백업] 백업 요청 시작...')
+        
+        // 인증 토큰 확인
+        const token = getToken()
+        if (!token) {
+            throw new Error('로그인 세션이 만료되었습니다. 다시 로그인해주세요.')
+        }
+        console.log('[백업] 토큰 확인 완료')
+        
         // 백업 데이터 가져오기
+        console.log('[백업] API 호출 중...')
         const backupData = await BackupAPI.exportBackup()
+        console.log('[백업] API 응답 받음:', backupData)
+        
+        // 데이터 검증
+        if (!backupData || !backupData.data) {
+            throw new Error('백업 데이터 형식이 올바르지 않습니다.')
+        }
         
         // JSON을 예쁘게 포맷
         const jsonStr = JSON.stringify(backupData, null, 2)
+        console.log('[백업] JSON 생성 완료, 크기:', jsonStr.length, 'bytes')
         
         // Blob 생성 및 다운로드
         const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' })
@@ -878,15 +895,33 @@ async function exportDataBackup() {
         link.click()
         document.body.removeChild(link)
         
+        console.log('[백업] 파일 다운로드 시작:', filename)
+        
         // 성공 메시지
-        alert(`백업이 완료되었습니다!\n\n파일명: ${filename}\n\n총 참가자: ${backupData.statistics.total_participants}명\n실인원: ${backupData.statistics.unique_participants}명\n행사: ${backupData.statistics.total_events}개\n부스: ${backupData.statistics.total_booths}개`)
+        alert(`백업이 완료되었습니다! ✅\n\n파일명: ${filename}\n\n총 참가자: ${backupData.statistics.total_participants}명\n실인원: ${backupData.statistics.unique_participants}명\n행사: ${backupData.statistics.total_events}개\n부스: ${backupData.statistics.total_booths}개`)
         
         // 버튼 활성화
         backupBtn.disabled = false
         backupBtn.innerHTML = originalHTML
     } catch (error) {
-        console.error('백업 실패:', error)
-        alert('백업에 실패했습니다: ' + error.message)
+        console.error('[백업] 에러 발생:', error)
+        
+        // 에러 타입에 따른 메시지
+        let errorMessage = '백업에 실패했습니다.\n\n'
+        
+        if (error.message.includes('로그인')) {
+            errorMessage += '로그인 세션이 만료되었습니다.\n다시 로그인해주세요.'
+        } else if (error.message.includes('인증')) {
+            errorMessage += '인증에 실패했습니다.\n페이지를 새로고침하고 다시 시도해주세요.'
+        } else if (error.message.includes('권한')) {
+            errorMessage += '관리자 권한이 필요합니다.'
+        } else if (error.message.includes('Network') || error.message.includes('Failed to fetch')) {
+            errorMessage += '네트워크 연결을 확인해주세요.'
+        } else {
+            errorMessage += '오류: ' + error.message
+        }
+        
+        alert(errorMessage)
         
         // 버튼 활성화
         if (event && event.target) {

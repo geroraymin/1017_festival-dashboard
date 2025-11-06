@@ -63,20 +63,53 @@ async function request(endpoint, options = {}) {
   }
   
   try {
+    console.log(`[API] 요청: ${options.method || 'GET'} ${url}`)
+    
     const response = await fetch(url, {
       ...options,
       headers
     })
     
-    const data = await response.json()
+    console.log(`[API] 응답: ${response.status} ${response.statusText}`)
+    
+    // 응답이 JSON이 아닐 수도 있음
+    let data
+    const contentType = response.headers.get('content-type')
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json()
+    } else {
+      const text = await response.text()
+      console.error('[API] JSON이 아닌 응답:', text)
+      throw new Error('서버에서 올바른 응답을 받지 못했습니다.')
+    }
     
     if (!response.ok) {
-      throw new Error(data.error || '요청 처리 중 오류가 발생했습니다.')
+      // 401 인증 에러
+      if (response.status === 401) {
+        console.error('[API] 인증 실패 (401)')
+        throw new Error(data.error || '인증이 필요합니다. 다시 로그인해주세요.')
+      }
+      // 403 권한 에러
+      else if (response.status === 403) {
+        console.error('[API] 권한 없음 (403)')
+        throw new Error(data.error || '접근 권한이 없습니다.')
+      }
+      // 기타 에러
+      else {
+        console.error('[API] 에러 응답:', data)
+        throw new Error(data.error || '요청 처리 중 오류가 발생했습니다.')
+      }
     }
     
     return data
   } catch (error) {
-    console.error('API request error:', error)
+    console.error('[API] 예외 발생:', error)
+    
+    // 네트워크 에러
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error('네트워크 연결에 실패했습니다. 인터넷 연결을 확인해주세요.')
+    }
+    
     throw error
   }
 }
