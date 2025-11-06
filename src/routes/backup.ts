@@ -14,38 +14,61 @@ backup.use('/*', authMiddleware, adminOnly)
 backup.get('/export', async (c) => {
   try {
     const db = c.env.DB
+    
+    if (!db) {
+      console.error('[백업] DB 환경 변수가 없습니다')
+      return c.json({ error: 'Database not configured' }, 500)
+    }
+    
     const backupDate = new Date().toISOString()
+    console.log('[백업] 백업 시작:', backupDate)
 
     // 1. 행사 데이터
+    console.log('[백업] 행사 데이터 조회 중...')
     const eventsResult = await db
       .prepare('SELECT * FROM events ORDER BY created_at DESC')
       .all()
+    console.log('[백업] 행사 데이터:', eventsResult.results?.length || 0, '건')
 
     // 2. 부스 데이터
+    console.log('[백업] 부스 데이터 조회 중...')
     const boothsResult = await db
       .prepare('SELECT * FROM booths ORDER BY created_at DESC')
       .all()
+    console.log('[백업] 부스 데이터:', boothsResult.results?.length || 0, '건')
 
     // 3. 참가자 데이터
+    console.log('[백업] 참가자 데이터 조회 중...')
     const participantsResult = await db
       .prepare('SELECT * FROM participants ORDER BY created_at DESC')
       .all()
+    console.log('[백업] 참가자 데이터:', participantsResult.results?.length || 0, '건')
 
     // 4. 관리자 데이터 (비밀번호 해시 포함)
+    console.log('[백업] 관리자 데이터 조회 중...')
     const adminsResult = await db
       .prepare('SELECT * FROM admins')
       .all()
+    console.log('[백업] 관리자 데이터:', adminsResult.results?.length || 0, '건')
 
     // 5. 운영자 데이터 (비밀번호 해시 포함)
+    console.log('[백업] 운영자 데이터 조회 중...')
     const operatorsResult = await db
       .prepare('SELECT * FROM operators')
       .all()
+    console.log('[백업] 운영자 데이터:', operatorsResult.results?.length || 0, '건')
 
     // 통계 계산
+    console.log('[백업] 통계 계산 중...')
     const totalParticipants = participantsResult.results?.length || 0
     const uniqueParticipants = participantsResult.results?.filter((p: any) => p.is_duplicate === 0).length || 0
+    console.log('[백업] 통계: 연인원', totalParticipants, '명, 실인원', uniqueParticipants, '명')
 
     // 백업 데이터 구성
+    // user 정보 안전하게 가져오기
+    const user = c.get('user')
+    const exportedBy = user?.username || user?.booth_code || 'admin'
+    
     const backupData = {
       backup_date: backupDate,
       version: '1.0',
@@ -65,15 +88,20 @@ backup.get('/export', async (c) => {
         duplicate_visits: totalParticipants - uniqueParticipants
       },
       metadata: {
-        exported_by: c.get('user').username || 'admin',
+        exported_by: exportedBy,
         exported_at: backupDate
       }
     }
 
     return c.json(backupData)
-  } catch (error) {
+  } catch (error: any) {
     console.error('Backup export error:', error)
-    return c.json({ error: '백업 내보내기에 실패했습니다.' }, 500)
+    console.error('Error stack:', error?.stack)
+    console.error('Error message:', error?.message)
+    return c.json({ 
+      error: '백업 내보내기에 실패했습니다.', 
+      details: error?.message || 'Unknown error'
+    }, 500)
   }
 })
 
