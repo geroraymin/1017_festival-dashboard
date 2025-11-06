@@ -1,19 +1,8 @@
 import { Hono } from 'hono'
-import { cors } from 'hono/cors'
 import { type Env } from '../lib/d1'
 import { authMiddleware, adminOnly } from '../middlewares/auth'
 
 const backup = new Hono<{ Bindings: Env }>()
-
-// CORS 설정 (preflight 요청 허용)
-backup.use('/*', cors({
-  origin: '*',
-  allowMethods: ['GET', 'POST', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  exposeHeaders: ['Content-Length'],
-  maxAge: 600,
-  credentials: true
-}))
 
 // 모든 라우트에 관리자 권한 필요
 backup.use('/*', authMiddleware, adminOnly)
