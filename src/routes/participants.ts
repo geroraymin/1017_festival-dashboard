@@ -115,6 +115,53 @@ participants.post('/', async (c) => {
       .bind(insertResult.meta.last_row_id)
       .first()
 
+    // 대기열 자동 참가
+    let queueInfo = null
+    
+    try {
+      // 해당 부스의 마지막 대기번호 조회
+      const lastQueue = await db
+        .prepare('SELECT MAX(queue_number) as last_number FROM queue WHERE booth_id = ?')
+        .bind(booth_id)
+        .first() as { last_number: number | null }
+      
+      const nextNumber = (lastQueue?.last_number || 0) + 1
+      
+      // 대기열 추가
+      const queueResult = await db
+        .prepare(`
+          INSERT INTO queue (booth_id, participant_id, queue_number, status)
+          VALUES (?, ?, ?, 'waiting')
+        `)
+        .bind(booth_id, insertResult.meta.last_row_id, nextNumber)
+        .run()
+      
+      // 현재 진행 중인 번호 조회
+      const currentQueue = await db
+        .prepare(`
+          SELECT queue_number 
+          FROM queue 
+          WHERE booth_id = ? AND status IN ('called', 'completed')
+          ORDER BY queue_number DESC
+          LIMIT 1
+        `)
+        .bind(booth_id)
+        .first() as { queue_number: number } | null
+      
+      const currentNumber = currentQueue?.queue_number || 0
+      const waitingCount = nextNumber - currentNumber
+      
+      queueInfo = {
+        queue_id: queueResult.meta.last_row_id,
+        queue_number: nextNumber,
+        current_number: currentNumber,
+        waiting_count: waitingCount
+      }
+    } catch (queueError) {
+      console.error('Queue join error:', queueError)
+      // 대기열 참가 실패해도 참가자 등록은 성공으로 처리
+    }
+    
     // 응답 메시지 구성 (재방문자 환영 메시지)
     let message = '방명록 작성이 완료되었습니다. 감사합니다!'
     let isRevisit = false
@@ -143,7 +190,8 @@ participants.post('/', async (c) => {
       message,
       participant: newParticipant,
       is_revisit: isRevisit,
-      previous_booth: previousBoothName || null
+      previous_booth: previousBoothName || null,
+      queue: queueInfo
     }, 201)
   } catch (error) {
     console.error('Participant creation error:', error)

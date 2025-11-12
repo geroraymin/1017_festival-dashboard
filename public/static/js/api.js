@@ -324,3 +324,45 @@ const BackupAPI = {
     })
   }
 }
+
+/**
+ * 대기열 API
+ */
+const QueueAPI = {
+  // 대기열 참가 (자동 - 참가자 등록 시)
+  join: (booth_id, participant_id) => {
+    return request('/queue/join', {
+      method: 'POST',
+      body: JSON.stringify({ booth_id, participant_id })
+    })
+  },
+  
+  // 부스별 현재 대기 상황
+  getStatus: (booth_id) => {
+    return request(`/queue/status/${booth_id}`, {
+      method: 'GET'
+    })
+  },
+  
+  // 내 대기 상태 조회
+  getMyStatus: (queue_id) => {
+    return request(`/queue/my-status/${queue_id}`, {
+      method: 'GET'
+    })
+  },
+  
+  // 다음 손님 호출 (운영자)
+  callNext: (booth_id) => {
+    return request('/queue/call-next', {
+      method: 'POST',
+      body: JSON.stringify({ booth_id })
+    })
+  },
+  
+  // 대기열 목록 (운영자)
+  getList: (booth_id) => {
+    return request(`/queue/list/${booth_id}`, {
+      method: 'GET'
+    })
+  }
+}

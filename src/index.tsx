@@ -12,6 +12,7 @@ import stats from './routes/stats'
 import publicStats from './routes/public-stats'
 import email from './routes/email'
 import backup from './routes/backup'
+import queue from './routes/queue'
 
 // 페이지 템플릿 임포트
 import { adminLoginPage, operatorLoginPage } from './views/pages'
@@ -41,6 +42,7 @@ app.route('/api/stats', stats)
 app.route('/api/public/stats', publicStats)
 app.route('/api/email', email)
 app.route('/api/backup', backup)
+app.route('/api/queue', queue)
 
 // 정적 파일 서빙
 app.use('/static/*', serveStatic({ root: './public' }))
