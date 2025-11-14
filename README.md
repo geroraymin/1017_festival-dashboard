@@ -74,10 +74,10 @@ webapp/
 
 - **플랫폼**: Cloudflare Pages
 - **상태**: ✅ 활성
-- **프로덕션 URL**: https://e136ecdf.guestbook-system.pages.dev
+- **프로덕션 URL**: https://d59fe89d.guestbook-system.pages.dev
 - **GitHub**: https://github.com/geroraymin/1017_festival-dashboard
 - **기술 스택**: Hono + TypeScript + TailwindCSS + Cloudflare D1 + SendGrid
-- **최종 업데이트**: 2025-01-15 03:40 KST
+- **최종 업데이트**: 2025-01-15 08:21 KST
 
 ## 현재 완료된 기능
 
@@ -106,8 +106,9 @@ webapp/
 
 ### 4. ✅ 중복 방문 추적 시스템
    - name + date_of_birth 조합으로 실인원 식별
-   - 동일 부스 재방문 차단
-   - 다른 부스 방문 허용 (재방문 메시지 표시)
+   - **모든 방문 허용 (동일 부스 재방문 포함)** 🆕
+   - **연인원에 모든 방문 포함** 🆕
+   - 재방문 시 환영 메시지 표시 (동일 부스 / 다른 부스 구분)
    - 실인원/연인원 분리 집계
    - CSV 내보내기 시 방문형태(첫방문/재방문) 표시
 
