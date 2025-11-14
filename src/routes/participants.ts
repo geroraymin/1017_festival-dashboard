@@ -50,53 +50,26 @@ participants.post('/', async (c) => {
       return c.json({ error: '현재 비활성화된 부스입니다.' }, 400)
     }
 
-    // 동일 부스 중복 등록 체크 (이름 + 생년월일 + 부스 조합)
-    const sameBoothCheck = await db
-      .prepare('SELECT id, name, created_at FROM participants WHERE booth_id = ? AND name = ? AND date_of_birth = ?')
-      .bind(booth_id, name, date_of_birth)
-      .first()
-
-    if (sameBoothCheck) {
-      // 동일 부스 중복 등록 감지 - 차단
-      const createdAt = new Date(sameBoothCheck.created_at as string)
-      const timeDiff = Date.now() - createdAt.getTime()
-      const minutesAgo = Math.floor(timeDiff / 60000)
-      
-      let timeMessage = ''
-      if (minutesAgo < 1) {
-        timeMessage = '방금 전'
-      } else if (minutesAgo < 60) {
-        timeMessage = `${minutesAgo}분 전`
-      } else {
-        const hoursAgo = Math.floor(minutesAgo / 60)
-        timeMessage = `${hoursAgo}시간 전`
-      }
-      
-      return c.json({ 
-        error: `이미 등록된 참가자입니다.\n${sameBoothCheck.name}님은 ${timeMessage}에 등록하셨습니다.`,
-        duplicate: true,
-        existing_participant: {
-          name: sameBoothCheck.name,
-          created_at: sameBoothCheck.created_at
-        }
-      }, 409)
-    }
-
-    // 다른 부스 방문 이력 확인 (실인원 vs 연인원 체크용)
+    // 이전 방문 이력 확인 (동일 부스 포함, 모든 부스)
+    // 동일 부스든 다른 부스든 이전 방문이 있으면 중복으로 간주
     const previousVisit = await db
       .prepare(`
         SELECT p.id, p.name, p.created_at, b.name as booth_name, b.id as previous_booth_id
         FROM participants p
         LEFT JOIN booths b ON p.booth_id = b.id
-        WHERE p.name = ? AND p.date_of_birth = ? AND p.booth_id != ?
+        WHERE p.name = ? AND p.date_of_birth = ?
         ORDER BY p.created_at DESC
         LIMIT 1
       `)
-      .bind(name, date_of_birth, booth_id)
+      .bind(name, date_of_birth)
       .first()
 
     // is_duplicate 플래그 결정 (이전 방문 이력이 있으면 1, 없으면 0)
+    // 동일 부스든 다른 부스든 이전 방문이 있으면 중복(재방문)
     const isDuplicate = previousVisit ? 1 : 0
+    
+    // 동일 부스 재방문인지 확인
+    const isSameBooth = previousVisit && previousVisit.previous_booth_id === booth_id
 
     // 참가자 등록 (is_duplicate 플래그 포함)
     const insertResult = await db
@@ -176,14 +149,22 @@ participants.post('/', async (c) => {
       const minutesAgo = Math.floor(timeDiff / 60000)
       
       let timeMessage = ''
-      if (minutesAgo < 60) {
+      if (minutesAgo < 1) {
+        timeMessage = '방금 전'
+      } else if (minutesAgo < 60) {
         timeMessage = `${minutesAgo}분 전`
       } else {
         const hoursAgo = Math.floor(minutesAgo / 60)
         timeMessage = `${hoursAgo}시간 전`
       }
 
-      message = `다시 방문해주셔서 감사합니다! 🎉\n[이전 방문] ${previousBoothName} (${timeMessage})`
+      if (isSameBooth) {
+        // 동일 부스 재방문
+        message = `다시 방문해주셔서 감사합니다! 🎉\n이 부스에 ${timeMessage} 방문하셨습니다.`
+      } else {
+        // 다른 부스 방문
+        message = `다시 방문해주셔서 감사합니다! 🎉\n[이전 방문] ${previousBoothName} (${timeMessage})`
+      }
     }
 
     return c.json({ 
