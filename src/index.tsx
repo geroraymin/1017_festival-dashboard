@@ -20,6 +20,7 @@ import { guestbookPage } from './views/guestbook'
 import { operatorDashboardPage } from './views/operator-dashboard'
 import { adminDashboardPage } from './views/admin-dashboard'
 import { statsDisplayPage } from './views/stats-display'
+import { queueDisplayPage } from './views/queue-display'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -169,6 +170,11 @@ app.get('/dashboard/admin', (c) => {
 // 통계 디스플레이 페이지
 app.get('/display', (c) => {
   return c.html(statsDisplayPage)
+})
+
+// 대기열 디스플레이 페이지
+app.get('/queue-display', (c) => {
+  return c.html(queueDisplayPage)
 })
 
 // 404 에러 핸들링

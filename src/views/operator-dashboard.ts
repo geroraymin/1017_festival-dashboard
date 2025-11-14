@@ -101,6 +101,50 @@ export const operatorDashboardPage = `
             </div>
         </div>
 
+        <!-- 대기열 관리 섹션 (NEW) -->
+        <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-xl p-6 mb-8 text-white">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-2xl font-bold mb-1">
+                        <i class="fas fa-users-line mr-2"></i>
+                        대기열 관리
+                    </h2>
+                    <p class="text-orange-100">현재 대기 중인 손님을 관리하세요</p>
+                </div>
+                <button onclick="refreshQueue()" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition">
+                    <i class="fas fa-sync-alt mr-2"></i>새로고침
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
+                    <div class="text-orange-100 text-sm mb-1">현재 진행 번호</div>
+                    <div class="text-4xl font-bold" id="currentQueueNumber">-</div>
+                </div>
+                <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
+                    <div class="text-orange-100 text-sm mb-1">마지막 발급 번호</div>
+                    <div class="text-4xl font-bold" id="lastQueueNumber">-</div>
+                </div>
+                <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
+                    <div class="text-orange-100 text-sm mb-1">대기 인원</div>
+                    <div class="text-4xl font-bold" id="waitingCount">-</div>
+                </div>
+            </div>
+            
+            <div class="flex gap-4">
+                <button onclick="callNextGuest()" 
+                    class="flex-1 bg-white hover:bg-gray-100 text-orange-600 font-bold py-4 px-6 rounded-xl transition transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-bell mr-2"></i>
+                    다음 손님 호출
+                </button>
+                <button onclick="openQueueDisplay()" 
+                    class="px-6 py-4 bg-white/20 hover:bg-white/30 rounded-xl transition">
+                    <i class="fas fa-tv mr-2"></i>
+                    대기 화면 보기
+                </button>
+            </div>
+        </div>
+
         <!-- 액션 버튼 -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
             <a href="#" onclick="openGuestbook(); return false;" 
@@ -352,6 +396,11 @@ export const operatorDashboardPage = `
                 
                 if (booth.events) {
                     document.getElementById('eventName').textContent = booth.events.name
+                }
+                
+                // 대기열 시스템에 부스 ID 전달
+                if (typeof setBoothIdForQueue === 'function') {
+                    setBoothIdForQueue(boothId)
                 }
             } catch (error) {
                 console.error('부스 정보 로드 실패:', error)
@@ -639,6 +688,9 @@ export const operatorDashboardPage = `
         // 10초마다 자동 새로고침
         setInterval(loadStats, 10000)
     </script>
+    
+    <!-- 대기열 관리 스크립트 -->
+    <script src="/static/js/operator-queue.js"></script>
 </body>
 </html>
 `
