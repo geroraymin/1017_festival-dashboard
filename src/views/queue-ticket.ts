@@ -206,28 +206,36 @@ export const queueTicketPage = `
                 document.getElementById('remainingCount').textContent = data.remaining
                 document.getElementById('boothName').textContent = data.booth_name
                 
-                // 상태 메시지
+                // 상태 메시지 - API의 is_my_turn 사용
                 const statusText = document.getElementById('statusText')
                 const statusMessage = document.getElementById('statusMessage')
                 
                 if (data.is_my_turn) {
-                    statusMessage.className = 'bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl p-4 text-center mb-6 pulse-grow'
-                    statusText.innerHTML = '<i class="fas fa-bell mr-2"></i>지금 입장해주세요! 🎉'
-                    statusText.className = 'text-white text-xl font-bold'
+                    // 정확히 내 차례 (remaining = 0)
+                    statusMessage.className = 'bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl p-6 text-center mb-6 pulse-grow'
+                    statusText.innerHTML = '<i class="fas fa-door-open mr-2"></i><strong>지금 바로 입장하세요!</strong> 🎉'
+                    statusText.className = 'text-white text-2xl font-bold'
                     
                     // 알림음 (선택사항)
                     if (typeof Audio !== 'undefined') {
                         const audio = new Audio('/static/notification.mp3')
                         audio.play().catch(() => {}) // 재생 실패 무시
                     }
-                } else if (data.remaining <= 3) {
+                } else if (data.remaining === 0) {
+                    // 다음 차례 (remaining = 1)
+                    statusMessage.className = 'bg-gradient-to-r from-yellow-200 to-orange-200 rounded-xl p-5 text-center mb-6'
+                    statusText.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i><strong>다음 차례입니다!</strong> 준비해주세요'
+                    statusText.className = 'text-orange-900 text-xl font-bold'
+                } else if (data.remaining <= 2) {
+                    // 곧 차례 (2-3명 남음)
                     statusMessage.className = 'bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-4 text-center mb-6'
-                    statusText.innerHTML = '<i class="fas fa-hourglass-half mr-2"></i>곧 내 차례입니다! (앞에 ' + data.remaining + '명)'
+                    statusText.innerHTML = '<i class="fas fa-hourglass-half mr-2"></i>곧 차례입니다 (앞에 ' + data.remaining + '명)'
                     statusText.className = 'text-orange-800 text-lg font-medium'
                 } else {
-                    statusMessage.className = 'bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4 text-center mb-6'
-                    statusText.innerHTML = '<i class="fas fa-clock mr-2"></i>잠시만 기다려주세요 (앞에 ' + data.remaining + '명)'
-                    statusText.className = 'text-purple-800 text-lg font-medium'
+                    // 대기 중 (3명 이상 남음)
+                    statusMessage.className = 'bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl p-4 text-center mb-6'
+                    statusText.innerHTML = '<i class="fas fa-clock mr-2"></i>대기 중입니다 (앞에 ' + data.remaining + '명)'
+                    statusText.className = 'text-gray-700 text-lg font-medium'
                 }
                 
                 console.log('[대기번호] 상태 업데이트:', data)

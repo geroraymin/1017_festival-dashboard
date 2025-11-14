@@ -177,7 +177,10 @@ queue.get('/my-status/:queue_id', async (c) => {
       .first() as { queue_number: number } | null
     
     const currentNumber = currentQueue?.queue_number || 0
-    const remaining = Math.max(0, myQueue.queue_number - currentNumber)
+    const remaining = Math.max(0, myQueue.queue_number - currentNumber - 1)
+    
+    // 정확히 내 차례인지 확인 (내 번호 = 현재 호출된 번호 + 1)
+    const isMyTurn = myQueue.queue_number === currentNumber + 1 && myQueue.status === 'waiting'
     
     return c.json({
       queue_number: myQueue.queue_number,
@@ -185,7 +188,7 @@ queue.get('/my-status/:queue_id', async (c) => {
       remaining: remaining,
       status: myQueue.status,
       booth_name: myQueue.booth_name,
-      is_my_turn: remaining <= 1 && myQueue.status === 'waiting'
+      is_my_turn: isMyTurn
     })
   } catch (error) {
     console.error('My status error:', error)
