@@ -21,6 +21,7 @@ import { operatorDashboardPage } from './views/operator-dashboard'
 import { adminDashboardPage } from './views/admin-dashboard'
 import { statsDisplayPage } from './views/stats-display'
 import { queueDisplayPage } from './views/queue-display'
+import { queueTicketPage } from './views/queue-ticket'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -175,6 +176,11 @@ app.get('/display', (c) => {
 // 대기열 디스플레이 페이지
 app.get('/queue-display', (c) => {
   return c.html(queueDisplayPage)
+})
+
+// 큐 티켓 페이지 (참가자용)
+app.get('/queue-ticket', (c) => {
+  return c.html(queueTicketPage)
 })
 
 // 404 에러 핸들링

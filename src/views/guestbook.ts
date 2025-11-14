@@ -1257,7 +1257,30 @@ export const guestbookPage = `
                     return
                 }
 
-                // 성공 - Step 6으로 이동
+                // 성공 - 큐 정보 확인
+                const queueInfo = data.queue
+                
+                // 작성 완료 플래그 설정 (페이지 이탈 경고 비활성화)
+                isFormCompleted = true
+                
+                // 큐 정보가 있으면 큐 티켓 페이지로 리다이렉트
+                if (queueInfo && queueInfo.queue_id) {
+                    const redirectParams = new URLSearchParams({
+                        queue_id: queueInfo.queue_id.toString()
+                    })
+                    
+                    // 재방문 정보 추가
+                    if (data.is_revisit && data.previous_booth) {
+                        redirectParams.append('is_revisit', 'true')
+                        redirectParams.append('previous_booth', data.previous_booth)
+                    }
+                    
+                    // 즉시 큐 티켓 페이지로 이동
+                    window.location.href = '/queue-ticket?' + redirectParams.toString()
+                    return
+                }
+                
+                // 큐 정보가 없으면 기존 완료 화면 표시
                 showSection('section6')
                 updateProgress(6)
                 currentStep = 6
@@ -1274,9 +1297,6 @@ export const guestbookPage = `
                         <strong>즐거운 시간 되세요!</strong> 🎉
                     \`
                 }
-                
-                // 작성 완료 플래그 설정 (페이지 이탈 경고 비활성화)
-                isFormCompleted = true
                 
                 // 3초 후 페이지 새로고침 (다음 참가자 작성 가능)
                 setTimeout(() => {
