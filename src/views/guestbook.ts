@@ -130,16 +130,23 @@ export const guestbookPage = `
             transition: all var(--transition-fast);
             border-radius: var(--radius-xl);
         }
-        .radio-card:hover {
+        .radio-card > div {
+            border: none !important;
+            background: rgba(0, 0, 0, 0.03);
+        }
+        .radio-card:hover > div {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+            background: rgba(0, 122, 255, 0.05);
+        }
+        .radio-card:focus-within > div {
             transform: scale(1.02);
             box-shadow: var(--shadow-md);
         }
-        .radio-card:focus-within {
-            transform: scale(1.02);
-        }
         .radio-card input:checked + div {
-            border-color: var(--color-primary);
-            background: rgba(0, 122, 255, 0.1);
+            border: none !important;
+            background: rgba(0, 122, 255, 0.15) !important;
+            box-shadow: 0 0 0 2px var(--color-primary);
         }
         /* 선택 애니메이션 */
         .radio-card.selecting {
@@ -479,7 +486,7 @@ export const guestbookPage = `
                     <legend class="sr-only">성별 선택</legend>
                     <label class="radio-card" tabindex="0" onclick="selectGenderAndProceed('남성', event)" style="position: relative;">
                         <input type="radio" name="gender" value="남성" class="sr-only" aria-label="남성">
-                        <div style="padding: var(--space-4); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
+                        <div style="padding: var(--space-4); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-mars" aria-hidden="true" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: var(--space-2); display: block;"></i>
                             <div class="text-headline">남성</div>
@@ -487,7 +494,7 @@ export const guestbookPage = `
                     </label>
                     <label class="radio-card" tabindex="0" onclick="selectGenderAndProceed('여성', event)" style="position: relative;">
                         <input type="radio" name="gender" value="여성" class="sr-only" aria-label="여성">
-                        <div style="padding: var(--space-4); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
+                        <div style="padding: var(--space-4); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-venus" aria-hidden="true" style="font-size: 2.5rem; color: #ec4899; margin-bottom: var(--space-2); display: block;"></i>
                             <div class="text-headline">여성</div>
@@ -526,7 +533,7 @@ export const guestbookPage = `
                     <legend class="sr-only">학교급 선택</legend>
                     <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('유아', event)" style="position: relative;">
                         <input type="radio" name="grade" value="유아" class="sr-only" aria-label="유아">
-                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
+                        <div style="padding: var(--space-3); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-baby" aria-hidden="true" style="font-size: 2rem; color: #eab308; margin-bottom: var(--space-1); display: block;"></i>
                             <div class="text-subheadline font-semibold">유아</div>
@@ -534,7 +541,7 @@ export const guestbookPage = `
                     </label>
                     <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('초등', event)" style="position: relative;">
                         <input type="radio" name="grade" value="초등" class="sr-only" aria-label="초등학생">
-                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
+                        <div style="padding: var(--space-3); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-child" aria-hidden="true" style="font-size: 2rem; color: #22c55e; margin-bottom: var(--space-1); display: block;"></i>
                             <div class="text-subheadline font-semibold">초등</div>
@@ -542,7 +549,7 @@ export const guestbookPage = `
                     </label>
                     <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('중등', event)" style="position: relative;">
                         <input type="radio" name="grade" value="중등" class="sr-only" aria-label="중학생">
-                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
+                        <div style="padding: var(--space-3); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-user-graduate" aria-hidden="true" style="font-size: 2rem; color: #3b82f6; margin-bottom: var(--space-1); display: block;"></i>
                             <div class="text-subheadline font-semibold">중등</div>
@@ -550,7 +557,7 @@ export const guestbookPage = `
                     </label>
                     <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('고등', event)" style="position: relative;">
                         <input type="radio" name="grade" value="고등" class="sr-only" aria-label="고등학생">
-                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
+                        <div style="padding: var(--space-3); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-graduation-cap" aria-hidden="true" style="font-size: 2rem; color: #a855f7; margin-bottom: var(--space-1); display: block;"></i>
                             <div class="text-subheadline font-semibold">고등</div>
@@ -558,7 +565,7 @@ export const guestbookPage = `
                     </label>
                     <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('성인', event)" style="position: relative;">
                         <input type="radio" name="grade" value="성인" class="sr-only" aria-label="성인">
-                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
+                        <div style="padding: var(--space-3); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
                             <i class="fas fa-user-tie" aria-hidden="true" style="font-size: 2rem; color: #6366f1; margin-bottom: var(--space-1); display: block;"></i>
                             <div class="text-subheadline font-semibold">성인</div>
