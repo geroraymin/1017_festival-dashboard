@@ -10,151 +10,321 @@ export const queueTicketPage = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대기번호 발급</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/static/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @keyframes slideIn {
-            from {
-                transform: translateY(-30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        /* 큐 티켓 페이지 전용 스타일 */
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-4);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+        .ticket-container {
+            max-width: 600px;
+            width: 100%;
         }
-        .slide-in {
-            animation: slideIn 0.5s ease-out;
+
+        /* 완료 체크 아이콘 */
+        .success-icon {
+            text-align: center;
+            margin-bottom: var(--space-8);
         }
-        .pulse-grow {
-            animation: pulse 2s ease-in-out infinite;
+
+        .success-icon-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--color-success), #28a745);
+            border-radius: 50%;
+            box-shadow: var(--shadow-xl);
+            margin-bottom: var(--space-4);
         }
-        .confetti {
+
+        .success-icon-circle i {
+            font-size: 3.5rem;
+            color: white;
+        }
+
+        /* 큐 번호 카드 */
+        .queue-number-display {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-xl);
+            text-align: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .queue-number-value {
+            font-size: 8rem;
+            font-weight: 900;
+            color: white;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        /* 대기 정보 그리드 */
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .status-item {
+            padding: var(--space-5);
+            border-radius: var(--radius-xl);
+            text-align: center;
+        }
+
+        .status-item-label {
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--space-2);
+            font-weight: 600;
+        }
+
+        .status-item-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .status-item-current {
+            background-color: rgba(0, 122, 255, 0.1);
+        }
+
+        .status-item-current .status-item-value {
+            color: var(--color-primary);
+        }
+
+        .status-item-remaining {
+            background-color: rgba(255, 149, 0, 0.1);
+        }
+
+        .status-item-remaining .status-item-value {
+            color: var(--color-warning);
+        }
+
+        /* 상태 메시지 박스 */
+        .status-alert {
+            padding: var(--space-5);
+            border-radius: var(--radius-xl);
+            text-align: center;
+            margin-bottom: var(--space-6);
+            transition: all var(--transition-base);
+        }
+
+        .status-alert-my-turn {
+            background: linear-gradient(135deg, var(--color-success), #28a745);
+            color: white;
+            padding: var(--space-8);
+        }
+
+        .status-alert-next {
+            background: linear-gradient(135deg, var(--color-warning), #e08600);
+            color: white;
+        }
+
+        .status-alert-soon {
+            background-color: var(--color-warning-bg);
+            color: var(--color-warning-hover);
+        }
+
+        .status-alert-waiting {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+        }
+
+        /* 부스 정보 */
+        .booth-info {
+            text-align: center;
+            margin-bottom: var(--space-6);
+            color: var(--color-text-inverse);
+        }
+
+        /* 액션 버튼 */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+
+        /* 안내 섹션 */
+        .info-section {
+            margin-top: var(--space-6);
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info-list li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+            color: var(--color-text-secondary);
+        }
+
+        .info-list li i {
+            margin-right: var(--space-3);
+            margin-top: 2px;
+            color: var(--color-success);
+        }
+
+        /* 컨페티 효과 */
+        #confettiContainer {
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .confetti {
+            position: absolute;
             width: 10px;
             height: 10px;
-            background: #fbbf24;
-            position: absolute;
+            background: var(--color-warning);
             animation: confetti-fall 3s linear;
         }
+
         @keyframes confetti-fall {
             to {
                 transform: translateY(100vh) rotate(360deg);
                 opacity: 0;
             }
         }
+
+        /* 반응형 디자인 */
+        @media (max-width: 640px) {
+            .queue-number-value {
+                font-size: 5rem;
+            }
+
+            .status-item-value {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 min-h-screen flex items-center justify-center p-4">
+<body>
     <!-- 컨페티 효과 -->
-    <div id="confettiContainer"></div>
+    <div id="confettiContainer" aria-hidden="true"></div>
 
-    <div class="max-w-2xl w-full">
+    <main class="ticket-container" role="main">
         <!-- 완료 체크 아이콘 -->
-        <div class="text-center mb-8 slide-in">
-            <div class="inline-block p-6 bg-green-500 rounded-full shadow-2xl mb-4">
-                <i class="fas fa-check text-white text-6xl"></i>
+        <header class="success-icon fade-in">
+            <div class="success-icon-circle" aria-label="완료">
+                <i class="fas fa-check" aria-hidden="true"></i>
             </div>
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">
+            <h1 class="text-title1" style="color: white; margin-bottom: var(--space-2);">
                 방명록 작성 완료!
             </h1>
-            <p class="text-gray-600 text-lg" id="thankYouMessage">
+            <p class="text-body" style="color: rgba(255, 255, 255, 0.9);" id="thankYouMessage">
                 참여해주셔서 감사합니다 🎉
             </p>
-        </div>
+        </header>
 
         <!-- 대기번호 카드 -->
-        <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6 slide-in" style="animation-delay: 0.2s;">
-            <div class="text-center mb-8">
-                <div class="text-gray-600 text-xl mb-4">
-                    <i class="fas fa-ticket mr-2"></i>
+        <div class="card card-lg fade-in" style="animation-delay: 0.2s;">
+            <!-- 내 대기번호 -->
+            <section style="margin-bottom: var(--space-8);">
+                <div class="text-headline" style="text-align: center; margin-bottom: var(--space-4); color: var(--color-text-secondary);">
+                    <i class="fas fa-ticket" aria-hidden="true" style="margin-right: var(--space-2);"></i>
                     내 대기번호
                 </div>
-                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-8 shadow-xl pulse-grow">
-                    <div id="myQueueNumber" class="text-9xl font-black text-white">
+                <div class="queue-number-display pulse-grow" role="region" aria-label="대기번호">
+                    <div id="myQueueNumber" class="queue-number-value" aria-live="polite">
                         --
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- 대기 정보 -->
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-blue-50 rounded-xl p-4 text-center">
-                    <div class="text-blue-600 text-sm mb-1">
-                        <i class="fas fa-arrow-right mr-1"></i>
+            <div class="status-grid">
+                <div class="status-item status-item-current">
+                    <div class="status-item-label">
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         현재 진행 번호
                     </div>
-                    <div id="currentNumber" class="text-4xl font-bold text-blue-700">
+                    <div id="currentNumber" class="status-item-value" aria-live="polite">
                         --
                     </div>
                 </div>
-                <div class="bg-orange-50 rounded-xl p-4 text-center">
-                    <div class="text-orange-600 text-sm mb-1">
-                        <i class="fas fa-users mr-1"></i>
+                <div class="status-item status-item-remaining">
+                    <div class="status-item-label">
+                        <i class="fas fa-users" aria-hidden="true"></i>
                         앞에 대기
                     </div>
-                    <div class="flex items-baseline justify-center">
-                        <div id="remainingCount" class="text-4xl font-bold text-orange-700">
+                    <div style="display: flex; align-items: baseline; justify-content: center;">
+                        <div id="remainingCount" class="status-item-value" aria-live="polite">
                             --
                         </div>
-                        <div class="text-xl text-orange-600 ml-2">명</div>
+                        <div class="text-headline" style="margin-left: var(--space-2); color: var(--color-warning);">명</div>
                     </div>
                 </div>
             </div>
 
             <!-- 상태 메시지 -->
-            <div id="statusMessage" class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4 text-center mb-6">
-                <p class="text-purple-800 text-lg font-medium">
-                    <i class="fas fa-info-circle mr-2"></i>
+            <div id="statusMessage" class="status-alert status-alert-waiting" role="status" aria-live="assertive">
+                <p class="text-body" style="margin: 0; font-weight: 600;">
+                    <i class="fas fa-info-circle" aria-hidden="true" style="margin-right: var(--space-2);"></i>
                     <span id="statusText">대기 정보를 불러오는 중...</span>
                 </p>
             </div>
 
             <!-- 부스 정보 -->
-            <div class="text-center text-gray-600 mb-6">
-                <i class="fas fa-store mr-2"></i>
+            <div class="booth-info text-body">
+                <i class="fas fa-store" aria-hidden="true" style="margin-right: var(--space-2);"></i>
                 <span id="boothName">부스명</span>
             </div>
 
             <!-- 액션 버튼 -->
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="checkMyTurn()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl transition transform hover:scale-105 shadow-lg">
-                    <i class="fas fa-sync-alt mr-2"></i>
+            <div class="action-buttons">
+                <button onclick="checkMyTurn()" class="btn btn-primary btn-lg" aria-label="내 차례 확인">
+                    <i class="fas fa-sync-alt" aria-hidden="true" style="margin-right: var(--space-2);"></i>
                     내 차례 확인
                 </button>
-                <button onclick="goToGuestbook()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-4 px-6 rounded-xl transition transform hover:scale-105">
-                    <i class="fas fa-pen mr-2"></i>
+                <button onclick="goToGuestbook()" class="btn btn-secondary btn-lg" aria-label="방명록 추가 작성">
+                    <i class="fas fa-pen" aria-hidden="true" style="margin-right: var(--space-2);"></i>
                     방명록 더 쓰기
                 </button>
             </div>
         </div>
 
         <!-- 안내 -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 slide-in" style="animation-delay: 0.4s;">
-            <h3 class="font-bold text-gray-800 mb-3 flex items-center">
-                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+        <aside class="card info-section fade-in" style="animation-delay: 0.4s;" aria-labelledby="info-heading">
+            <h2 id="info-heading" class="text-headline" style="margin-bottom: var(--space-4); display: flex; align-items: center;">
+                <i class="fas fa-lightbulb" aria-hidden="true" style="color: var(--color-warning); margin-right: var(--space-2);"></i>
                 이용 안내
-            </h3>
-            <ul class="space-y-2 text-gray-600">
-                <li class="flex items-start">
-                    <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+            </h2>
+            <ul class="info-list">
+                <li>
+                    <i class="fas fa-check-circle" aria-hidden="true"></i>
                     <span>부스 입구 화면에서 현재 진행 번호를 확인하세요</span>
                 </li>
-                <li class="flex items-start">
-                    <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                <li>
+                    <i class="fas fa-check-circle" aria-hidden="true"></i>
                     <span>내 차례가 되면 입장해주세요</span>
                 </li>
-                <li class="flex items-start">
-                    <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                <li>
+                    <i class="fas fa-check-circle" aria-hidden="true"></i>
                     <span>이 화면을 캡처하거나 번호를 기억해두세요</span>
                 </li>
             </ul>
-        </div>
-    </div>
+        </aside>
+    </main>
 
     <script src="/static/js/api.js"></script>
     <script>
@@ -211,10 +381,10 @@ export const queueTicketPage = `
                 const statusMessage = document.getElementById('statusMessage')
                 
                 if (data.is_my_turn) {
-                    // 정확히 내 차례 (remaining = 0)
-                    statusMessage.className = 'bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl p-6 text-center mb-6 pulse-grow'
-                    statusText.innerHTML = '<i class="fas fa-door-open mr-2"></i><strong>지금 바로 입장하세요!</strong> 🎉'
-                    statusText.className = 'text-white text-2xl font-bold'
+                    // 정확히 내 차례
+                    statusMessage.className = 'status-alert status-alert-my-turn pulse-grow'
+                    statusText.innerHTML = '<i class="fas fa-door-open" aria-hidden="true" style="margin-right: var(--space-2);"></i><strong>지금 바로 입장하세요!</strong> 🎉'
+                    statusText.style = 'font-size: 1.375rem; font-weight: 700; margin: 0;'
                     
                     // 알림음 (선택사항)
                     if (typeof Audio !== 'undefined') {
@@ -222,20 +392,20 @@ export const queueTicketPage = `
                         audio.play().catch(() => {}) // 재생 실패 무시
                     }
                 } else if (data.remaining === 0) {
-                    // 다음 차례 (remaining = 1)
-                    statusMessage.className = 'bg-gradient-to-r from-yellow-200 to-orange-200 rounded-xl p-5 text-center mb-6'
-                    statusText.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i><strong>다음 차례입니다!</strong> 준비해주세요'
-                    statusText.className = 'text-orange-900 text-xl font-bold'
+                    // 다음 차례
+                    statusMessage.className = 'status-alert status-alert-next'
+                    statusText.innerHTML = '<i class="fas fa-exclamation-triangle" aria-hidden="true" style="margin-right: var(--space-2);"></i><strong>다음 차례입니다!</strong> 준비해주세요'
+                    statusText.style = 'font-size: 1.25rem; font-weight: 700; margin: 0;'
                 } else if (data.remaining <= 2) {
                     // 곧 차례 (2-3명 남음)
-                    statusMessage.className = 'bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-4 text-center mb-6'
-                    statusText.innerHTML = '<i class="fas fa-hourglass-half mr-2"></i>곧 차례입니다 (앞에 ' + data.remaining + '명)'
-                    statusText.className = 'text-orange-800 text-lg font-medium'
+                    statusMessage.className = 'status-alert status-alert-soon'
+                    statusText.innerHTML = '<i class="fas fa-hourglass-half" aria-hidden="true" style="margin-right: var(--space-2);"></i>곧 차례입니다 (앞에 ' + data.remaining + '명)'
+                    statusText.style = 'font-size: 1.0625rem; font-weight: 600; margin: 0;'
                 } else {
                     // 대기 중 (3명 이상 남음)
-                    statusMessage.className = 'bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl p-4 text-center mb-6'
-                    statusText.innerHTML = '<i class="fas fa-clock mr-2"></i>대기 중입니다 (앞에 ' + data.remaining + '명)'
-                    statusText.className = 'text-gray-700 text-lg font-medium'
+                    statusMessage.className = 'status-alert status-alert-waiting'
+                    statusText.innerHTML = '<i class="fas fa-clock" aria-hidden="true" style="margin-right: var(--space-2);"></i>대기 중입니다 (앞에 ' + data.remaining + '명)'
+                    statusText.style = 'font-size: 1.0625rem; font-weight: 600; margin: 0;'
                 }
                 
                 console.log('[대기번호] 상태 업데이트:', data)
@@ -250,7 +420,7 @@ export const queueTicketPage = `
             const btn = event.target.closest('button')
             const originalHTML = btn.innerHTML
             btn.disabled = true
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>확인 중...'
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true" style="margin-right: var(--space-2);"></i>확인 중...'
             
             await loadMyStatus()
             
