@@ -514,94 +514,94 @@ export const guestbookPage = `
 
             <!-- Step 4: 교급 -->
             <div id="section4" class="form-section" role="region" aria-labelledby="step4-heading">
-                <div class="text-center mb-3">
-                    <div class="inline-block p-3 bg-purple-100 rounded-full mb-2" aria-hidden="true">
-                        <i class="fas fa-graduation-cap text-purple-600 text-3xl"></i>
+                <div style="text-align: center; margin-bottom: var(--space-3);">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
+                        <i class="fas fa-graduation-cap" style="color: var(--color-primary); font-size: 2rem;"></i>
                     </div>
-                    <h2 id="step4-heading" class="text-2xl font-bold text-gray-800 mb-1">학교급을 선택해주세요</h2>
-                    <p class="text-sm text-gray-600">현재 재학 중이신 학교급을 선택해주세요</p>
+                    <h2 id="step4-heading" class="text-title2" style="margin-bottom: var(--space-1);">학교급을 선택해주세요</h2>
+                    <p class="text-subheadline" style="color: var(--color-text-tertiary);">현재 재학 중이신 학교급을 선택해주세요</p>
                 </div>
 
-                <fieldset class="grid grid-cols-3 gap-2 mb-3" aria-required="true" aria-describedby="gradeError">
+                <fieldset style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-bottom: var(--space-3);" aria-required="true" aria-describedby="gradeError">
                     <legend class="sr-only">학교급 선택</legend>
-                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('유아', event)">
+                    <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('유아', event)" style="position: relative;">
                         <input type="radio" name="grade" value="유아" class="sr-only" aria-label="유아">
-                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-baby text-3xl text-yellow-500 mb-1" aria-hidden="true"></i>
-                            <div class="font-semibold text-sm">유아</div>
+                            <i class="fas fa-baby" aria-hidden="true" style="font-size: 2rem; color: #eab308; margin-bottom: var(--space-1); display: block;"></i>
+                            <div class="text-subheadline font-semibold">유아</div>
                         </div>
                     </label>
-                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('초등', event)">
+                    <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('초등', event)" style="position: relative;">
                         <input type="radio" name="grade" value="초등" class="sr-only" aria-label="초등학생">
-                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-child text-3xl text-green-500 mb-1" aria-hidden="true"></i>
-                            <div class="font-semibold text-sm">초등</div>
+                            <i class="fas fa-child" aria-hidden="true" style="font-size: 2rem; color: #22c55e; margin-bottom: var(--space-1); display: block;"></i>
+                            <div class="text-subheadline font-semibold">초등</div>
                         </div>
                     </label>
-                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('중등', event)">
+                    <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('중등', event)" style="position: relative;">
                         <input type="radio" name="grade" value="중등" class="sr-only" aria-label="중학생">
-                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-user-graduate text-3xl text-blue-500 mb-1" aria-hidden="true"></i>
-                            <div class="font-semibold text-sm">중등</div>
+                            <i class="fas fa-user-graduate" aria-hidden="true" style="font-size: 2rem; color: #3b82f6; margin-bottom: var(--space-1); display: block;"></i>
+                            <div class="text-subheadline font-semibold">중등</div>
                         </div>
                     </label>
-                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('고등', event)">
+                    <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('고등', event)" style="position: relative;">
                         <input type="radio" name="grade" value="고등" class="sr-only" aria-label="고등학생">
-                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-graduation-cap text-3xl text-purple-500 mb-1" aria-hidden="true"></i>
-                            <div class="font-semibold text-sm">고등</div>
+                            <i class="fas fa-graduation-cap" aria-hidden="true" style="font-size: 2rem; color: #a855f7; margin-bottom: var(--space-1); display: block;"></i>
+                            <div class="text-subheadline font-semibold">고등</div>
                         </div>
                     </label>
-                    <label class="radio-card relative" tabindex="0" onclick="selectGradeAndProceed('성인', event)">
+                    <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('성인', event)" style="position: relative;">
                         <input type="radio" name="grade" value="성인" class="sr-only" aria-label="성인">
-                        <div class="p-3 border-2 border-gray-200 rounded-xl text-center focus-within:ring-4 focus-within:ring-purple-300">
+                        <div style="padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-xl); text-align: center;">
                             <i class="fas fa-check-circle check-icon" aria-hidden="true"></i>
-                            <i class="fas fa-user-tie text-3xl text-indigo-500 mb-1" aria-hidden="true"></i>
-                            <div class="font-semibold text-sm">성인</div>
+                            <i class="fas fa-user-tie" aria-hidden="true" style="font-size: 2rem; color: #6366f1; margin-bottom: var(--space-1); display: block;"></i>
+                            <div class="text-subheadline font-semibold">성인</div>
                         </div>
                     </label>
                 </fieldset>
 
-                <div id="gradeError" class="hidden mb-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center" role="alert" aria-live="polite">
-                    <i class="fas fa-exclamation-circle mr-2" aria-hidden="true"></i>
+                <div id="gradeError" class="hidden" style="margin-bottom: var(--space-4); background: var(--color-error-bg); color: var(--color-error); padding: var(--space-3); border-radius: var(--radius-lg); text-align: center;" role="alert" aria-live="polite">
+                    <i class="fas fa-exclamation-circle" aria-hidden="true" style="margin-right: var(--space-2);"></i>
                     학교급을 선택해주세요.
                 </div>
 
-                <div class="flex gap-3">
-                    <button onclick="goToStep(3)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 px-6 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-gray-400"
+                <div style="display: flex; gap: var(--space-3);">
+                    <button onclick="goToStep(3)" class="btn btn-secondary btn-lg" style="flex: 1;"
                         aria-label="이전 단계로 돌아가기">
-                        <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>이전
+                        <i class="fas fa-arrow-left" aria-hidden="true" style="margin-right: var(--space-2);"></i>이전
                     </button>
-                    <button onclick="goToStep(5)" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300"
+                    <button onclick="goToStep(5)" class="btn btn-primary btn-lg" style="flex: 1; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: var(--shadow-lg);"
                         aria-label="다음 단계로 이동">
-                        다음 <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>
+                        다음 <i class="fas fa-arrow-right" aria-hidden="true" style="margin-left: var(--space-2);"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Step 5: 생년월일 -->
             <div id="section5" class="form-section" role="region" aria-labelledby="step5-heading">
-                <div class="text-center mb-3">
-                    <div class="inline-block p-3 bg-purple-100 rounded-full mb-2" aria-hidden="true">
-                        <i class="fas fa-calendar-alt text-purple-600 text-3xl"></i>
+                <div style="text-align: center; margin-bottom: var(--space-3);">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
+                        <i class="fas fa-calendar-alt" style="color: var(--color-primary); font-size: 2rem;"></i>
                     </div>
-                    <h2 id="step5-heading" class="text-2xl font-bold text-gray-800 mb-1">생년월일을 알려주세요</h2>
-                    <p class="text-sm text-gray-600">동명이인 구분을 위해 필요합니다</p>
+                    <h2 id="step5-heading" class="text-title2" style="margin-bottom: var(--space-1);">생년월일을 알려주세요</h2>
+                    <p class="text-subheadline" style="color: var(--color-text-tertiary);">동명이인 구분을 위해 필요합니다</p>
                 </div>
 
-                <div class="mb-4">
-                    <!-- 년/월/일 분리형 선택기 (개선된 버전) -->
-                    <div class="grid grid-cols-3 gap-3">
+                <div style="margin-bottom: var(--space-4);">
+                    <!-- 년/월/일 분리형 선택기 -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3);">
                         <!-- 년도 선택 -->
                         <div>
-                            <label for="birthYear" class="block text-sm font-semibold text-gray-700 mb-2 text-center">년</label>
+                            <label for="birthYear" class="text-subheadline font-semibold" style="display: block; text-align: center; margin-bottom: var(--space-2);">년</label>
                             <select id="birthYear" 
-                                class="w-full px-2 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-500 bg-white appearance-none cursor-pointer transition-all hover:border-purple-400"
-                                style="min-height: 70px; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23667eea\' stroke-width=\'2\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; padding-right: 2.5rem;"
+                                class="input"
+                                style="width: 100%; padding: var(--space-2); font-size: 1.25rem; text-align: center; cursor: pointer; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23007AFF\' stroke-width=\'2\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; padding-right: 2.5rem; appearance: none; min-height: 70px;"
                                 aria-required="true">
                                 <option value="">선택</option>
                             </select>
@@ -609,10 +609,10 @@ export const guestbookPage = `
                         
                         <!-- 월 선택 -->
                         <div>
-                            <label for="birthMonth" class="block text-sm font-semibold text-gray-700 mb-2 text-center">월</label>
+                            <label for="birthMonth" class="text-subheadline font-semibold" style="display: block; text-align: center; margin-bottom: var(--space-2);">월</label>
                             <select id="birthMonth" 
-                                class="w-full px-2 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-500 bg-white appearance-none cursor-pointer transition-all hover:border-purple-400"
-                                style="min-height: 70px; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23667eea\' stroke-width=\'2\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; padding-right: 2.5rem;"
+                                class="input"
+                                style="width: 100%; padding: var(--space-2); font-size: 1.25rem; text-align: center; cursor: pointer; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23007AFF\' stroke-width=\'2\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; padding-right: 2.5rem; appearance: none; min-height: 70px;"
                                 aria-required="true">
                                 <option value="">선택</option>
                                 <option value="01">1월</option>
@@ -632,10 +632,10 @@ export const guestbookPage = `
                         
                         <!-- 일 선택 -->
                         <div>
-                            <label for="birthDay" class="block text-sm font-semibold text-gray-700 mb-2 text-center">일</label>
+                            <label for="birthDay" class="text-subheadline font-semibold" style="display: block; text-align: center; margin-bottom: var(--space-2);">일</label>
                             <select id="birthDay" 
-                                class="w-full px-2 py-4 text-xl text-center border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-purple-300 focus:border-purple-500 bg-white appearance-none cursor-pointer transition-all hover:border-purple-400"
-                                style="min-height: 70px; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23667eea\' stroke-width=\'2\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; padding-right: 2.5rem;"
+                                class="input"
+                                style="width: 100%; padding: var(--space-2); font-size: 1.25rem; text-align: center; cursor: pointer; background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23007AFF\' stroke-width=\'2\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.5rem center; padding-right: 2.5rem; appearance: none; min-height: 70px;"
                                 aria-required="true"
                                 disabled>
                                 <option value="">월 선택 후</option>
@@ -644,54 +644,54 @@ export const guestbookPage = `
                     </div>
                     
                     <!-- 선택된 날짜 실시간 미리보기 -->
-                    <div class="mt-4 p-4 bg-purple-50 rounded-xl text-center transition-all" id="datePreviewBox">
-                        <p class="text-sm text-gray-600 mb-1">선택한 생년월일</p>
-                        <p id="datePreview" class="text-2xl font-bold text-gray-400">
+                    <div id="datePreviewBox" style="margin-top: var(--space-4); padding: var(--space-4); background: rgba(0, 122, 255, 0.05); border-radius: var(--radius-xl); text-align: center; transition: all var(--transition-base);">
+                        <p class="text-subheadline" style="color: var(--color-text-tertiary); margin-bottom: var(--space-1);">선택한 생년월일</p>
+                        <p id="datePreview" class="text-title2" style="color: var(--color-text-quaternary);">
                             선택해주세요
                         </p>
                     </div>
                     
-                    <div id="dateError" class="hidden mt-2 bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center" role="alert" aria-live="polite">
-                        <i class="fas fa-exclamation-circle mr-1" aria-hidden="true"></i>
+                    <div id="dateError" class="hidden" style="margin-top: var(--space-2); background: var(--color-error-bg); color: var(--color-error); padding: var(--space-3); border-radius: var(--radius-lg); text-align: center;" role="alert" aria-live="polite">
+                        <i class="fas fa-exclamation-circle" aria-hidden="true" style="margin-right: var(--space-1);"></i>
                         <span id="dateErrorText">생년월일을 모두 선택해주세요.</span>
                     </div>
                 </div>
 
-                <div class="flex gap-2">
-                    <button onclick="goToStep(4)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-gray-400"
+                <div style="display: flex; gap: var(--space-2);">
+                    <button onclick="goToStep(4)" class="btn btn-secondary" style="flex: 1;"
                         aria-label="이전 단계로 돌아가기">
-                        <i class="fas fa-arrow-left mr-1" aria-hidden="true"></i>이전
+                        <i class="fas fa-arrow-left" aria-hidden="true" style="margin-right: var(--space-1);"></i>이전
                     </button>
-                    <button onclick="submitForm()" id="submitBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    <button onclick="submitForm()" id="submitBtn" class="btn btn-primary" style="flex: 1; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: var(--shadow-lg);"
                         aria-label="방명록 제출"
                         disabled>
-                        제출하기 <i class="fas fa-check ml-1" aria-hidden="true"></i>
+                        제출하기 <i class="fas fa-check" aria-hidden="true" style="margin-left: var(--space-1);"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Step 6: 완료 -->
-            <div id="section6" class="form-section text-center" role="region" aria-labelledby="step6-heading" aria-live="polite">
-                <div class="mb-4">
-                    <div class="inline-block p-4 bg-green-100 rounded-full mb-3 animate-bounce" aria-hidden="true">
-                        <i class="fas fa-check-circle text-green-600 text-5xl"></i>
+            <div id="section6" class="form-section" style="text-align: center;" role="region" aria-labelledby="step6-heading" aria-live="polite">
+                <div style="margin-bottom: var(--space-4);">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 120px; height: 120px; background: var(--color-success-bg); border-radius: 50%; margin-bottom: var(--space-3); animation: bounce 1s ease-in-out infinite;" aria-hidden="true">
+                        <i class="fas fa-check-circle" style="color: var(--color-success); font-size: 4rem;"></i>
                     </div>
                 </div>
                 
-                <h2 id="step6-heading" class="text-2xl font-bold text-gray-800 mb-3">
+                <h2 id="step6-heading" class="text-title1" style="margin-bottom: var(--space-3);">
                     등록 완료!
                 </h2>
                 
-                <p class="text-gray-600 mb-4 text-sm">
+                <p class="text-body" style="color: var(--color-text-secondary); margin-bottom: var(--space-4);">
                     소중한 시간 내어 방명록을 작성해주셔서 감사합니다.<br>
                     <strong>즐거운 시간 되세요!</strong> 🎉
                 </p>
 
-                <div class="bg-purple-50 p-4 rounded-lg" role="status">
-                    <p class="text-xs text-gray-600">
-                        <i class="fas fa-info-circle text-purple-600 mr-1" aria-hidden="true"></i>
+                <div style="background: rgba(0, 122, 255, 0.05); padding: var(--space-4); border-radius: var(--radius-lg);" role="status">
+                    <p class="text-caption1" style="color: var(--color-text-tertiary);">
+                        <i class="fas fa-info-circle" aria-hidden="true" style="color: var(--color-primary); margin-right: var(--space-1);"></i>
                         3초 후 자동으로 새로고침됩니다.<br>
-                        <span class="text-xs text-gray-500 mt-1 block">다음 참가자도 작성 가능합니다</span>
+                        <span style="display: block; margin-top: var(--space-1); color: var(--color-text-quaternary);">다음 참가자도 작성 가능합니다</span>
                     </p>
                 </div>
             </div>
