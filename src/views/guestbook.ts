@@ -12,12 +12,12 @@ export const guestbookPage = `
     
     <!-- PWA 설정 -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#4F46E5">
+    <meta name="theme-color" content="#007AFF">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="방명록">
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/static/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     
@@ -25,11 +25,16 @@ export const guestbookPage = `
     <script src="/static/offline-db.js"></script>
     <script src="/static/sync-manager.js"></script>
     <style>
+        /* 방명록 페이지 전용 스타일 */
         body, html {
             height: 100%;
             width: 100%;
             margin: 0;
             padding: 0;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
         /* 세로 모드 (모바일 기본) */
@@ -95,76 +100,46 @@ export const guestbookPage = `
             }
         }
         
-        /* 스크린 리더 전용 텍스트 */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-        }
-        
-        /* 포커스 스타일 개선 */
-        *:focus-visible {
-            outline: 3px solid #667eea;
-            outline-offset: 2px;
-        }
-        
-        button:focus-visible {
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.5);
-        }
-        
-        input:focus-visible, select:focus-visible {
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3);
-        }
+        /* Note: .sr-only is already defined in /static/style.css */
         
         .step-indicator {
-            transition: all 0.3s ease;
+            transition: all var(--transition-base);
         }
         .step-active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
             color: white;
         }
         .step-completed {
-            background: #10b981;
+            background: var(--color-success);
             color: white;
         }
         .step-inactive {
-            background: #e5e7eb;
-            color: #9ca3af;
+            background: var(--color-neutral-300);
+            color: var(--color-neutral-600);
         }
         .form-section {
             display: none;
         }
         .form-section.active {
             display: block;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn var(--transition-slow) ease;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* fadeIn already defined in /static/style.css */
         .radio-card {
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all var(--transition-fast);
+            border-radius: var(--radius-xl);
         }
         .radio-card:hover {
             transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-md);
         }
         .radio-card:focus-within {
             transform: scale(1.02);
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3);
         }
         .radio-card input:checked + div {
-            border-color: #667eea;
-            background: #f0f4ff;
+            border-color: var(--color-primary);
+            background: rgba(0, 122, 255, 0.1);
         }
         /* 선택 애니메이션 */
         .radio-card.selecting {
@@ -178,14 +153,14 @@ export const guestbookPage = `
         .radio-card .check-icon {
             display: none;
             position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #10b981;
+            top: var(--space-2);
+            right: var(--space-2);
+            color: var(--color-success);
             font-size: 1.5rem;
         }
         .radio-card.selecting .check-icon {
             display: block;
-            animation: checkFadeIn 0.3s ease-in-out;
+            animation: checkFadeIn var(--transition-base) ease-in-out;
         }
         @keyframes checkFadeIn {
             0% { opacity: 0; transform: scale(0.5); }
@@ -193,14 +168,14 @@ export const guestbookPage = `
         }
         .progress-bar {
             height: 4px;
-            background: #e5e7eb;
-            border-radius: 2px;
+            background: var(--color-neutral-300);
+            border-radius: var(--radius-sm);
             overflow: hidden;
         }
         .progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s ease;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            transition: width var(--transition-base);
         }
         .main-card {
             position: relative;
@@ -331,7 +306,7 @@ export const guestbookPage = `
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 to-pink-50">
+<body>
     <!-- 우측 상단 작은 QR 코드 -->
     <div class="qr-code-small" onclick="openQRModal()" title="QR 코드 크게 보기">
         <div class="bg-white rounded-xl shadow-lg p-2 border-2 border-purple-300">
