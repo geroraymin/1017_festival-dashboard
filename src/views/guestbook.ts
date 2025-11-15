@@ -482,7 +482,7 @@ export const guestbookPage = `
                     <p class="text-subheadline" style="color: var(--color-text-tertiary);">통계 자료로 활용됩니다</p>
                 </div>
 
-                <fieldset style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4);" aria-required="true" aria-describedby="genderError">
+                <fieldset style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4); border: none; padding: 0;" aria-required="true" aria-describedby="genderError">
                     <legend class="sr-only">성별 선택</legend>
                     <label class="radio-card" tabindex="0" onclick="selectGenderAndProceed('남성', event)" style="position: relative;">
                         <input type="radio" name="gender" value="남성" class="sr-only" aria-label="남성">
@@ -529,7 +529,7 @@ export const guestbookPage = `
                     <p class="text-subheadline" style="color: var(--color-text-tertiary);">현재 재학 중이신 학교급을 선택해주세요</p>
                 </div>
 
-                <fieldset style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-bottom: var(--space-3);" aria-required="true" aria-describedby="gradeError">
+                <fieldset style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-bottom: var(--space-3); border: none; padding: 0;" aria-required="true" aria-describedby="gradeError">
                     <legend class="sr-only">학교급 선택</legend>
                     <label class="radio-card" tabindex="0" onclick="selectGradeAndProceed('유아', event)" style="position: relative;">
                         <input type="radio" name="grade" value="유아" class="sr-only" aria-label="유아">
