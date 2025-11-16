@@ -112,29 +112,29 @@ app.get('/', (c) => {
         <link rel="stylesheet" href="/static/style.css">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     </head>
-    <body style="background: linear-gradient(135deg, var(--color-background-secondary), var(--color-primary-light)); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-4);">
+    <body style="background: linear-gradient(135deg, #F5F7FA, #E3F2FD); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
         <div style="max-width: 28rem; width: 100%;">
-            <div style="text-align: center; margin-bottom: var(--space-8);">
-                <div style="display: inline-block; padding: var(--space-4); background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: 50%; margin-bottom: var(--space-4); box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="display: inline-block; padding: 1rem; background: linear-gradient(135deg, #007AFF, #00A0B0); border-radius: 50%; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);">
                     <i class="fas fa-clipboard-list" style="color: white; font-size: 2.5rem;"></i>
                 </div>
-                <h1 class="text-title1" style="color: var(--color-text-primary); margin-bottom: var(--space-2);">축제 디지털방명록</h1>
-                <p class="text-body" style="color: var(--color-text-secondary);">시스템 로그인</p>
+                <h1 class="text-title1" style="color: #1D1D1F; margin-bottom: 0.5rem;">축제 디지털방명록</h1>
+                <p class="text-body" style="color: #6E6E73;">시스템 로그인</p>
             </div>
 
-            <div class="card" style="padding: var(--space-8);">
-                <a href="/admin" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: var(--space-4); text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--color-primary), #0051D5);">
-                    <i class="fas fa-user-shield" style="margin-right: var(--space-2);"></i>
+            <div class="card" style="padding: 2rem;">
+                <a href="/admin" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #007AFF, #0051D5);">
+                    <i class="fas fa-user-shield" style="margin-right: 0.5rem;"></i>
                     관리자 로그인
                 </a>
 
-                <a href="/operator" class="btn btn-secondary btn-lg" style="width: 100%; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--color-secondary), #0099CC);">
-                    <i class="fas fa-users" style="margin-right: var(--space-2);"></i>
+                <a href="/operator" class="btn btn-secondary btn-lg" style="width: 100%; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #00A0B0, #0099CC);">
+                    <i class="fas fa-users" style="margin-right: 0.5rem;"></i>
                     부스 운영자 로그인
                 </a>
             </div>
 
-            <p class="text-caption1" style="text-align: center; color: var(--color-text-tertiary); margin-top: var(--space-6);">
+            <p class="text-caption1" style="text-align: center; color: #8E8E93; margin-top: 1.5rem;">
                 © 2025 축제 디지털방명록 시스템. All rights reserved.
             </p>
         </div>

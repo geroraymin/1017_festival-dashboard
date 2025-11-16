@@ -17,21 +17,21 @@ export const adminLoginPage = `
     <link rel="stylesheet" href="/static/style.css">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body style="background: linear-gradient(135deg, var(--color-background-secondary), var(--color-primary-light)); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-4);">
+<body style="background: linear-gradient(135deg, #F5F7FA, #E3F2FD); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
     <div style="max-width: 28rem; width: 100%;">
-        <div style="text-align: center; margin-bottom: var(--space-8);">
-            <a href="/" style="display: inline-block; padding: var(--space-4); background: linear-gradient(135deg, var(--color-primary), #0051D5); border-radius: 50%; margin-bottom: var(--space-4); text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="/" style="display: inline-block; padding: 1rem; background: linear-gradient(135deg, #007AFF, #0051D5); border-radius: 50%; margin-bottom: 1rem; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);">
                 <i class="fas fa-user-shield" style="color: white; font-size: 2.5rem;"></i>
             </a>
-            <h1 class="text-title1" style="color: var(--color-text-primary); margin-bottom: var(--space-2);">관리자 로그인</h1>
-            <p class="text-body" style="color: var(--color-text-secondary);">시스템 관리자 전용</p>
+            <h1 class="text-title1" style="color: #1D1D1F; margin-bottom: 0.5rem;">관리자 로그인</h1>
+            <p class="text-body" style="color: #6E6E73;">시스템 관리자 전용</p>
         </div>
 
-        <div class="card" style="padding: var(--space-8);">
-            <form id="loginForm" style="display: flex; flex-direction: column; gap: var(--space-6);">
+        <div class="card" style="padding: 2rem;">
+            <form id="loginForm" style="display: flex; flex-direction: column; gap: 1.5rem;">
                 <div>
-                    <label class="text-footnote" style="display: block; font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-2);">
-                        <i class="fas fa-user" style="margin-right: var(--space-2);"></i>아이디
+                    <label class="text-footnote" style="display: block; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
+                        <i class="fas fa-user" style="margin-right: 0.5rem;"></i>아이디
                     </label>
                     <input type="text" id="username" required
                         class="input"
@@ -40,8 +40,8 @@ export const adminLoginPage = `
                 </div>
 
                 <div>
-                    <label class="text-footnote" style="display: block; font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-2);">
-                        <i class="fas fa-lock" style="margin-right: var(--space-2);"></i>비밀번호
+                    <label class="text-footnote" style="display: block; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
+                        <i class="fas fa-lock" style="margin-right: 0.5rem;"></i>비밀번호
                     </label>
                     <input type="password" id="password" required
                         class="input"
@@ -50,19 +50,19 @@ export const adminLoginPage = `
                 </div>
 
                 <div id="errorMessage" class="status-alert status-alert-error" style="display: none;">
-                    <i class="fas fa-exclamation-circle" style="margin-right: var(--space-2);"></i>
+                    <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i>
                     <span id="errorText"></span>
                 </div>
 
                 <button type="submit" id="loginButton"
                     class="btn btn-primary btn-lg"
-                    style="width: 100%; background: linear-gradient(135deg, var(--color-primary), #0051D5);">
-                    <i class="fas fa-sign-in-alt" style="margin-right: var(--space-2);"></i>
+                    style="width: 100%; background: linear-gradient(135deg, #007AFF, #0051D5);">
+                    <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>
                     로그인
                 </button>
 
-                <a href="/" class="text-body" style="display: block; text-align: center; color: var(--color-text-secondary); text-decoration: none; transition: color 0.2s;">
-                    <i class="fas fa-arrow-left" style="margin-right: var(--space-2);"></i>
+                <a href="/" class="text-body" style="display: block; text-align: center; color: #6E6E73; text-decoration: none; transition: color 0.2s;">
+                    <i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i>
                     메인으로 돌아가기
                 </a>
             </form>
@@ -84,7 +84,7 @@ export const adminLoginPage = `
 
             errorMessage.style.display = 'none'
             loginButton.disabled = true
-            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: var(--space-2);"></i>로그인 중...'
+            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>로그인 중...'
 
             try {
                 const response = await AuthAPI.adminLogin(username, password)
@@ -98,7 +98,7 @@ export const adminLoginPage = `
                 errorMessage.style.display = 'flex'
                 
                 loginButton.disabled = false
-                loginButton.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right: var(--space-2);"></i>로그인'
+                loginButton.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>로그인'
             }
         })
     </script>
@@ -121,21 +121,21 @@ export const operatorLoginPage = `
     <link rel="stylesheet" href="/static/style.css">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body style="background: linear-gradient(135deg, #E0F7FA, var(--color-secondary-light)); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-4);">
+<body style="background: linear-gradient(135deg, #E0F7FA, #B2EBF2); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
     <div style="max-width: 28rem; width: 100%;">
-        <div style="text-align: center; margin-bottom: var(--space-8);">
-            <a href="/" style="display: inline-block; padding: var(--space-4); background: linear-gradient(135deg, var(--color-secondary), #0099CC); border-radius: 50%; margin-bottom: var(--space-4); text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 160, 176, 0.3);">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="/" style="display: inline-block; padding: 1rem; background: linear-gradient(135deg, #00A0B0, #0099CC); border-radius: 50%; margin-bottom: 1rem; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 160, 176, 0.3);">
                 <i class="fas fa-users" style="color: white; font-size: 2.5rem;"></i>
             </a>
-            <h1 class="text-title1" style="color: var(--color-text-primary); margin-bottom: var(--space-2);">부스 운영자 로그인</h1>
-            <p class="text-body" style="color: var(--color-text-secondary);">부스 코드를 입력하세요</p>
+            <h1 class="text-title1" style="color: #1D1D1F; margin-bottom: 0.5rem;">부스 운영자 로그인</h1>
+            <p class="text-body" style="color: #6E6E73;">부스 코드를 입력하세요</p>
         </div>
 
-        <div class="card" style="padding: var(--space-8);">
-            <form id="loginForm" style="display: flex; flex-direction: column; gap: var(--space-6);">
+        <div class="card" style="padding: 2rem;">
+            <form id="loginForm" style="display: flex; flex-direction: column; gap: 1.5rem;">
                 <div>
-                    <label class="text-footnote" style="display: block; font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-2);">
-                        <i class="fas fa-key" style="margin-right: var(--space-2);"></i>부스 코드 (6자리)
+                    <label class="text-footnote" style="display: block; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
+                        <i class="fas fa-key" style="margin-right: 0.5rem;"></i>부스 코드 (6자리)
                     </label>
                     <input type="text" id="boothCode" required maxlength="6"
                         class="input"
@@ -144,32 +144,32 @@ export const operatorLoginPage = `
                 </div>
 
                 <div class="info-box">
-                    <i class="fas fa-info-circle" style="margin-right: var(--space-2); color: var(--color-primary);"></i>
+                    <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: #007AFF;"></i>
                     부스 코드는 관리자로부터 전달받은 6자리 코드입니다.
                 </div>
                 
                 <!-- 부스 코드 찾기 링크 추가 -->
                 <div style="text-align: center;">
-                    <button type="button" onclick="showBoothCodeFinder()" class="text-footnote" style="background: none; border: none; color: var(--color-secondary); cursor: pointer; font-weight: 600; transition: opacity 0.2s;">
-                        <i class="fas fa-search" style="margin-right: var(--space-1);"></i>
+                    <button type="button" onclick="showBoothCodeFinder()" class="text-footnote" style="background: none; border: none; color: #00A0B0; cursor: pointer; font-weight: 600; transition: opacity 0.2s;">
+                        <i class="fas fa-search" style="margin-right: 0.25rem;"></i>
                         부스 코드를 잊으셨나요?
                     </button>
                 </div>
 
                 <div id="errorMessage" class="status-alert status-alert-error" style="display: none;">
-                    <i class="fas fa-exclamation-circle" style="margin-right: var(--space-2);"></i>
+                    <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i>
                     <span id="errorText"></span>
                 </div>
 
                 <button type="submit" id="loginButton"
                     class="btn btn-secondary btn-lg"
-                    style="width: 100%; background: linear-gradient(135deg, var(--color-secondary), #0099CC);">
-                    <i class="fas fa-sign-in-alt" style="margin-right: var(--space-2);"></i>
+                    style="width: 100%; background: linear-gradient(135deg, #00A0B0, #0099CC);">
+                    <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>
                     로그인
                 </button>
 
-                <a href="/" class="text-body" style="display: block; text-align: center; color: var(--color-text-secondary); text-decoration: none; transition: color 0.2s;">
-                    <i class="fas fa-arrow-left" style="margin-right: var(--space-2);"></i>
+                <a href="/" class="text-body" style="display: block; text-align: center; color: #6E6E73; text-decoration: none; transition: color 0.2s;">
+                    <i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i>
                     메인으로 돌아가기
                 </a>
             </form>
@@ -177,26 +177,26 @@ export const operatorLoginPage = `
     </div>
     
     <!-- 부스 코드 찾기 모달 -->
-    <div id="boothCodeFinderModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center; padding: var(--space-4); z-index: 50;" onclick="hideBoothCodeFinder()">
-        <div class="card" style="max-width: 28rem; width: 100%; padding: var(--space-6); animation: slideUp 0.3s ease-out;" onclick="event.stopPropagation()">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
-                <h2 class="text-title2" style="color: var(--color-text-primary);">
-                    <i class="fas fa-search" style="color: var(--color-secondary); margin-right: var(--space-2);"></i>
+    <div id="boothCodeFinderModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center; padding: 1rem; z-index: 50;" onclick="hideBoothCodeFinder()">
+        <div class="card" style="max-width: 28rem; width: 100%; padding: 1.5rem; animation: slideUp 0.3s ease-out;" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 class="text-title2" style="color: #1D1D1F;">
+                    <i class="fas fa-search" style="color: #00A0B0; margin-right: 0.5rem;"></i>
                     부스 코드 찾기
                 </h2>
-                <button onclick="hideBoothCodeFinder()" style="background: none; border: none; color: var(--color-text-tertiary); cursor: pointer; min-width: var(--touch-target-min); min-height: var(--touch-target-min); display: flex; align-items: center; justify-content: center; transition: color 0.2s;">
+                <button onclick="hideBoothCodeFinder()" style="background: none; border: none; color: #8E8E93; cursor: pointer; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; transition: color 0.2s;">
                     <i class="fas fa-times" style="font-size: 1.5rem;"></i>
                 </button>
             </div>
             
-            <p class="text-body" style="color: var(--color-text-secondary); margin-bottom: var(--space-4);">
+            <p class="text-body" style="color: #6E6E73; margin-bottom: 1rem;">
                 관리자에게 전화하지 말고 직접 찾아보세요!
             </p>
             
-            <form id="findBoothCodeForm" style="display: flex; flex-direction: column; gap: var(--space-4);">
+            <form id="findBoothCodeForm" style="display: flex; flex-direction: column; gap: 1rem;">
                 <div>
-                    <label class="text-footnote" style="display: block; font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-2);">
-                        <i class="fas fa-calendar-alt" style="margin-right: var(--space-1);"></i>행사 선택
+                    <label class="text-footnote" style="display: block; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
+                        <i class="fas fa-calendar-alt" style="margin-right: 0.25rem;"></i>행사 선택
                     </label>
                     <select id="eventSelectForFinder" required
                         class="input"
@@ -206,8 +206,8 @@ export const operatorLoginPage = `
                 </div>
                 
                 <div>
-                    <label class="text-footnote" style="display: block; font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-2);">
-                        <i class="fas fa-store" style="margin-right: var(--space-1);"></i>부스명
+                    <label class="text-footnote" style="display: block; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
+                        <i class="fas fa-store" style="margin-right: 0.25rem;"></i>부스명
                     </label>
                     <input type="text" id="boothNameSearch" required
                         class="input"
@@ -216,24 +216,24 @@ export const operatorLoginPage = `
                 </div>
                 
                 <div id="finderError" class="status-alert status-alert-error" style="display: none;">
-                    <i class="fas fa-exclamation-circle" style="margin-right: var(--space-2);"></i>
+                    <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i>
                     <span id="finderErrorText"></span>
                 </div>
                 
                 <button type="submit" id="searchButton"
                     class="btn btn-secondary btn-lg"
-                    style="width: 100%; background: linear-gradient(135deg, var(--color-secondary), #0099CC);">
-                    <i class="fas fa-search" style="margin-right: var(--space-2);"></i>
+                    style="width: 100%; background: linear-gradient(135deg, #00A0B0, #0099CC);">
+                    <i class="fas fa-search" style="margin-right: 0.5rem;"></i>
                     검색
                 </button>
             </form>
             
             <!-- 검색 결과 -->
-            <div id="boothCodeResult" style="display: none; margin-top: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3);">
+            <div id="boothCodeResult" style="display: none; margin-top: 1rem;">
                 <div class="status-alert status-alert-success" style="text-align: center; flex-direction: column;">
-                    <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: var(--space-2);"></i>
-                    <p class="text-body" style="color: var(--color-text-primary); margin-bottom: var(--space-2);">찾은 부스 코드</p>
-                    <div id="foundBoothCodes" style="display: flex; flex-direction: column; gap: var(--space-2); width: 100%;">
+                    <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                    <p class="text-body" style="color: #1D1D1F; margin-bottom: 0.5rem;">찾은 부스 코드</p>
+                    <div id="foundBoothCodes" style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
                         <!-- 동적으로 채워짐 -->
                     </div>
                 </div>
@@ -267,7 +267,7 @@ export const operatorLoginPage = `
 
             errorMessage.style.display = 'none'
             loginButton.disabled = true
-            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: var(--space-2);"></i>로그인 중...'
+            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>로그인 중...'
 
             try {
                 const response = await AuthAPI.operatorLogin(boothCode)
@@ -281,7 +281,7 @@ export const operatorLoginPage = `
                 errorMessage.style.display = 'flex'
                 
                 loginButton.disabled = false
-                loginButton.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right: var(--space-2);"></i>로그인'
+                loginButton.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>로그인'
             }
         })
         
@@ -346,7 +346,7 @@ export const operatorLoginPage = `
             finderError.style.display = 'none'
             resultDiv.style.display = 'none'
             searchButton.disabled = true
-            searchButton.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: var(--space-2);"></i>검색 중...'
+            searchButton.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>검색 중...'
             
             try {
                 const response = await fetch('/api/booths/find-code', {
@@ -368,16 +368,16 @@ export const operatorLoginPage = `
                     data.booths.forEach(booth => {
                         const boothCard = document.createElement('div')
                         boothCard.className = 'card'
-                        boothCard.style.padding = 'var(--space-3)'
+                        boothCard.style.padding = '0.75rem'
                         boothCard.style.background = 'rgba(0, 160, 176, 0.05)'
                         boothCard.innerHTML = \`
-                            <p class="text-caption1" style="color: var(--color-text-secondary); margin-bottom: var(--space-1);">\${booth.name}</p>
+                            <p class="text-caption1" style="color: #6E6E73; margin-bottom: 0.25rem;">\${booth.name}</p>
                             <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <span style="font-size: 1.875rem; font-family: 'SF Mono', monospace; font-weight: 700; color: var(--color-secondary);">\${booth.booth_code}</span>
+                                <span style="font-size: 1.875rem; font-family: 'SF Mono', monospace; font-weight: 700; color: #00A0B0;">\${booth.booth_code}</span>
                                 <button onclick="copyBoothCode('\${booth.booth_code}')" 
                                     class="btn btn-secondary"
-                                    style="padding: var(--space-2) var(--space-3); font-size: 0.875rem;">
-                                    <i class="fas fa-copy" style="margin-right: var(--space-1);"></i>복사
+                                    style="padding: 0.5rem 0.75rem; font-size: 0.875rem;">
+                                    <i class="fas fa-copy" style="margin-right: 0.25rem;"></i>복사
                                 </button>
                             </div>
                         \`
@@ -395,7 +395,7 @@ export const operatorLoginPage = `
                 finderError.style.display = 'flex'
             } finally {
                 searchButton.disabled = false
-                searchButton.innerHTML = '<i class="fas fa-search" style="margin-right: var(--space-2);"></i>검색'
+                searchButton.innerHTML = '<i class="fas fa-search" style="margin-right: 0.5rem;"></i>검색'
             }
         })
         
