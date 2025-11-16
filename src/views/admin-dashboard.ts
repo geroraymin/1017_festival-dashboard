@@ -654,23 +654,23 @@ export const adminDashboardPage = `
     <div id="chartMode" class="chart-mode">
         <!-- 헤더 -->
         <div class="chart-mode-header">
-            <div class="flex items-center justify-between text-white gap-2">
-                <div class="flex items-center gap-2 min-w-0 flex-1">
-                    <i class="fas fa-chart-line text-xl sm:text-2xl"></i>
-                    <div class="min-w-0">
-                        <h2 class="text-base sm:text-xl font-bold truncate">통계 대시보드</h2>
-                        <p class="text-xs sm:text-sm opacity-80 truncate" id="chartModeEventName">전체 행사</p>
+            <div style="display: flex; align-items: center; justify-content: space-between; color: white; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0; flex: 1;">
+                    <i class="fas fa-chart-line" style="font-size: 1.5rem;"></i>
+                    <div style="min-width: 0;">
+                        <h2 style="font-size: 1.25rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -0.5px;">통계 대시보드</h2>
+                        <p style="font-size: 0.875rem; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" id="chartModeEventName">전체 행사</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 flex-shrink-0">
-                    <div class="text-xs sm:text-sm opacity-80 hidden sm:flex items-center">
-                        <i class="fas fa-sync-alt mr-1"></i>
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
+                    <div style="font-size: 0.875rem; opacity: 0.8; display: flex; align-items: center;">
+                        <i class="fas fa-sync-alt" style="margin-right: 0.25rem;"></i>
                         <span id="chartModeUpdateTime">--:--</span>
                     </div>
                     <button onclick="exitChartMode()" 
-                        class="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition text-sm sm:text-base">
+                        style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255, 255, 255, 0.2); border-radius: 12px; transition: all 0.2s ease; font-size: 0.9375rem; color: white; border: none; cursor: pointer; min-height: 44px;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
                         <i class="fas fa-times"></i>
-                        <span class="hidden sm:inline">닫기 (ESC)</span>
+                        <span style="display: inline;">닫기 (ESC)</span>
                     </button>
                 </div>
             </div>
@@ -679,77 +679,77 @@ export const adminDashboardPage = `
         <!-- 차트 콘텐츠 -->
         <div class="chart-mode-content">
             <!-- 요약 카드 (더 컴팩트하게) -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-lg shadow-2xl p-2">
-                    <div class="flex items-center justify-between">
-                        <i class="fas fa-users text-xl text-blue-600"></i>
-                        <span class="text-2xl font-bold text-gray-800" id="chartModeTotalParticipants">0</span>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; margin-bottom: 0.75rem;">
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 0.75rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <i class="fas fa-users" style="font-size: 1.5rem; color: #007AFF;"></i>
+                        <span style="font-size: 1.5rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;" id="chartModeTotalParticipants">0</span>
                     </div>
-                    <h3 class="text-gray-600 text-xs font-medium mt-1">총 참가자</h3>
+                    <h3 style="color: #6E6E73; font-size: 0.75rem; font-weight: 600; margin-top: 0.25rem;">총 참가자</h3>
                 </div>
 
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-lg shadow-2xl p-2">
-                    <div class="flex items-center justify-between">
-                        <i class="fas fa-calendar text-xl text-purple-600"></i>
-                        <span class="text-2xl font-bold text-gray-800" id="chartModeTotalEvents">0</span>
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 0.75rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <i class="fas fa-calendar" style="font-size: 1.5rem; color: #5856D6;"></i>
+                        <span style="font-size: 1.5rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;" id="chartModeTotalEvents">0</span>
                     </div>
-                    <h3 class="text-gray-600 text-xs font-medium mt-1">진행 중인 행사</h3>
+                    <h3 style="color: #6E6E73; font-size: 0.75rem; font-weight: 600; margin-top: 0.25rem;">진행 중인 행사</h3>
                 </div>
 
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-lg shadow-2xl p-2">
-                    <div class="flex items-center justify-between">
-                        <i class="fas fa-store text-xl text-pink-600"></i>
-                        <span class="text-2xl font-bold text-gray-800" id="chartModeTotalBooths">0</span>
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 0.75rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <i class="fas fa-store" style="font-size: 1.5rem; color: #FF375F;"></i>
+                        <span style="font-size: 1.5rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;" id="chartModeTotalBooths">0</span>
                     </div>
-                    <h3 class="text-gray-600 text-xs font-medium mt-1">활성 부스</h3>
+                    <h3 style="color: #6E6E73; font-size: 0.75rem; font-weight: 600; margin-top: 0.25rem;">활성 부스</h3>
                 </div>
 
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-lg shadow-2xl p-2">
-                    <div class="flex items-center justify-between">
-                        <i class="fas fa-chart-pie text-xl text-green-600"></i>
-                        <span class="text-lg font-bold text-gray-800" id="chartModeGenderRatio">50% / 50%</span>
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 0.75rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <i class="fas fa-chart-pie" style="font-size: 1.5rem; color: #32D74B;"></i>
+                        <span style="font-size: 1.125rem; font-weight: 800; color: #1D1D1F; letter-spacing: -0.5px;" id="chartModeGenderRatio">50% / 50%</span>
                     </div>
-                    <h3 class="text-gray-600 text-xs font-medium mt-1">남성 / 여성 비율</h3>
+                    <h3 style="color: #6E6E73; font-size: 0.75rem; font-weight: 600; margin-top: 0.25rem;">남성 / 여성 비율</h3>
                 </div>
             </div>
 
             <!-- 차트 그리드 (더 작은 높이와 패딩) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 0.75rem; margin-bottom: 0.75rem;">
                 <!-- 성별 분포 -->
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-3">
-                    <h3 class="text-base font-bold text-gray-800 mb-2">
-                        <i class="fas fa-venus-mars text-pink-500 mr-1"></i>
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 1rem;">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: #1D1D1F; margin-bottom: 0.5rem; letter-spacing: -0.5px;">
+                        <i class="fas fa-venus-mars" style="color: #FF375F; margin-right: 0.25rem;"></i>
                         성별 분포
                     </h3>
                     <div style="height: 160px;">
                         <canvas id="chartModeGenderChart"></canvas>
                     </div>
                     <!-- 성별 통계 테이블 (더 컴팩트하게) -->
-                    <div class="mt-2 pt-2 border-t border-gray-200">
-                        <div id="chartModeGenderStatsTable" class="grid grid-cols-2 gap-2 text-center text-xs"></div>
+                    <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 2px solid #E5E5E7;">
+                        <div id="chartModeGenderStatsTable" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; text-align: center; font-size: 0.75rem;"></div>
                     </div>
                 </div>
 
                 <!-- 교급 분포 -->
-                <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-3">
-                    <h3 class="text-base font-bold text-gray-800 mb-2">
-                        <i class="fas fa-graduation-cap text-blue-500 mr-1"></i>
+                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 1rem;">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: #1D1D1F; margin-bottom: 0.5rem; letter-spacing: -0.5px;">
+                        <i class="fas fa-graduation-cap" style="color: #007AFF; margin-right: 0.25rem;"></i>
                         교급 분포
                     </h3>
                     <div style="height: 160px;">
                         <canvas id="chartModeGradeChart"></canvas>
                     </div>
                     <!-- 교급 통계 테이블 (더 컴팩트하게) -->
-                    <div class="mt-2 pt-2 border-t border-gray-200">
-                        <div id="chartModeGradeStatsTable" class="grid grid-cols-5 gap-1 text-center text-xs"></div>
+                    <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 2px solid #E5E5E7;">
+                        <div id="chartModeGradeStatsTable" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.25rem; text-align: center; font-size: 0.75rem;"></div>
                     </div>
                 </div>
             </div>
 
             <!-- 부스별 참가자 현황 (더 작은 높이) -->
-            <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-3">
-                <h3 class="text-base font-bold text-gray-800 mb-2">
-                    <i class="fas fa-store-alt text-indigo-500 mr-1"></i>
+            <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 1rem;">
+                <h3 style="font-size: 1rem; font-weight: 700; color: #1D1D1F; margin-bottom: 0.5rem; letter-spacing: -0.5px;">
+                    <i class="fas fa-store-alt" style="color: #5856D6; margin-right: 0.25rem;"></i>
                     부스별 참가자 현황
                 </h3>
                 <div style="height: 200px;">
@@ -763,29 +763,29 @@ export const adminDashboardPage = `
     <div id="cardMode" class="chart-mode">
         <!-- 헤더 -->
         <div class="chart-mode-header">
-            <div class="flex items-center justify-between text-white gap-2">
-                <div class="flex items-center gap-2 min-w-0 flex-1">
-                    <i class="fas fa-th-large text-xl sm:text-2xl"></i>
-                    <div class="min-w-0">
-                        <h2 class="text-base sm:text-xl font-bold truncate">실적 대시보드</h2>
-                        <p class="text-xs sm:text-sm opacity-80 truncate" id="cardModeEventName">전체 행사</p>
+            <div style="display: flex; align-items: center; justify-content: space-between; color: white; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0; flex: 1;">
+                    <i class="fas fa-th-large" style="font-size: 1.5rem;"></i>
+                    <div style="min-width: 0;">
+                        <h2 style="font-size: 1.25rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -0.5px;">실적 대시보드</h2>
+                        <p style="font-size: 0.875rem; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" id="cardModeEventName">전체 행사</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
                     <!-- 정렬 토글 -->
                     <select id="cardModeSortOrder" onchange="updateCardMode()"
-                        class="px-2 py-1.5 sm:px-3 sm:py-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg text-xs sm:text-sm border-none outline-none cursor-pointer">
-                        <option value="count" class="text-gray-800">많은 순</option>
-                        <option value="date" class="text-gray-800">일자 순</option>
+                        style="padding: 0.5rem 0.75rem; background: rgba(255, 255, 255, 0.2); color: white; border-radius: 12px; font-size: 0.875rem; border: none; outline: none; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+                        <option value="count" style="color: #1D1D1F;">많은 순</option>
+                        <option value="date" style="color: #1D1D1F;">일자 순</option>
                     </select>
-                    <div class="text-xs sm:text-sm opacity-80 hidden sm:flex items-center">
-                        <i class="fas fa-sync-alt mr-1"></i>
+                    <div style="font-size: 0.875rem; opacity: 0.8; display: flex; align-items: center;">
+                        <i class="fas fa-sync-alt" style="margin-right: 0.25rem;"></i>
                         <span id="cardModeUpdateTime">--:--</span>
                     </div>
                     <button onclick="exitCardMode()" 
-                        class="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition text-sm sm:text-base">
+                        style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255, 255, 255, 0.2); border-radius: 12px; transition: all 0.2s ease; font-size: 0.9375rem; color: white; border: none; cursor: pointer; min-height: 44px;" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
                         <i class="fas fa-times"></i>
-                        <span class="hidden sm:inline">닫기 (ESC)</span>
+                        <span style="display: inline;">닫기 (ESC)</span>
                     </button>
                 </div>
             </div>
@@ -794,9 +794,9 @@ export const adminDashboardPage = `
         <!-- 카드 콘텐츠 -->
         <div class="chart-mode-content">
             <!-- 요약 정보 -->
-            <div class="bg-white bg-opacity-95 backdrop-blur rounded-xl shadow-2xl p-4 mb-4">
-                <div class="flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex items-center space-x-6">
+            <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
                         <div class="text-center">
                             <div class="text-3xl font-bold text-indigo-600" id="cardModeTotalParticipants">0</div>
                             <div class="text-sm text-gray-600 mt-1">총 참가자</div>
