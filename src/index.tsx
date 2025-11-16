@@ -107,34 +107,34 @@ app.get('/', (c) => {
         
         <!-- PWA 설정 -->
         <link rel="manifest" href="/manifest.json">
-        <meta name="theme-color" content="#4F46E5">
+        <meta name="theme-color" content="#007AFF">
         
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="/static/style.css">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     </head>
-    <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
-        <div class="max-w-md w-full">
-            <div class="text-center mb-8">
-                <div class="inline-block p-3 bg-indigo-600 rounded-full mb-4">
-                    <i class="fas fa-clipboard-list text-white text-4xl"></i>
+    <body style="background: linear-gradient(135deg, var(--color-background-secondary), var(--color-primary-light)); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-4);">
+        <div style="max-width: 28rem; width: 100%;">
+            <div style="text-align: center; margin-bottom: var(--space-8);">
+                <div style="display: inline-block; padding: var(--space-4); background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: 50%; margin-bottom: var(--space-4); box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);">
+                    <i class="fas fa-clipboard-list" style="color: white; font-size: 2.5rem;"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">축제 디지털방명록</h1>
-                <p class="text-gray-600">시스템</p>
+                <h1 class="text-title1" style="color: var(--color-text-primary); margin-bottom: var(--space-2);">축제 디지털방명록</h1>
+                <p class="text-body" style="color: var(--color-text-secondary);">시스템 로그인</p>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-xl p-8 space-y-4">
-                <a href="/admin" class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-md">
-                    <i class="fas fa-user-shield mr-2"></i>
+            <div class="card" style="padding: var(--space-8);">
+                <a href="/admin" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: var(--space-4); text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--color-primary), #0051D5);">
+                    <i class="fas fa-user-shield" style="margin-right: var(--space-2);"></i>
                     관리자 로그인
                 </a>
 
-                <a href="/operator" class="block w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-md">
-                    <i class="fas fa-users mr-2"></i>
+                <a href="/operator" class="btn btn-secondary btn-lg" style="width: 100%; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--color-secondary), #0099CC);">
+                    <i class="fas fa-users" style="margin-right: var(--space-2);"></i>
                     부스 운영자 로그인
                 </a>
             </div>
 
-            <p class="text-center text-sm text-gray-500 mt-6">
+            <p class="text-caption1" style="text-align: center; color: var(--color-text-tertiary); margin-top: var(--space-6);">
                 © 2025 축제 디지털방명록 시스템. All rights reserved.
             </p>
         </div>
