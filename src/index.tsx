@@ -123,13 +123,13 @@ app.get('/', (c) => {
             </div>
 
             <div class="card" style="padding: 2rem;">
-                <a href="/admin" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #007AFF, #0051D5);">
-                    <i class="fas fa-user-shield" style="margin-right: 0.5rem;"></i>
+                <a href="/admin" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #007AFF, #0051D5); font-size: 1.125rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);">
+                    <i class="fas fa-user-shield" style="margin-right: 0.75rem; font-size: 1.25rem;"></i>
                     관리자 로그인
                 </a>
 
-                <a href="/operator" class="btn btn-secondary btn-lg" style="width: 100%; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #00A0B0, #0099CC);">
-                    <i class="fas fa-users" style="margin-right: 0.5rem;"></i>
+                <a href="/operator" class="btn btn-lg" style="width: 100%; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #5856D6, #AF52DE); color: white; font-size: 1.125rem; font-weight: 600; box-shadow: 0 4px 12px rgba(88, 86, 214, 0.3); border: none; padding: 0.875rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s;">
+                    <i class="fas fa-users" style="margin-right: 0.75rem; font-size: 1.25rem;"></i>
                     부스 운영자 로그인
                 </a>
             </div>
