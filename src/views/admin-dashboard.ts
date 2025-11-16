@@ -735,14 +735,14 @@ export const adminDashboardPage = `
                 </div>
             </div>
 
-            <!-- 부스별 참가자 현황 (더 작은 높이) -->
+            <!-- 부스별 참가자 현황 (리더보드 카드 그리드) -->
             <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 1rem;">
                 <h3 style="font-size: 1rem; font-weight: 700; color: #1D1D1F; margin-bottom: 0.5rem; letter-spacing: -0.5px;">
-                    <i class="fas fa-store-alt" style="color: #5856D6; margin-right: 0.25rem;"></i>
-                    부스별 참가자 현황
+                    <i class="fas fa-trophy" style="color: #FFD60A; margin-right: 0.25rem;"></i>
+                    부스 순위 리더보드
                 </h3>
-                <div style="height: 200px;">
-                    <canvas id="chartModeBoothChart"></canvas>
+                <div id="chartModeBoothList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; max-height: 400px; overflow-y: auto;">
+                    <!-- 카드들이 동적으로 추가됩니다 -->
                 </div>
             </div>
         </div>
