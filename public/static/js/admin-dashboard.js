@@ -1731,48 +1731,58 @@ function renderEventCards(events) {
     }).join('')
 }
 
-// 부스별 카드 렌더링
+// 부스별 카드 렌더링 (리더보드 스타일)
 function renderBoothCards(event) {
     const container = document.getElementById('cardModeGrid')
     const sortOrder = document.getElementById('cardModeSortOrder').value
     
     if (!event || !event.booths) {
-        container.innerHTML = '<div class="col-span-full text-center text-white text-lg">부스 데이터가 없습니다</div>'
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 0; color: rgba(255, 255, 255, 0.8);">
+                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                <p style="font-size: 1rem;">부스 데이터가 없습니다</p>
+            </div>
+        `
         return
     }
     
     document.getElementById('cardModeDescription').textContent = `${event.name || event.event_name} 행사의 부스별 실적입니다`
     
-    // 정렬 (부스는 참가자 많은 순 또는 이름 순)
+    // 정렬 (참가자 많은 순으로 고정하여 순위 표시)
     const sortedBooths = [...event.booths].sort((a, b) => {
-        if (sortOrder === 'count') {
-            const aCount = a.total_participants || a.participant_count || 0
-            const bCount = b.total_participants || b.participant_count || 0
-            return bCount - aCount
-        } else {
-            // 이름 순
-            const aName = a.name || a.booth_name || ''
-            const bName = b.name || b.booth_name || ''
-            return aName.localeCompare(bName)
-        }
+        const aCount = a.total_participants || a.participant_count || 0
+        const bCount = b.total_participants || b.participant_count || 0
+        return bCount - aCount
     })
     
-    // 행사 색상 (첫 번째 행사와 동일한 색상 사용)
-    const eventIndex = allEvents.findIndex(e => (e.id || e.event_id) === selectedEventId)
-    const color = eventColors[eventIndex >= 0 ? eventIndex % eventColors.length : 0]
+    // Apple HIG 색상 팔레트
+    const colors = [
+        { bg: 'linear-gradient(135deg, #FFD60A 0%, #FF9F0A 100%)', icon: '🥇', border: '#FFD60A' }, // 금메달
+        { bg: 'linear-gradient(135deg, #C7C7CC 0%, #8E8E93 100%)', icon: '🥈', border: '#C7C7CC' }, // 은메달
+        { bg: 'linear-gradient(135deg, #FF9F0A 0%, #FF6B35 100%)', icon: '🥉', border: '#FF9F0A' }, // 동메달
+        { bg: 'rgba(255, 55, 95, 0.1)', icon: '🎪', border: '#FF375F' },
+        { bg: 'rgba(88, 86, 214, 0.1)', icon: '🎪', border: '#5856D6' },
+        { bg: 'rgba(0, 122, 255, 0.1)', icon: '🎪', border: '#007AFF' },
+        { bg: 'rgba(50, 215, 75, 0.1)', icon: '🎪', border: '#32D74B' },
+        { bg: 'rgba(255, 214, 10, 0.1)', icon: '🎪', border: '#FFD60A' },
+        { bg: 'rgba(175, 82, 222, 0.1)', icon: '🎪', border: '#AF52DE' },
+    ]
     
     // 카드 생성
     container.innerHTML = sortedBooths.map((booth, index) => {
         const boothName = booth.name || booth.booth_name
         const participantCount = booth.total_participants || booth.participant_count || 0
-        const icon = boothIcons[index % boothIcons.length]
+        const colorScheme = colors[index % colors.length]
+        const rank = index + 1
+        const medal = index < 3 ? colorScheme.icon : `<span style="font-weight: 800; color: #8E8E93;">#${rank}</span>`
         
         // 성별 분포
         const genderDist = booth.gender_distribution || {}
         const maleCount = genderDist['남성'] || 0
         const femaleCount = genderDist['여성'] || 0
         const totalGender = maleCount + femaleCount
-        const genderRatio = totalGender > 0 ? `${Math.round(maleCount/totalGender*100)}% / ${Math.round(femaleCount/totalGender*100)}%` : '-'
+        const malePercent = totalGender > 0 ? Math.round(maleCount/totalGender*100) : 0
+        const femalePercent = totalGender > 0 ? Math.round(femaleCount/totalGender*100) : 0
         
         // 교급 분포
         const gradeDist = booth.grade_distribution || {}
@@ -1792,40 +1802,52 @@ function renderBoothCards(event) {
             const percentage = participantCount > 0 ? Math.round(count / participantCount * 100) : 0
             
             return `
-                <div class="text-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                    <i class="fas ${icon} text-lg text-gray-600 mb-1"></i>
-                    <div class="text-xs text-gray-500">${grade}</div>
-                    <div class="text-sm font-bold text-gray-800">${count}명</div>
-                    <div class="text-xs text-gray-400">${percentage}%</div>
+                <div style="text-align: center; padding: 0.5rem; background: #F5F5F7; border-radius: 8px; transition: all 0.2s ease;"
+                     onmouseover="this.style.background='#E5E5E7'"
+                     onmouseout="this.style.background='#F5F5F7'">
+                    <i class="fas ${icon}" style="font-size: 1rem; color: #6E6E73; margin-bottom: 0.25rem; display: block;"></i>
+                    <div style="font-size: 0.625rem; color: #6E6E73;">${grade}</div>
+                    <div style="font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">${count}명</div>
+                    <div style="font-size: 0.625rem; color: #8E8E93;">${percentage}%</div>
                 </div>
             `
         }).join('')
         
         return `
-            <div class="bg-white rounded-xl shadow-2xl p-6 border-t-4 border-${color.bg.replace('bg-', '')} transform transition hover:scale-105 hover:shadow-3xl">
-                <div class="flex items-center justify-between mb-4">
-                    <i class="fas ${icon} text-3xl ${color.text}"></i>
-                    <div class="text-right">
-                        <div class="text-3xl font-bold text-gray-800">${participantCount}</div>
-                        <div class="text-xs text-gray-500">명</div>
+            <div style="background: ${colorScheme.bg}; border: 2px solid ${colorScheme.border}; border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px);"
+                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.15)'"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                
+                <!-- 순위 표시 -->
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                    <div style="font-size: 2rem;">${medal}</div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 2.5rem; font-weight: 900; color: #1D1D1F; letter-spacing: -2px;">${participantCount}</div>
+                        <div style="font-size: 0.875rem; color: #6E6E73; font-weight: 600;">명</div>
                     </div>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800 mb-3 line-clamp-2">${boothName}</h3>
+                
+                <!-- 부스명 -->
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin: 0 0 1rem 0; letter-spacing: -0.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    ${boothName}
+                </h3>
                 
                 <!-- 성별 분포 -->
-                <div class="mb-3 pb-3 border-b border-gray-200">
-                    <div class="flex items-center justify-between text-sm text-gray-600">
-                        <span><i class="fas fa-venus-mars mr-1"></i>성별</span>
-                        <span class="font-semibold">${genderRatio}</span>
+                <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid rgba(0, 0, 0, 0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.875rem; color: #6E6E73;">
+                        <span style="font-weight: 600;">
+                            <i class="fas fa-venus-mars" style="margin-right: 0.25rem; color: #FF375F;"></i>성별 분포
+                        </span>
+                        <span style="font-weight: 700; color: #1D1D1F;">${malePercent}% / ${femalePercent}%</span>
                     </div>
                 </div>
                 
                 <!-- 교급 분포 카드 -->
-                <div class="space-y-2">
-                    <div class="text-xs font-medium text-gray-700 flex items-center">
-                        <i class="fas fa-graduation-cap mr-1"></i>교급 분포
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #1D1D1F; margin-bottom: 0.5rem; display: flex; align-items: center;">
+                        <i class="fas fa-graduation-cap" style="margin-right: 0.25rem; color: #007AFF;"></i>교급 분포
                     </div>
-                    <div class="grid grid-cols-5 gap-1">
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem;">
                         ${gradeCards}
                     </div>
                 </div>
