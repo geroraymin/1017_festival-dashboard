@@ -581,7 +581,7 @@ export const adminDashboardPage = `
     </main>
 
     <!-- 행사 생성 모달 -->
-    <div id="eventModal" class="modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
+    <div id="eventModal" class="modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 50;">
         <div style="background: white; border-radius: 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); padding: 2rem; max-width: 28rem; width: 100%; margin: 0 1rem;">
             <h3 style="font-size: 1.5rem; font-weight: 800; color: #1D1D1F; margin-bottom: 1.5rem; letter-spacing: -0.5px;">새 행사 추가</h3>
             <form id="eventForm" style="display: flex; flex-direction: column; gap: 1rem;">
@@ -600,13 +600,13 @@ export const adminDashboardPage = `
                     <input type="date" id="eventEndDate" required
                         style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'">
                 </div>
-                <div class="flex gap-3 mt-6">
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
                     <button type="button" onclick="closeEventModal()"
-                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-medium">
+                        style="flex: 1; background: #F5F5F7; color: #1D1D1F; padding: 0.75rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px;" onmouseover="this.style.background='#E5E5E7'" onmouseout="this.style.background='#F5F5F7'">
                         취소
                     </button>
                     <button type="submit"
-                        class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium">
+                        style="flex: 1; background: linear-gradient(135deg, #5856D6 0%, #4F46E5 100%); color: white; padding: 0.75rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(88, 86, 214, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(88, 86, 214, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #5856D6 0%, #4F46E5 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(88, 86, 214, 0.3)'">
                         생성
                     </button>
                 </div>
@@ -615,7 +615,7 @@ export const adminDashboardPage = `
     </div>
 
     <!-- 부스 생성 모달 -->
-    <div id="boothModal" class="modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
+    <div id="boothModal" class="modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 50;">
         <div style="background: white; border-radius: 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); padding: 2rem; max-width: 28rem; width: 100%; margin: 0 1rem;">
             <h3 style="font-size: 1.5rem; font-weight: 800; color: #1D1D1F; margin-bottom: 1.5rem; letter-spacing: -0.5px;">새 부스 추가</h3>
             <form id="boothForm" style="display: flex; flex-direction: column; gap: 1rem;">
@@ -636,13 +636,13 @@ export const adminDashboardPage = `
                     <textarea id="boothDescription" rows="3"
                         style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'"></textarea>
                 </div>
-                <div class="flex gap-3 mt-6">
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
                     <button type="button" onclick="closeBoothModal()"
-                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-lg font-medium">
+                        style="flex: 1; background: #F5F5F7; color: #1D1D1F; padding: 0.75rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px;" onmouseover="this.style.background='#E5E5E7'" onmouseout="this.style.background='#F5F5F7'">
                         취소
                     </button>
                     <button type="submit"
-                        class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium">
+                        style="flex: 1; background: linear-gradient(135deg, #5856D6 0%, #4F46E5 100%); color: white; padding: 0.75rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(88, 86, 214, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(88, 86, 214, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #5856D6 0%, #4F46E5 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(88, 86, 214, 0.3)'">
                         생성
                     </button>
                 </div>
