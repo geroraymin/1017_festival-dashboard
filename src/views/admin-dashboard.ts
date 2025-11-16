@@ -1,5 +1,5 @@
 /**
- * 관리자 대시보드 페이지
+ * 관리자 대시보드 페이지 - Apple HIG
  */
 
 export const adminDashboardPage = `
@@ -9,7 +9,7 @@ export const adminDashboardPage = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 대시보드 - 축제 디지털방명록 시스템</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/style.css">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -153,20 +153,20 @@ export const adminDashboardPage = `
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-50 to-purple-50 min-h-screen">
+<body style="background: linear-gradient(135deg, #F5F7FA 0%, #E3F2FD 100%); min-height: 100vh; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
     <!-- 헤더 -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="p-2 bg-indigo-600 rounded-lg">
-                    <i class="fas fa-crown text-white text-xl"></i>
+    <header style="background: rgba(255, 255, 255, 0.95); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(20px);">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="padding: 0.5rem; background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%); border-radius: 12px;">
+                    <i class="fas fa-crown" style="color: white; font-size: 1.25rem;"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-gray-800">관리자 대시보드</h1>
-                    <p class="text-sm text-gray-600" id="adminName">관리자</p>
+                    <h1 class="text-title3" style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin: 0; letter-spacing: -0.5px;">관리자 대시보드</h1>
+                    <p class="text-body" style="font-size: 0.875rem; color: #6E6E73; margin: 0;" id="adminName">관리자</p>
                 </div>
             </div>
-            <button onclick="logout()" class="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition">
+            <button onclick="logout()" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #FF375F; color: white; border: none; border-radius: 12px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; min-height: 44px;" onmouseover="this.style.background='#E8204E'" onmouseout="this.style.background='#FF375F'">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>로그아웃</span>
             </button>
@@ -174,40 +174,40 @@ export const adminDashboardPage = `
     </header>
 
     <!-- 탭 네비게이션 -->
-    <nav class="bg-white shadow-sm border-b sticky top-16 z-40">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex space-x-8">
-                <button onclick="switchTab('overview')" class="tab-button active py-4 px-2 border-b-2 border-indigo-600 text-indigo-600 font-medium">
-                    <i class="fas fa-chart-line mr-2"></i>통계 개요
+    <nav style="background: rgba(255, 255, 255, 0.95); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); border-bottom: 1px solid #E5E5E7; position: sticky; top: 64px; z-index: 40; backdrop-filter: blur(20px);">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;">
+            <div style="display: flex; gap: 2rem;">
+                <button onclick="switchTab('overview')" class="tab-button active" style="padding: 1rem 0.5rem; border: none; border-bottom: 2px solid #007AFF; background: none; color: #007AFF; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease;">
+                    <i class="fas fa-chart-line" style="margin-right: 0.5rem;"></i>통계 개요
                 </button>
-                <button onclick="switchTab('events')" class="tab-button py-4 px-2 border-b-2 border-transparent text-gray-600 hover:text-indigo-600 font-medium">
-                    <i class="fas fa-calendar mr-2"></i>행사 관리
+                <button onclick="switchTab('events')" class="tab-button" style="padding: 1rem 0.5rem; border: none; border-bottom: 2px solid transparent; background: none; color: #6E6E73; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease;">
+                    <i class="fas fa-calendar" style="margin-right: 0.5rem;"></i>행사 관리
                 </button>
-                <button onclick="switchTab('booths')" class="tab-button py-4 px-2 border-b-2 border-transparent text-gray-600 hover:text-indigo-600 font-medium">
-                    <i class="fas fa-store mr-2"></i>부스 관리
+                <button onclick="switchTab('booths')" class="tab-button" style="padding: 1rem 0.5rem; border: none; border-bottom: 2px solid transparent; background: none; color: #6E6E73; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease;">
+                    <i class="fas fa-store" style="margin-right: 0.5rem;"></i>부스 관리
                 </button>
-                <button onclick="switchTab('participants')" class="tab-button py-4 px-2 border-b-2 border-transparent text-gray-600 hover:text-indigo-600 font-medium">
-                    <i class="fas fa-users mr-2"></i>참가자 관리
+                <button onclick="switchTab('participants')" class="tab-button" style="padding: 1rem 0.5rem; border: none; border-bottom: 2px solid transparent; background: none; color: #6E6E73; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease;">
+                    <i class="fas fa-users" style="margin-right: 0.5rem;"></i>참가자 관리
                 </button>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
+    <main style="max-width: 1280px; margin: 0 auto; padding: 2rem 1.5rem;">
         <!-- 통계 개요 탭 -->
         <div id="tab-overview" class="tab-content active">
             <!-- 행사 선택 필터 및 모드 버튼 -->
-            <div class="bg-white rounded-xl shadow-lg p-3 sm:p-4 mb-4 sm:mb-6">
+            <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; margin-bottom: 1.5rem; backdrop-filter: blur(20px);">
                 <!-- 행사 선택 (전체 너비) -->
-                <div class="flex items-center gap-2 mb-3">
-                    <i class="fas fa-filter text-indigo-600 text-base sm:text-lg flex-shrink-0"></i>
-                    <div class="flex-1 min-w-0">
-                        <label for="eventFilter" class="block text-xs font-medium text-gray-700 mb-1">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <i class="fas fa-filter" style="color: #5856D6; font-size: 1.125rem;"></i>
+                    <div style="flex: 1; min-width: 0;">
+                        <label for="eventFilter" style="display: block; font-size: 0.875rem; font-weight: 600; color: #6E6E73; margin-bottom: 0.25rem;">
                             행사 선택
                         </label>
                         <select id="eventFilter" 
-                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                            onchange="filterByEvent()">
+                            style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;"
+                            onchange="filterByEvent()" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'">
                             <option value="">전체 행사</option>
                             <!-- 동적으로 행사 목록이 추가됩니다 -->
                         </select>
@@ -215,126 +215,126 @@ export const adminDashboardPage = `
                 </div>
                 
                 <!-- 버튼 그룹 (전체 너비, 균등 분할) -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem;">
                     <button onclick="loadOverview()" 
-                        class="flex items-center justify-center gap-1 px-2 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium transition shadow-sm">
+                        style="display: flex; align-items: center; justify-content: center; gap: 0.25rem; padding: 0.625rem 0.75rem; background: rgba(255, 255, 255, 0.95); color: #1D1D1F; border: 2px solid #E5E5E7; border-radius: 12px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; min-height: 44px; backdrop-filter: blur(20px);" onmouseover="this.style.background='#F5F5F7'; this.style.borderColor='#007AFF'" onmouseout="this.style.background='rgba(255, 255, 255, 0.95)'; this.style.borderColor='#E5E5E7'">
                         <i class="fas fa-sync-alt"></i>
-                        <span class="hidden sm:inline">새로고침</span>
+                        <span>새로고침</span>
                     </button>
                     <button onclick="exportDataBackup()" 
-                        class="flex items-center justify-center gap-1 px-2 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg">
+                        style="display: flex; align-items: center; justify-content: center; gap: 0.25rem; padding: 0.625rem 0.75rem; background: linear-gradient(135deg, #32D74B 0%, #30BE47 100%); color: white; border: none; border-radius: 12px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(50, 215, 75, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #30BE47 0%, #28A745 100)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(50, 215, 75, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #32D74B 0%, #30BE47 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(50, 215, 75, 0.3)'">
                         <i class="fas fa-database"></i>
                         <span>백업</span>
                     </button>
                     <button onclick="enterChartMode()" 
-                        class="flex items-center justify-center gap-1 px-2 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg">
+                        style="display: flex; align-items: center; justify-content: center; gap: 0.25rem; padding: 0.625rem 0.75rem; background: linear-gradient(135deg, #5856D6 0%, #4F46E5 100%); color: white; border: none; border-radius: 12px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(88, 86, 214, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(88, 86, 214, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #5856D6 0%, #4F46E5 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(88, 86, 214, 0.3)'">
                         <i class="fas fa-chart-line"></i>
                         <span>차트</span>
                     </button>
                     <button onclick="enterCardMode()" 
-                        class="flex items-center justify-center gap-1 px-2 py-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white rounded-lg text-xs sm:text-sm font-medium transition shadow-lg">
+                        style="display: flex; align-items: center; justify-content: center; gap: 0.25rem; padding: 0.625rem 0.75rem; background: linear-gradient(135deg, #FF375F 0%, #E8204E 100%); color: white; border: none; border-radius: 12px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(255, 55, 95, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #E8204E 0%, #D70040 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(255, 55, 95, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #FF375F 0%, #E8204E 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(255, 55, 95, 0.3)'">
                         <i class="fas fa-th-large"></i>
                         <span>카드</span>
                     </button>
                 </div>
                 
-                <!-- 안내 문구 (모바일에서는 숨김) -->
-                <div class="text-xs text-gray-600 mt-3 hidden lg:block">
+                <!-- 안내 문구 -->
+                <div style="font-size: 0.75rem; color: #6E6E73; margin-top: 0.75rem;">
                     <i class="fas fa-info-circle mr-1"></i>
                     행사를 선택하면 해당 행사의 통계만 표시됩니다
                 </div>
             </div>
 
             <!-- 요약 카드 -->
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-blue-500">
-                    <div class="flex items-center justify-between">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; border-left: 4px solid #007AFF; backdrop-filter: blur(20px);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
                         <div>
-                            <div class="text-2xl font-bold text-gray-800" id="totalParticipants">0</div>
-                            <div class="text-xs text-gray-600 mt-1">연인원</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;" id="totalParticipants">0</div>
+                            <div style="font-size: 0.875rem; color: #6E6E73; margin-top: 0.25rem; font-weight: 600;">연인원</div>
                         </div>
-                        <i class="fas fa-users text-3xl text-blue-500 opacity-60"></i>
+                        <i class="fas fa-users" style="font-size: 2.5rem; color: #007AFF; opacity: 0.5;"></i>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-teal-500">
-                    <div class="flex items-center justify-between">
+                <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; border-left: 4px solid #32D74B; backdrop-filter: blur(20px);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
                         <div>
-                            <div class="text-2xl font-bold text-gray-800" id="uniqueParticipants">0</div>
-                            <div class="text-xs text-gray-600 mt-1">실인원</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;" id="uniqueParticipants">0</div>
+                            <div style="font-size: 0.875rem; color: #6E6E73; margin-top: 0.25rem; font-weight: 600;">실인원</div>
                         </div>
-                        <i class="fas fa-user-check text-3xl text-teal-500 opacity-60"></i>
+                        <i class="fas fa-user-check" style="font-size: 2.5rem; color: #32D74B; opacity: 0.5;"></i>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-purple-500">
-                    <div class="flex items-center justify-between">
+                <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; border-left: 4px solid #5856D6; backdrop-filter: blur(20px);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
                         <div>
-                            <div class="text-2xl font-bold text-gray-800" id="totalEvents">0</div>
-                            <div class="text-xs text-gray-600 mt-1">진행 중인 행사</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;" id="totalEvents">0</div>
+                            <div style="font-size: 0.875rem; color: #6E6E73; margin-top: 0.25rem; font-weight: 600;">진행 중인 행사</div>
                         </div>
-                        <i class="fas fa-calendar text-3xl text-purple-500 opacity-60"></i>
+                        <i class="fas fa-calendar" style="font-size: 2.5rem; color: #5856D6; opacity: 0.5;"></i>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-pink-500">
-                    <div class="flex items-center justify-between">
+                <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; border-left: 4px solid #FF375F; backdrop-filter: blur(20px);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
                         <div>
-                            <div class="text-2xl font-bold text-gray-800" id="totalBooths">0</div>
-                            <div class="text-xs text-gray-600 mt-1">활성 부스</div>
+                            <div style="font-size: 2rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;" id="totalBooths">0</div>
+                            <div style="font-size: 0.875rem; color: #6E6E73; margin-top: 0.25rem; font-weight: 600;">활성 부스</div>
                         </div>
-                        <i class="fas fa-store text-3xl text-pink-500 opacity-60"></i>
+                        <i class="fas fa-store" style="font-size: 2.5rem; color: #FF375F; opacity: 0.5;"></i>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-green-500">
-                    <div class="flex items-center justify-between">
+                <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; border-left: 4px solid #32D74B; backdrop-filter: blur(20px);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
                         <div>
-                            <div class="text-sm font-bold text-gray-800" id="lastUpdate">--:--</div>
-                            <div class="text-xs text-gray-600 mt-1">마지막 업데이트</div>
+                            <div style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; letter-spacing: -0.5px;" id="lastUpdate">--:--</div>
+                            <div style="font-size: 0.875rem; color: #6E6E73; margin-top: 0.25rem; font-weight: 600;">마지막 업데이트</div>
                         </div>
-                        <i class="fas fa-clock text-3xl text-green-500 opacity-60"></i>
+                        <i class="fas fa-clock" style="font-size: 2.5rem; color: #32D74B; opacity: 0.5;"></i>
                     </div>
                 </div>
             </div>
 
             <!-- 차트 그리드 -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
                 <!-- 성별 분포 -->
-                <div class="bg-white rounded-xl shadow-lg p-5">
-                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
-                        <i class="fas fa-venus-mars text-pink-500 mr-2"></i>
+                <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; backdrop-filter: blur(20px);">
+                    <h3 class="text-title3" style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin-bottom: 1rem; display: flex; align-items: center; letter-spacing: -0.5px;">
+                        <i class="fas fa-venus-mars" style="color: #FF375F; margin-right: 0.5rem;"></i>
                         성별 분포
                     </h3>
                     <div style="height: 220px;">
                         <canvas id="overallGenderChart"></canvas>
                     </div>
                     <!-- 성별 통계 테이블 -->
-                    <div class="mt-3 pt-3 border-t border-gray-200">
-                        <div id="genderStatsTable" class="grid grid-cols-2 gap-3 text-center"></div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #E5E5E7;">
+                        <div id="genderStatsTable" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; text-align: center;"></div>
                     </div>
                 </div>
 
                 <!-- 교급 분포 -->
-                <div class="bg-white rounded-xl shadow-lg p-5">
-                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
-                        <i class="fas fa-graduation-cap text-blue-500 mr-2"></i>
+                <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; backdrop-filter: blur(20px);">
+                    <h3 class="text-title3" style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin-bottom: 1rem; display: flex; align-items: center; letter-spacing: -0.5px;">
+                        <i class="fas fa-graduation-cap" style="color: #007AFF; margin-right: 0.5rem;"></i>
                         교급 분포
                     </h3>
                     <div style="height: 220px;">
                         <canvas id="overallGradeChart"></canvas>
                     </div>
                     <!-- 교급 통계 테이블 -->
-                    <div class="mt-3 pt-3 border-t border-gray-200">
-                        <div id="gradeStatsTable" class="grid grid-cols-5 gap-2 text-center"></div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #E5E5E7;">
+                        <div id="gradeStatsTable" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; text-align: center;"></div>
                     </div>
                 </div>
             </div>
 
             <!-- 부스별 참가자 수 차트 -->
             <div class="bg-white rounded-xl shadow-lg p-5 mb-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
-                    <i class="fas fa-store-alt text-indigo-500 mr-2"></i>
+                <h3 class="text-title3" style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin-bottom: 1rem; display: flex; align-items: center; letter-spacing: -0.5px;">
+                    <i class="fas fa-store-alt" style="color: #5856D6; margin-right: 0.5rem;"></i>
                     부스별 참가자 현황
                 </h3>
                 <div style="height: 300px;">
@@ -345,18 +345,18 @@ export const adminDashboardPage = `
             <!-- 부스 리더보드 -->
             <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl shadow-lg p-5 mb-6" id="leaderboardSection" style="display: none;">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-gray-800 flex items-center">
-                        <i class="fas fa-trophy text-yellow-500 mr-2"></i>
+                    <h3 class="text-title2" style="font-size: 1.5rem; font-weight: 700; color: #1D1D1F; display: flex; align-items: center; letter-spacing: -0.5px;">
+                        <i class="fas fa-trophy" style="color: #FFD60A; margin-right: 0.5rem;"></i>
                         부스 순위 리더보드
                     </h3>
-                    <div class="text-sm text-gray-600" id="leaderboardEventName"></div>
+                    <div style="font-size: 0.875rem; color: #6E6E73; font-weight: 600;" id="leaderboardEventName"></div>
                 </div>
                 
                 <div id="leaderboardContent">
                     <!-- 로딩 중 -->
-                    <div id="leaderboardLoading" class="text-center py-8">
-                        <i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i>
-                        <p class="text-gray-600 mt-2">순위를 불러오는 중...</p>
+                    <div id="leaderboardLoading" style="text-align: center; padding: 2rem 0;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #C7C7CC;"></i>
+                        <p style="color: #6E6E73; margin-top: 0.5rem; font-size: 0.9375rem;">순위를 불러오는 중...</p>
                     </div>
                     
                     <!-- 리더보드 목록 -->
@@ -366,7 +366,7 @@ export const adminDashboardPage = `
                     
                     <!-- 데이터 없음 -->
                     <div id="leaderboardEmpty" style="display: none;" class="text-center py-8 text-gray-600">
-                        <i class="fas fa-inbox text-4xl mb-2"></i>
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 0.5rem; display: block;"></i>
                         <p>참가자 데이터가 없습니다</p>
                     </div>
                 </div>
@@ -375,31 +375,31 @@ export const adminDashboardPage = `
 
         <!-- 행사 관리 탭 -->
         <div id="tab-events" class="tab-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-calendar mr-2"></i>행사 목록
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="text-title1" style="font-size: 2rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;">
+                    <i class="fas fa-calendar" style="margin-right: 0.5rem;"></i>행사 목록
                 </h2>
-                <button onclick="openEventModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition">
-                    <i class="fas fa-plus mr-2"></i>새 행사 추가
+                <button onclick="openEventModal()" style="background: linear-gradient(135deg, #5856D6 0%, #4F46E5 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(88, 86, 214, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(88, 86, 214, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #5856D6 0%, #4F46E5 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(88, 86, 214, 0.3)'">
+                    <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>새 행사 추가
                 </button>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <table class="w-full mobile-card-view">
-                    <thead class="bg-gray-50 border-b">
+            <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); overflow: hidden; backdrop-filter: blur(20px);">
+                <table class="mobile-card-view" style="width: 100%;">
+                    <thead style="background: #F5F5F7; border-bottom: 2px solid #E5E5E7;">
                         <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">행사명</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">기간</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">부스 수</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">참가자</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">상태</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">액션</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">행사명</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">기간</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">부스 수</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">참가자</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">상태</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">액션</th>
                         </tr>
                     </thead>
-                    <tbody id="eventsTableBody" class="divide-y">
+                    <tbody id="eventsTableBody" style="border-top: 2px solid #E5E5E7;">
                         <tr>
-                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                            <td colspan="6" style="padding: 2rem 1.5rem; text-align: center; color: #6E6E73;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
                                 <p>데이터 로딩 중...</p>
                             </td>
                         </tr>
@@ -410,31 +410,31 @@ export const adminDashboardPage = `
 
         <!-- 부스 관리 탭 -->
         <div id="tab-booths" class="tab-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-store mr-2"></i>부스 목록
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="text-title1" style="font-size: 2rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;">
+                    <i class="fas fa-store" style="margin-right: 0.5rem;"></i>부스 목록
                 </h2>
-                <button onclick="openBoothModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition">
-                    <i class="fas fa-plus mr-2"></i>새 부스 추가
+                <button onclick="openBoothModal()" style="background: linear-gradient(135deg, #5856D6 0%, #4F46E5 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(88, 86, 214, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(88, 86, 214, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #5856D6 0%, #4F46E5 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(88, 86, 214, 0.3)'">
+                    <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>새 부스 추가
                 </button>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <table class="w-full mobile-card-view">
-                    <thead class="bg-gray-50 border-b">
+            <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); overflow: hidden; backdrop-filter: blur(20px);">
+                <table class="mobile-card-view" style="width: 100%;">
+                    <thead style="background: #F5F5F7; border-bottom: 2px solid #E5E5E7;">
                         <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">부스명</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">행사</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">부스 코드</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">참가자</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">상태</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">액션</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">부스명</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">행사</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">부스 코드</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">참가자</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">상태</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">액션</th>
                         </tr>
                     </thead>
-                    <tbody id="boothsTableBody" class="divide-y">
+                    <tbody id="boothsTableBody" style="border-top: 2px solid #E5E5E7;">
                         <tr>
-                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                            <td colspan="6" style="padding: 2rem 1.5rem; text-align: center; color: #6E6E73;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
                                 <p>데이터 로딩 중...</p>
                             </td>
                         </tr>
@@ -445,45 +445,45 @@ export const adminDashboardPage = `
 
         <!-- 참가자 관리 탭 -->
         <div id="tab-participants" class="tab-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-users mr-2"></i>참가자 목록
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="text-title1" style="font-size: 2rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;">
+                    <i class="fas fa-users" style="margin-right: 0.5rem;"></i>참가자 목록
                 </h2>
-                <button onclick="exportCSV()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition">
-                    <i class="fas fa-file-csv mr-2"></i>CSV 다운로드
+                <button onclick="exportCSV()" style="background: linear-gradient(135deg, #32D74B 0%, #30BE47 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(50, 215, 75, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #30BE47 0%, #28A745 100)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(50, 215, 75, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #32D74B 0%, #30BE47 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(50, 215, 75, 0.3)'">
+                    <i class="fas fa-file-csv" style="margin-right: 0.5rem;"></i>CSV 다운로드
                 </button>
             </div>
 
             <!-- 검색 및 필터 -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; margin-bottom: 1.5rem; backdrop-filter: blur(20px);">
                 <!-- 이름 검색 -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
                         <i class="fas fa-search mr-1"></i>이름 검색
                     </label>
                     <input type="text" id="searchName" placeholder="이름 입력..."
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                        style="width: 100%; padding: 0.5rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'"
                         oninput="filterParticipants()">
                 </div>
 
                 <!-- 성별 필터 (버튼형) -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
                         <i class="fas fa-venus-mars mr-1"></i>성별
                     </label>
-                    <div class="flex flex-wrap gap-2">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                         <button onclick="setGenderFilter('')" 
-                            class="filter-btn filter-btn-gender px-4 py-2 rounded-full text-sm font-medium transition-all active"
+                            class="filter-btn filter-btn-gender active" style="padding: 0.5rem 1rem; border-radius: 24px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s ease; min-height: 44px;"
                             data-value="">
                             <i class="fas fa-users mr-1"></i>전체
                         </button>
                         <button onclick="setGenderFilter('남성')" 
-                            class="filter-btn filter-btn-gender px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            class="filter-btn filter-btn-gender" style="padding: 0.5rem 1rem; border-radius: 24px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s ease; min-height: 44px;"
                             data-value="남성">
                             <i class="fas fa-mars mr-1"></i>남성
                         </button>
                         <button onclick="setGenderFilter('여성')" 
-                            class="filter-btn filter-btn-gender px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            class="filter-btn filter-btn-gender" style="padding: 0.5rem 1rem; border-radius: 24px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s ease; min-height: 44px;"
                             data-value="여성">
                             <i class="fas fa-venus mr-1"></i>여성
                         </button>
@@ -491,38 +491,38 @@ export const adminDashboardPage = `
                 </div>
 
                 <!-- 교급 필터 (버튼형) -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
                         <i class="fas fa-graduation-cap mr-1"></i>교급
                     </label>
-                    <div class="flex flex-wrap gap-2">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                         <button onclick="setGradeFilter('')" 
-                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all active"
+                            class="filter-btn filter-btn-grade active" style="padding: 0.5rem 1rem; border-radius: 24px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s ease; min-height: 44px;"
                             data-value="">
                             <i class="fas fa-list mr-1"></i>전체
                         </button>
                         <button onclick="setGradeFilter('유아')" 
-                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            class="filter-btn filter-btn-grade" style="padding: 0.5rem 1rem; border-radius: 24px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s ease; min-height: 44px;"
                             data-value="유아">
                             <i class="fas fa-baby mr-1"></i>유아
                         </button>
                         <button onclick="setGradeFilter('초등')" 
-                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            class="filter-btn filter-btn-grade" style="padding: 0.5rem 1rem; border-radius: 24px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s ease; min-height: 44px;"
                             data-value="초등">
                             <i class="fas fa-child mr-1"></i>초등
                         </button>
                         <button onclick="setGradeFilter('중등')" 
-                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            class="filter-btn filter-btn-grade" style="padding: 0.5rem 1rem; border-radius: 24px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s ease; min-height: 44px;"
                             data-value="중등">
                             <i class="fas fa-user-graduate mr-1"></i>중등
                         </button>
                         <button onclick="setGradeFilter('고등')" 
-                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            class="filter-btn filter-btn-grade" style="padding: 0.5rem 1rem; border-radius: 24px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s ease; min-height: 44px;"
                             data-value="고등">
                             <i class="fas fa-user-tie mr-1"></i>고등
                         </button>
                         <button onclick="setGradeFilter('성인')" 
-                            class="filter-btn filter-btn-grade px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            class="filter-btn filter-btn-grade" style="padding: 0.5rem 1rem; border-radius: 24px; font-size: 0.875rem; font-weight: 600; transition: all 0.2s ease; min-height: 44px;"
                             data-value="성인">
                             <i class="fas fa-user mr-1"></i>성인
                         </button>
@@ -530,12 +530,12 @@ export const adminDashboardPage = `
                 </div>
 
                 <!-- 부스 필터 (드롭다운 유지 - 많은 옵션) -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
                         <i class="fas fa-store mr-1"></i>부스
                     </label>
                     <select id="filterBooth" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                        style="width: 100%; padding: 0.5rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'"
                         onchange="filterParticipants()">
                         <option value="">전체</option>
                         <!-- 동적으로 부스 목록이 추가됩니다 -->
@@ -543,8 +543,8 @@ export const adminDashboardPage = `
                 </div>
 
                 <!-- 필터 결과 및 초기화 -->
-                <div class="flex justify-between items-center">
-                    <div class="text-sm text-gray-600">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 0.875rem; color: #6E6E73; font-weight: 600;">
                         <i class="fas fa-filter mr-1"></i>
                         검색 결과: <span id="filteredCount" class="font-semibold text-indigo-600">0</span>명 / 
                         전체 <span id="totalCount" class="font-semibold">0</span>명
@@ -556,21 +556,21 @@ export const adminDashboardPage = `
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <table class="w-full mobile-card-view">
-                    <thead class="bg-gray-50 border-b">
+            <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); overflow: hidden; backdrop-filter: blur(20px);">
+                <table class="mobile-card-view" style="width: 100%;">
+                    <thead style="background: #F5F5F7; border-bottom: 2px solid #E5E5E7;">
                         <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">이름</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">성별</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">교급</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">부스</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">등록일시</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">이름</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">성별</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">교급</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">부스</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">등록일시</th>
                         </tr>
                     </thead>
                     <tbody id="participantsTableBody" class="divide-y">
                         <tr>
-                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                            <td colspan="5" style="padding: 2rem 1.5rem; text-align: center; color: #6E6E73;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
                                 <p>데이터 로딩 중...</p>
                             </td>
                         </tr>
@@ -581,24 +581,24 @@ export const adminDashboardPage = `
     </main>
 
     <!-- 행사 생성 모달 -->
-    <div id="eventModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6">새 행사 추가</h3>
-            <form id="eventForm" class="space-y-4">
+    <div id="eventModal" class="modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
+        <div style="background: white; border-radius: 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); padding: 2rem; max-width: 28rem; width: 100%; margin: 0 1rem;">
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: #1D1D1F; margin-bottom: 1.5rem; letter-spacing: -0.5px;">새 행사 추가</h3>
+            <form id="eventForm" style="display: flex; flex-direction: column; gap: 1rem;">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">행사명</label>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">행사명</label>
                     <input type="text" id="eventName" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">시작일</label>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">시작일</label>
                     <input type="date" id="eventStartDate" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">종료일</label>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">종료일</label>
                     <input type="date" id="eventEndDate" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'">
                 </div>
                 <div class="flex gap-3 mt-6">
                     <button type="button" onclick="closeEventModal()"
@@ -615,26 +615,26 @@ export const adminDashboardPage = `
     </div>
 
     <!-- 부스 생성 모달 -->
-    <div id="boothModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6">새 부스 추가</h3>
-            <form id="boothForm" class="space-y-4">
+    <div id="boothModal" class="modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
+        <div style="background: white; border-radius: 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); padding: 2rem; max-width: 28rem; width: 100%; margin: 0 1rem;">
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: #1D1D1F; margin-bottom: 1.5rem; letter-spacing: -0.5px;">새 부스 추가</h3>
+            <form id="boothForm" style="display: flex; flex-direction: column; gap: 1rem;">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">행사 선택</label>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">행사 선택</label>
                     <select id="boothEventId" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'">
                         <option value="">행사를 선택하세요</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">부스명</label>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">부스명</label>
                     <input type="text" id="boothName" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">설명 (선택)</label>
+                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">설명 (선택)</label>
                     <textarea id="boothDescription" rows="3"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"></textarea>
+                        style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'"></textarea>
                 </div>
                 <div class="flex gap-3 mt-6">
                     <button type="button" onclick="closeBoothModal()"
@@ -810,7 +810,7 @@ export const adminDashboardPage = `
                             <div class="text-sm text-gray-600 mt-1">활성 부스</div>
                         </div>
                     </div>
-                    <div class="text-sm text-gray-600">
+                    <div style="font-size: 0.875rem; color: #6E6E73; font-weight: 600;">
                         <i class="fas fa-info-circle mr-1"></i>
                         <span id="cardModeDescription">카드를 클릭하여 상세 정보를 확인하세요</span>
                     </div>

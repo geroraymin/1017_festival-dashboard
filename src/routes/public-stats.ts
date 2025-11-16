@@ -47,12 +47,12 @@ publicStats.get('/booth/:booth_id', async (c) => {
       female: participants.filter(p => p.gender === '여성').length
     }
 
-    // 교급 통계
+    // 교급 통계 (방명록 기준: 유아, 초등, 중등, 고등, 성인)
     const gradeStats = {
+      infant: participants.filter(p => p.grade === '유아').length,
       elementary: participants.filter(p => p.grade === '초등').length,
       middle: participants.filter(p => p.grade === '중등').length,
       high: participants.filter(p => p.grade === '고등').length,
-      university: participants.filter(p => p.grade === '대학생').length,
       adult: participants.filter(p => p.grade === '성인').length
     }
 

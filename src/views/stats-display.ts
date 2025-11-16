@@ -1,5 +1,5 @@
 /**
- * 통계 디스플레이 페이지 (가로모드 최적화)
+ * 통계 디스플레이 페이지 (가로모드 최적화) - Apple HIG
  */
 
 export const statsDisplayPage = `
@@ -9,7 +9,7 @@ export const statsDisplayPage = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>실시간 통계</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/style.css">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -17,54 +17,59 @@ export const statsDisplayPage = `
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { width: 100%; height: 100vh; overflow: hidden; }
         body { 
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            padding: 0.5rem;
+            background: linear-gradient(135deg, #F5F7FA 0%, #E3F2FD 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            padding: 0.75rem;
         }
         
         .container {
             height: 100%;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
         
         .header {
             text-align: center;
-            padding: 0.5rem;
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(20px);
         }
         
         .header h1 {
-            font-size: 1.25rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            color: #333;
+            color: #1D1D1F;
+            letter-spacing: -0.5px;
         }
         
         .stats-row {
             display: flex !important;
             flex-direction: row !important;
-            gap: 0.5rem;
+            gap: 0.75rem;
             flex: 1;
             min-height: 0;
             width: 100%;
         }
         
         .stat-card {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
+            backdrop-filter: blur(20px);
         }
         
         .total-card {
-            flex: 0 0 200px;
+            flex: 0 0 240px;
             justify-content: center;
             align-items: center;
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            color: white;
         }
         
         .chart-card {
@@ -73,25 +78,27 @@ export const statsDisplayPage = `
         }
         
         .stat-number {
-            font-size: 3rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 4rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            letter-spacing: -2px;
         }
         
         .stat-label {
-            font-size: 0.875rem;
-            color: #666;
-            margin-top: 0.25rem;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 0.5rem;
+            font-weight: 500;
         }
         
         .chart-title {
-            font-size: 1rem;
+            font-size: 1.125rem;
             font-weight: 700;
-            color: #333;
-            margin-bottom: 0.5rem;
+            color: #1D1D1F;
+            margin-bottom: 1rem;
             text-align: center;
+            letter-spacing: -0.3px;
         }
         
         .chart-wrapper {
@@ -104,7 +111,7 @@ export const statsDisplayPage = `
             max-height: 100%;
         }
         
-        /* 전체화면 버튼 */
+        /* 전체화면 버튼 - Apple HIG */
         .fullscreen-btn {
             position: fixed;
             top: 1rem;
@@ -112,40 +119,43 @@ export const statsDisplayPage = `
             z-index: 1000;
             background: rgba(255, 255, 255, 0.95);
             border: none;
-            border-radius: 0.75rem;
-            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            padding: 0.875rem 1.75rem;
             font-size: 1rem;
             font-weight: 600;
-            color: #667eea;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            color: #007AFF;
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.2);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.625rem;
+            min-height: 44px;
+            backdrop-filter: blur(20px);
         }
         
         .fullscreen-btn:hover {
             background: white;
             transform: scale(1.05);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.3);
         }
         
         .fullscreen-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
         }
         
         .fullscreen-btn i {
             font-size: 1.25rem;
         }
         
-        /* 전체화면 모드일 때 버튼 스타일 변경 */
+        /* 전체화면 모드일 때 버튼 스타일 */
         .fullscreen-active .fullscreen-btn {
-            background: rgba(102, 126, 234, 0.95);
+            background: linear-gradient(135deg, #007AFF, #0051D5);
             color: white;
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
         }
         
-        /* 세로모드 차단 */
+        /* 세로모드 경고 - Apple HIG */
         .portrait-warning {
             display: none;
         }
@@ -163,12 +173,12 @@ export const statsDisplayPage = `
                 height: 100vh;
                 text-align: center;
                 padding: 2rem;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
                 color: white;
             }
             
             .portrait-warning i {
-                font-size: 5rem;
+                font-size: 6rem;
                 margin-bottom: 2rem;
                 animation: rotate 2s ease-in-out infinite;
             }
@@ -179,15 +189,17 @@ export const statsDisplayPage = `
             }
             
             .portrait-warning h2 {
-                font-size: 2rem;
+                font-size: 2.25rem;
                 font-weight: 700;
                 margin-bottom: 1rem;
+                letter-spacing: -0.5px;
             }
             
             .portrait-warning p {
                 font-size: 1.25rem;
-                opacity: 0.9;
+                opacity: 0.95;
                 line-height: 1.6;
+                font-weight: 500;
             }
         }
     </style>
@@ -274,17 +286,26 @@ export const statsDisplayPage = `
                     labels: ['남성', '여성'],
                     datasets: [{
                         data: [stats?.male || 0, stats?.female || 0],
-                        backgroundColor: ['#3B82F6', '#EC4899']
+                        backgroundColor: ['#007AFF', '#FF375F'],
+                        borderWidth: 0,
+                        spacing: 2
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom', labels: { font: { size: 10 } } },
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                font: { size: 14, weight: '600', family: '-apple-system, BlinkMacSystemFont, "SF Pro Display"' },
+                                padding: 16,
+                                color: '#1D1D1F'
+                            } 
+                        },
                         datalabels: {
                             color: '#fff',
-                            font: { size: 14, weight: 'bold' },
+                            font: { size: 20, weight: '700' },
                             formatter: (value) => value || ''
                         }
                     }
@@ -301,16 +322,18 @@ export const statsDisplayPage = `
             gradeChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['초', '중', '고', '대학생', '성인'],
+                    labels: ['유아', '초등', '중등', '고등', '성인'],
                     datasets: [{
                         data: [
+                            stats?.infant || 0,
                             stats?.elementary || 0,
                             stats?.middle || 0,
                             stats?.high || 0,
-                            stats?.university || 0,
                             stats?.adult || 0
                         ],
-                        backgroundColor: '#8B5CF6'
+                        backgroundColor: ['#FFD60A', '#32D74B', '#007AFF', '#5856D6', '#FF375F'],
+                        borderRadius: 8,
+                        borderSkipped: false
                     }]
                 },
                 options: {
@@ -321,13 +344,32 @@ export const statsDisplayPage = `
                         datalabels: {
                             anchor: 'end',
                             align: 'top',
-                            font: { size: 12, weight: 'bold' },
+                            font: { size: 18, weight: '700' },
+                            color: '#1D1D1F',
                             formatter: (value) => value || ''
                         }
                     },
                     scales: {
-                        y: { beginAtZero: true, ticks: { font: { size: 10 } } },
-                        x: { ticks: { font: { size: 10 } } }
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { 
+                                font: { size: 14, weight: '600', family: '-apple-system' },
+                                color: '#1D1D1F'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                lineWidth: 1
+                            },
+                            border: { display: false }
+                        },
+                        x: { 
+                            ticks: { 
+                                font: { size: 14, weight: '600', family: '-apple-system' },
+                                color: '#1D1D1F'
+                            },
+                            grid: { display: false },
+                            border: { display: false }
+                        }
                     }
                 },
                 plugins: [ChartDataLabels]

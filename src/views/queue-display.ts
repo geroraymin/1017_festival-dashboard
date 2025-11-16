@@ -1,5 +1,5 @@
 /**
- * 대기 화면 페이지 (부스 입구 TV/모니터용)
+ * 대기 화면 페이지 (부스 입구 TV/모니터용) - Apple HIG
  * 현재 진행 번호와 대기 인원을 크게 표시
  */
 
@@ -10,7 +10,7 @@ export const queueDisplayPage = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대기 현황</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/style.css">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @keyframes pulse {
@@ -35,75 +35,75 @@ export const queueDisplayPage = `
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 min-h-screen flex flex-col overflow-hidden">
+<body style="background: linear-gradient(135deg, #1E3A8A 0%, #6B21A8 50%, #4338CA 100%); min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
     <!-- 헤더 -->
-    <header class="bg-white/10 backdrop-blur-lg p-6">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <header style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); padding: 1.5rem;">
+        <div style="max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <h1 class="text-3xl font-bold text-white mb-1">
-                    <i class="fas fa-users-line mr-3"></i>
+                <h1 style="font-size: 2rem; font-weight: 800; color: white; margin: 0 0 0.25rem 0; letter-spacing: -1px;">
+                    <i class="fas fa-users-line" style="margin-right: 0.75rem;"></i>
                     대기 현황
                 </h1>
-                <p class="text-white/70" id="boothName">부스명 로딩 중...</p>
+                <p style="color: rgba(255, 255, 255, 0.7); margin: 0; font-size: 1rem;" id="boothName">부스명 로딩 중...</p>
             </div>
-            <div class="text-white/70 text-lg" id="currentTime">--:--</div>
+            <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.125rem; font-weight: 600;" id="currentTime">--:--</div>
         </div>
     </header>
 
     <!-- 메인 디스플레이 -->
-    <main class="flex-1 flex items-center justify-center p-8">
-        <div class="max-w-6xl w-full">
+    <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+        <div style="max-width: 1200px; width: 100%;">
             <!-- 현재 번호 카드 -->
-            <div class="bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl shadow-2xl p-12 mb-8 slide-up">
-                <div class="text-center">
-                    <div class="text-white/90 text-3xl font-semibold mb-4">
-                        <i class="fas fa-bell mr-3"></i>
+            <div class="slide-up" style="background: linear-gradient(135deg, #32D74B 0%, #30BE47 100%); border-radius: 32px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); padding: 3rem; margin-bottom: 2rem;">
+                <div style="text-align: center;">
+                    <div style="color: rgba(255, 255, 255, 0.95); font-size: 2rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.5px;">
+                        <i class="fas fa-bell" style="margin-right: 0.75rem;"></i>
                         현재 진행 번호
                     </div>
-                    <div class="bg-white rounded-2xl p-8 mb-4">
-                        <div id="currentNumber" class="text-9xl font-black text-emerald-600 animate-pulse-slow">
+                    <div style="background: white; border-radius: 24px; padding: 2rem; margin-bottom: 1rem;">
+                        <div id="currentNumber" class="animate-pulse-slow" style="font-size: 8rem; font-weight: 900; color: #32D74B; line-height: 1; letter-spacing: -4px;">
                             -
                         </div>
                     </div>
-                    <div class="text-white text-2xl">
+                    <div style="color: white; font-size: 1.5rem; font-weight: 600;">
                         위 번호의 손님은 입장해주세요!
                     </div>
                 </div>
             </div>
 
             <!-- 대기 정보 -->
-            <div class="grid grid-cols-2 gap-6">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
                 <!-- 마지막 발급 번호 -->
-                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 slide-up">
-                    <div class="text-white/80 text-xl mb-4 flex items-center">
-                        <i class="fas fa-ticket mr-3"></i>
+                <div class="slide-up" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border-radius: 24px; padding: 2rem;">
+                    <div style="color: rgba(255, 255, 255, 0.8); font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; font-weight: 600;">
+                        <i class="fas fa-ticket" style="margin-right: 0.75rem;"></i>
                         마지막 발급 번호
                     </div>
-                    <div id="lastNumber" class="text-6xl font-bold text-white">
+                    <div id="lastNumber" style="font-size: 4rem; font-weight: 800; color: white; line-height: 1; letter-spacing: -2px;">
                         -
                     </div>
                 </div>
 
                 <!-- 대기 인원 -->
-                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 slide-up">
-                    <div class="text-white/80 text-xl mb-4 flex items-center">
-                        <i class="fas fa-users mr-3"></i>
+                <div class="slide-up" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border-radius: 24px; padding: 2rem;">
+                    <div style="color: rgba(255, 255, 255, 0.8); font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; font-weight: 600;">
+                        <i class="fas fa-users" style="margin-right: 0.75rem;"></i>
                         대기 인원
                     </div>
-                    <div class="flex items-baseline">
-                        <div id="waitingCount" class="text-6xl font-bold text-white">
+                    <div style="display: flex; align-items: baseline;">
+                        <div id="waitingCount" style="font-size: 4rem; font-weight: 800; color: white; line-height: 1; letter-spacing: -2px;">
                             -
                         </div>
-                        <div class="text-3xl text-white/70 ml-3">명</div>
+                        <div style="font-size: 2rem; color: rgba(255, 255, 255, 0.7); margin-left: 0.75rem; font-weight: 600;">명</div>
                     </div>
                 </div>
             </div>
 
             <!-- 안내 메시지 -->
-            <div class="mt-8 text-center">
-                <div class="bg-yellow-400/20 backdrop-blur-lg rounded-xl p-6 inline-block">
-                    <p class="text-yellow-100 text-lg">
-                        <i class="fas fa-info-circle mr-2"></i>
+            <div style="margin-top: 2rem; text-align: center;">
+                <div style="background: rgba(255, 214, 10, 0.2); backdrop-filter: blur(20px); border-radius: 16px; padding: 1.5rem; display: inline-block;">
+                    <p style="color: #FFE066; font-size: 1.125rem; margin: 0; font-weight: 600;">
+                        <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
                         내 차례가 되면 번호가 표시됩니다
                     </p>
                 </div>
@@ -112,9 +112,9 @@ export const queueDisplayPage = `
     </main>
 
     <!-- 푸터 -->
-    <footer class="bg-white/5 backdrop-blur-lg p-4">
-        <div class="max-w-7xl mx-auto text-center text-white/50 text-sm">
-            <i class="fas fa-sync-alt mr-2"></i>
+    <footer style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); padding: 1rem;">
+        <div style="max-width: 1280px; margin: 0 auto; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 0.875rem;">
+            <i class="fas fa-sync-alt" style="margin-right: 0.5rem;"></i>
             10초마다 자동 새로고침
         </div>
     </footer>
