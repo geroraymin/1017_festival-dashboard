@@ -797,28 +797,28 @@ export const adminDashboardPage = `
             <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); padding: 1.5rem; margin-bottom: 1.5rem;">
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                     <div style="display: flex; align-items: center; gap: 1.5rem;">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-indigo-600" id="cardModeTotalParticipants">0</div>
-                            <div class="text-sm text-gray-600 mt-1">총 참가자</div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 800; color: #5856D6; letter-spacing: -1px;" id="cardModeTotalParticipants">0</div>
+                            <div style="font-size: 0.875rem; color: #6E6E73; margin-top: 0.25rem; font-weight: 600;">총 참가자</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-purple-600" id="cardModeTotalEvents">0</div>
-                            <div class="text-sm text-gray-600 mt-1">진행 행사</div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 800; color: #AF52DE; letter-spacing: -1px;" id="cardModeTotalEvents">0</div>
+                            <div style="font-size: 0.875rem; color: #6E6E73; margin-top: 0.25rem; font-weight: 600;">진행 행사</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-pink-600" id="cardModeTotalBooths">0</div>
-                            <div class="text-sm text-gray-600 mt-1">활성 부스</div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 800; color: #FF375F; letter-spacing: -1px;" id="cardModeTotalBooths">0</div>
+                            <div style="font-size: 0.875rem; color: #6E6E73; margin-top: 0.25rem; font-weight: 600;">활성 부스</div>
                         </div>
                     </div>
                     <div style="font-size: 0.875rem; color: #6E6E73; font-weight: 600;">
-                        <i class="fas fa-info-circle mr-1"></i>
+                        <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
                         <span id="cardModeDescription">카드를 클릭하여 상세 정보를 확인하세요</span>
                     </div>
                 </div>
             </div>
 
             <!-- 카드 그리드 -->
-            <div id="cardModeGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div id="cardModeGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem;">
                 <!-- 카드들이 동적으로 추가됩니다 -->
             </div>
         </div>

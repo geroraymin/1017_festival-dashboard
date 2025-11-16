@@ -399,28 +399,28 @@ function updateOverallBoothChart(boothData) {
                 label: '참가자 수',
                 data: boothData.map(booth => booth.count),
                 backgroundColor: [
-                    'rgba(236, 72, 153, 0.8)',
-                    'rgba(168, 85, 247, 0.8)',
-                    'rgba(59, 130, 246, 0.8)',
-                    'rgba(16, 185, 129, 0.8)',
-                    'rgba(245, 158, 11, 0.8)',
-                    'rgba(239, 68, 68, 0.8)',
-                    'rgba(139, 92, 246, 0.8)',
-                    'rgba(236, 72, 153, 0.8)',
-                    'rgba(34, 197, 94, 0.8)',
-                    'rgba(249, 115, 22, 0.8)'
+                    'rgba(255, 55, 95, 0.8)',     // #FF375F - Pink
+                    'rgba(88, 86, 214, 0.8)',     // #5856D6 - Purple
+                    'rgba(0, 122, 255, 0.8)',     // #007AFF - Blue
+                    'rgba(50, 215, 75, 0.8)',     // #32D74B - Green
+                    'rgba(255, 214, 10, 0.8)',    // #FFD60A - Yellow
+                    'rgba(255, 159, 10, 0.8)',    // #FF9F0A - Orange
+                    'rgba(175, 82, 222, 0.8)',    // #AF52DE - Purple
+                    'rgba(255, 55, 95, 0.8)',     // #FF375F - Pink (repeat)
+                    'rgba(50, 215, 75, 0.8)',     // #32D74B - Green (repeat)
+                    'rgba(255, 159, 10, 0.8)'     // #FF9F0A - Orange (repeat)
                 ],
                 borderColor: [
-                    'rgb(236, 72, 153)',
-                    'rgb(168, 85, 247)',
-                    'rgb(59, 130, 246)',
-                    'rgb(16, 185, 129)',
-                    'rgb(245, 158, 11)',
-                    'rgb(239, 68, 68)',
-                    'rgb(139, 92, 246)',
-                    'rgb(236, 72, 153)',
-                    'rgb(34, 197, 94)',
-                    'rgb(249, 115, 22)'
+                    'rgb(255, 55, 95)',     // #FF375F
+                    'rgb(88, 86, 214)',     // #5856D6
+                    'rgb(0, 122, 255)',     // #007AFF
+                    'rgb(50, 215, 75)',     // #32D74B
+                    'rgb(255, 214, 10)',    // #FFD60A
+                    'rgb(255, 159, 10)',    // #FF9F0A
+                    'rgb(175, 82, 222)',    // #AF52DE
+                    'rgb(255, 55, 95)',     // #FF375F
+                    'rgb(50, 215, 75)',     // #32D74B
+                    'rgb(255, 159, 10)'     // #FF9F0A
                 ],
                 borderWidth: 2
             }]
@@ -1507,28 +1507,28 @@ function updateChartModeBoothChart(boothData) {
                 label: '참가자 수',
                 data: boothData.map(booth => booth.count),
                 backgroundColor: [
-                    'rgba(236, 72, 153, 0.8)',
-                    'rgba(168, 85, 247, 0.8)',
-                    'rgba(59, 130, 246, 0.8)',
-                    'rgba(16, 185, 129, 0.8)',
-                    'rgba(245, 158, 11, 0.8)',
-                    'rgba(239, 68, 68, 0.8)',
-                    'rgba(139, 92, 246, 0.8)',
-                    'rgba(236, 72, 153, 0.8)',
-                    'rgba(34, 197, 94, 0.8)',
-                    'rgba(249, 115, 22, 0.8)'
+                    'rgba(255, 55, 95, 0.8)',     // #FF375F - Pink
+                    'rgba(88, 86, 214, 0.8)',     // #5856D6 - Purple
+                    'rgba(0, 122, 255, 0.8)',     // #007AFF - Blue
+                    'rgba(50, 215, 75, 0.8)',     // #32D74B - Green
+                    'rgba(255, 214, 10, 0.8)',    // #FFD60A - Yellow
+                    'rgba(255, 159, 10, 0.8)',    // #FF9F0A - Orange
+                    'rgba(175, 82, 222, 0.8)',    // #AF52DE - Purple
+                    'rgba(255, 55, 95, 0.8)',     // #FF375F - Pink (repeat)
+                    'rgba(50, 215, 75, 0.8)',     // #32D74B - Green (repeat)
+                    'rgba(255, 159, 10, 0.8)'     // #FF9F0A - Orange (repeat)
                 ],
                 borderColor: [
-                    'rgb(236, 72, 153)',
-                    'rgb(168, 85, 247)',
-                    'rgb(59, 130, 246)',
-                    'rgb(16, 185, 129)',
-                    'rgb(245, 158, 11)',
-                    'rgb(239, 68, 68)',
-                    'rgb(139, 92, 246)',
-                    'rgb(236, 72, 153)',
-                    'rgb(34, 197, 94)',
-                    'rgb(249, 115, 22)'
+                    'rgb(255, 55, 95)',     // #FF375F
+                    'rgb(88, 86, 214)',     // #5856D6
+                    'rgb(0, 122, 255)',     // #007AFF
+                    'rgb(50, 215, 75)',     // #32D74B
+                    'rgb(255, 214, 10)',    // #FFD60A
+                    'rgb(255, 159, 10)',    // #FF9F0A
+                    'rgb(175, 82, 222)',    // #AF52DE
+                    'rgb(255, 55, 95)',     // #FF375F
+                    'rgb(50, 215, 75)',     // #32D74B
+                    'rgb(255, 159, 10)'     // #FF9F0A
                 ],
                 borderWidth: 2
             }]
