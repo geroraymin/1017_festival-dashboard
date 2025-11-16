@@ -331,20 +331,9 @@ export const adminDashboardPage = `
                 </div>
             </div>
 
-            <!-- 부스별 참가자 수 차트 -->
-            <div class="bg-white rounded-xl shadow-lg p-5 mb-6">
-                <h3 class="text-title3" style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin-bottom: 1rem; display: flex; align-items: center; letter-spacing: -0.5px;">
-                    <i class="fas fa-store-alt" style="color: #5856D6; margin-right: 0.5rem;"></i>
-                    부스별 참가자 현황
-                </h3>
-                <div style="height: 300px;">
-                    <canvas id="overallBoothChart"></canvas>
-                </div>
-            </div>
-
-            <!-- 부스 리더보드 -->
-            <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl shadow-lg p-5 mb-6" id="leaderboardSection" style="display: none;">
-                <div class="flex items-center justify-between mb-4">
+            <!-- 부스별 참가자 현황 (리더보드 카드 그리드) -->
+            <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; margin-bottom: 1.5rem; backdrop-filter: blur(20px);" id="leaderboardSection">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                     <h3 class="text-title2" style="font-size: 1.5rem; font-weight: 700; color: #1D1D1F; display: flex; align-items: center; letter-spacing: -0.5px;">
                         <i class="fas fa-trophy" style="color: #FFD60A; margin-right: 0.5rem;"></i>
                         부스 순위 리더보드
@@ -365,7 +354,7 @@ export const adminDashboardPage = `
                     </div>
                     
                     <!-- 데이터 없음 -->
-                    <div id="leaderboardEmpty" style="display: none;" class="text-center py-8 text-gray-600">
+                    <div id="leaderboardEmpty" style="display: none; text-align: center; padding: 2rem 0; color: #6E6E73;">
                         <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 0.5rem; display: block;"></i>
                         <p>참가자 데이터가 없습니다</p>
                     </div>

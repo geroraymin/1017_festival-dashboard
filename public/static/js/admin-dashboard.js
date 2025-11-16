@@ -378,96 +378,90 @@ function updateGradeStatsTable(data) {
 
 // 부스별 차트 업데이트
 function updateOverallBoothChart(boothData) {
-    const ctx = document.getElementById('overallBoothChart')
-    if (!ctx) return
-
-    // 기존 차트 제거
-    if (overallBoothChart) {
-        overallBoothChart.destroy()
-    }
-
+    // 리더보드 섹션 표시
+    const section = document.getElementById('leaderboardSection')
+    const listContainer = document.getElementById('leaderboardList')
+    const emptyContainer = document.getElementById('leaderboardEmpty')
+    
+    if (!section || !listContainer) return
+    
+    // 섹션 항상 표시
+    section.style.display = 'block'
+    
     // 데이터가 없을 때 처리
     if (!boothData || boothData.length === 0) {
-        boothData = [{ name: '데이터 없음', count: 0 }]
+        listContainer.style.display = 'none'
+        emptyContainer.style.display = 'block'
+        return
     }
-
-    overallBoothChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: boothData.map(booth => booth.name),
-            datasets: [{
-                label: '참가자 수',
-                data: boothData.map(booth => booth.count),
-                backgroundColor: [
-                    'rgba(255, 55, 95, 0.8)',     // #FF375F - Pink
-                    'rgba(88, 86, 214, 0.8)',     // #5856D6 - Purple
-                    'rgba(0, 122, 255, 0.8)',     // #007AFF - Blue
-                    'rgba(50, 215, 75, 0.8)',     // #32D74B - Green
-                    'rgba(255, 214, 10, 0.8)',    // #FFD60A - Yellow
-                    'rgba(255, 159, 10, 0.8)',    // #FF9F0A - Orange
-                    'rgba(175, 82, 222, 0.8)',    // #AF52DE - Purple
-                    'rgba(255, 55, 95, 0.8)',     // #FF375F - Pink (repeat)
-                    'rgba(50, 215, 75, 0.8)',     // #32D74B - Green (repeat)
-                    'rgba(255, 159, 10, 0.8)'     // #FF9F0A - Orange (repeat)
-                ],
-                borderColor: [
-                    'rgb(255, 55, 95)',     // #FF375F
-                    'rgb(88, 86, 214)',     // #5856D6
-                    'rgb(0, 122, 255)',     // #007AFF
-                    'rgb(50, 215, 75)',     // #32D74B
-                    'rgb(255, 214, 10)',    // #FFD60A
-                    'rgb(255, 159, 10)',    // #FF9F0A
-                    'rgb(175, 82, 222)',    // #AF52DE
-                    'rgb(255, 55, 95)',     // #FF375F
-                    'rgb(50, 215, 75)',     // #32D74B
-                    'rgb(255, 159, 10)'     // #FF9F0A
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            indexAxis: 'y', // 가로 막대형 차트
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    padding: 12,
-                    titleFont: {
-                        size: 14,
-                        weight: 'bold'
-                    },
-                    bodyFont: {
-                        size: 13
-                    },
-                    callbacks: {
-                        label: function(context) {
-                            return '참가자: ' + context.parsed.x + '명'
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    }
-                },
-                y: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
+    
+    // 데이터를 참가자 수로 정렬
+    boothData.sort((a, b) => b.count - a.count)
+    
+    // Apple HIG 색상 팔레트
+    const colors = [
+        { bg: 'linear-gradient(135deg, #FFD60A 0%, #FF9F0A 100%)', icon: '🥇', border: '#FFD60A' }, // 금메달
+        { bg: 'linear-gradient(135deg, #C7C7CC 0%, #8E8E93 100%)', icon: '🥈', border: '#C7C7CC' }, // 은메달
+        { bg: 'linear-gradient(135deg, #FF9F0A 0%, #FF6B35 100%)', icon: '🥉', border: '#FF9F0A' }, // 동메달
+        { bg: 'rgba(255, 55, 95, 0.1)', icon: '🎪', border: '#FF375F' },
+        { bg: 'rgba(88, 86, 214, 0.1)', icon: '🎪', border: '#5856D6' },
+        { bg: 'rgba(0, 122, 255, 0.1)', icon: '🎪', border: '#007AFF' },
+        { bg: 'rgba(50, 215, 75, 0.1)', icon: '🎪', border: '#32D74B' },
+        { bg: 'rgba(255, 214, 10, 0.1)', icon: '🎪', border: '#FFD60A' },
+        { bg: 'rgba(175, 82, 222, 0.1)', icon: '🎪', border: '#AF52DE' },
+    ]
+    
+    // 카드 HTML 생성
+    let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">'
+    
+    boothData.forEach((booth, index) => {
+        const colorScheme = colors[index % colors.length]
+        const rank = index + 1
+        const medal = index < 3 ? colorScheme.icon : `<span style="font-weight: 800; color: #8E8E93;">#${rank}</span>`
+        
+        html += `
+            <div class="booth-card" style="background: ${colorScheme.bg}; border: 2px solid ${colorScheme.border}; border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px);"
+                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.15)'"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                
+                <!-- 순위 표시 -->
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                    <div style="font-size: 2rem;">${medal}</div>
+                    <div style="font-size: 0.875rem; color: #6E6E73; font-weight: 600;">${booth.booth_code || ''}</div>
+                </div>
+                
+                <!-- 부스명 -->
+                <h4 style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: -0.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    ${booth.name}
+                </h4>
+                
+                <!-- 참가자 수 -->
+                <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <span style="font-size: 2.5rem; font-weight: 900; color: #1D1D1F; letter-spacing: -2px;">${booth.count}</span>
+                    <span style="font-size: 1rem; color: #6E6E73; font-weight: 600;">명</span>
+                </div>
+                
+                <!-- 행사명 태그 -->
+                ${booth.event_name ? `
+                <div style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(0, 122, 255, 0.1); border-radius: 12px; font-size: 0.75rem; color: #007AFF; font-weight: 600;">
+                    <i class="fas fa-calendar" style="margin-right: 0.25rem;"></i>${booth.event_name}
+                </div>
+                ` : ''}
+            </div>
+        `
     })
+    
+    html += '</div>'
+    
+    // DOM 업데이트
+    listContainer.innerHTML = html
+    listContainer.style.display = 'block'
+    emptyContainer.style.display = 'none'
+    
+    // 더미 차트 객체 (호환성 유지)
+    overallBoothChart = {
+        destroy: () => {} // 빈 destroy 메서드
+    }
 }
 
 // 행사 목록 로드
