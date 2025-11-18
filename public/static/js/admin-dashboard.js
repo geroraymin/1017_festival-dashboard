@@ -1670,7 +1670,7 @@ async function updateCardMode() {
     }
 }
 
-// 행사별 카드 렌더링
+// 행사별 카드 렌더링 (리더보드 스타일)
 function renderEventCards(events) {
     const container = document.getElementById('cardModeGrid')
     const sortOrder = document.getElementById('cardModeSortOrder').value
@@ -1692,6 +1692,16 @@ function renderEventCards(events) {
         }
     })
     
+    // Apple HIG 색상 팔레트
+    const colors = [
+        { bg: 'linear-gradient(135deg, #5856D6 0%, #4F46E5 100%)', icon: 'fa-calendar-alt', border: '#5856D6' },
+        { bg: 'linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)', icon: 'fa-rocket', border: '#FF375F' },
+        { bg: 'linear-gradient(135deg, #007AFF 0%, #0051D5 100%)', icon: 'fa-star', border: '#007AFF' },
+        { bg: 'linear-gradient(135deg, #32D74B 0%, #30B24D 100%)', icon: 'fa-trophy', border: '#32D74B' },
+        { bg: 'linear-gradient(135deg, #FFD60A 0%, #FF9F0A 100%)', icon: 'fa-fire', border: '#FFD60A' },
+        { bg: 'linear-gradient(135deg, #AF52DE 0%, #9747FF 100%)', icon: 'fa-magic', border: '#AF52DE' },
+    ]
+    
     // 카드 생성
     container.innerHTML = sortedEvents.map((event, index) => {
         const eventId = event.id || event.event_id
@@ -1701,27 +1711,28 @@ function renderEventCards(events) {
         const startDate = event.start_date ? new Date(event.start_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : ''
         const endDate = event.end_date ? new Date(event.end_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : ''
         
-        const color = eventColors[index % eventColors.length]
-        const icon = eventIcons[index % eventIcons.length]
+        const colorScheme = colors[index % colors.length]
         
         return `
             <div onclick="selectEventFromCard('${eventId}')" 
-                class="bg-gradient-to-br ${color.gradient} rounded-xl shadow-2xl p-6 cursor-pointer transform transition hover:scale-105 hover:shadow-3xl">
-                <div class="text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <i class="fas ${icon} text-4xl opacity-80"></i>
-                        <span class="text-sm opacity-80">${startDate}${endDate ? ' - ' + endDate : ''}</span>
+                style="background: ${colorScheme.bg}; border: 2px solid ${colorScheme.border}; border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);"
+                onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.2)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(0, 0, 0, 0.1)'">
+                <div style="color: white;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <i class="fas ${colorScheme.icon}" style="font-size: 2.5rem; opacity: 0.9;"></i>
+                        <span style="font-size: 0.875rem; opacity: 0.9;">${startDate}${endDate ? ' - ' + endDate : ''}</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-2 line-clamp-2">${eventName}</h3>
-                    <div class="mt-4 pt-4 border-t border-white border-opacity-30">
-                        <div class="flex items-center justify-between">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; letter-spacing: -0.5px;">${eventName}</h3>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.3);">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div>
-                                <div class="text-3xl font-bold">${participantCount}</div>
-                                <div class="text-sm opacity-80">참가자</div>
+                                <div style="font-size: 2rem; font-weight: 800; letter-spacing: -1px;">${participantCount}</div>
+                                <div style="font-size: 0.875rem; opacity: 0.9;">참가자</div>
                             </div>
-                            <div class="text-right">
-                                <div class="text-2xl font-bold">${boothCount}</div>
-                                <div class="text-sm opacity-80">부스</div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.5rem; font-weight: 800; letter-spacing: -1px;">${boothCount}</div>
+                                <div style="font-size: 0.875rem; opacity: 0.9;">부스</div>
                             </div>
                         </div>
                     </div>
@@ -1746,6 +1757,19 @@ function renderBoothCards(event) {
         return
     }
     
+    // 뒤로가기 버튼 추가
+    const backButton = `
+        <div style="grid-column: 1 / -1; margin-bottom: 1rem;">
+            <button onclick="backToEventList()" 
+                style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: rgba(255, 255, 255, 0.2); color: white; border: none; border-radius: 12px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(10px);"
+                onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='translateX(-4px)'"
+                onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='translateX(0)'">
+                <i class="fas fa-arrow-left"></i>
+                <span>행사 목록으로 돌아가기</span>
+            </button>
+        </div>
+    `
+    
     document.getElementById('cardModeDescription').textContent = `${event.name || event.event_name} 행사의 부스별 실적입니다`
     
     // 정렬 (참가자 많은 순으로 고정하여 순위 표시)
@@ -1769,7 +1793,7 @@ function renderBoothCards(event) {
     ]
     
     // 카드 생성
-    container.innerHTML = sortedBooths.map((booth, index) => {
+    container.innerHTML = backButton + sortedBooths.map((booth, index) => {
         const boothName = booth.name || booth.booth_name
         const participantCount = booth.total_participants || booth.participant_count || 0
         const colorScheme = colors[index % colors.length]
@@ -1863,6 +1887,16 @@ function selectEventFromCard(eventId) {
     selectedEventId = eventId
     
     // 카드 모드 업데이트
+    updateCardMode()
+}
+
+// 행사 목록으로 돌아가기
+function backToEventList() {
+    const eventFilter = document.getElementById('eventFilter')
+    eventFilter.value = ''
+    selectedEventId = null
+    
+    // 카드 모드 업데이트 (행사 목록 표시)
     updateCardMode()
 }
 
