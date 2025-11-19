@@ -155,7 +155,8 @@ app.get('/operator', (c) => {
 
 // 방명록 작성 페이지
 app.get('/guestbook', (c) => {
-  return c.html(guestbookPage)
+  const publicUrl = c.env.PUBLIC_URL || 'https://guestbook-system.pages.dev'
+  return c.html(guestbookPage(publicUrl))
 })
 
 // 운영자 대시보드
