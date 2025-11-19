@@ -903,7 +903,11 @@ export const guestbookPage = `
         
         // QR 코드 생성 및 로드
         function generateQRCode() {
-            const guestbookUrl = window.location.href
+            // URL 쿼리 파라미터 유지하면서 현재 경로의 전체 URL 생성
+            // window.location.origin은 프로토콜 + 도메인만 포함 (예: https://example.com)
+            // window.location.pathname은 경로만 포함 (예: /guestbook)
+            // window.location.search는 쿼리 파라미터 포함 (예: ?booth_id=1)
+            const guestbookUrl = window.location.origin + window.location.pathname + window.location.search
             
             // QRCode.js 라이브러리로 QR 코드 생성
             // 작은 QR 코드 (80x80)
