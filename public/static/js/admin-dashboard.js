@@ -380,6 +380,7 @@ function updateGradeStatsTable(data) {
 function updateOverallBoothChart(boothData) {
     // 리더보드 섹션 표시
     const section = document.getElementById('leaderboardSection')
+    const loadingContainer = document.getElementById('leaderboardLoading')
     const listContainer = document.getElementById('leaderboardList')
     const emptyContainer = document.getElementById('leaderboardEmpty')
     
@@ -387,6 +388,11 @@ function updateOverallBoothChart(boothData) {
     
     // 섹션 항상 표시
     section.style.display = 'block'
+    
+    // 로딩 숨기기
+    if (loadingContainer) {
+        loadingContainer.style.display = 'none'
+    }
     
     // 데이터가 없을 때 처리
     if (!boothData || boothData.length === 0) {
