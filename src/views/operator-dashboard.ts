@@ -146,7 +146,7 @@ export const operatorDashboardPage = `
         </div>
 
         <!-- 액션 버튼 -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
             <a href="#" onclick="openGuestbook(); return false;" class="card"
                 style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; text-decoration: none; transition: all 0.2s ease; backdrop-filter: blur(20px);">
                 <div>
@@ -240,7 +240,7 @@ export const operatorDashboardPage = `
                 <i class="fas fa-graduation-cap" style="color: #5856D6; margin-right: 0.75rem;"></i>
                 교급 분포
             </h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem;" id="statsCards">
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;" id="statsCards">
                 <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; backdrop-filter: blur(20px);">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                         <i class="fas fa-baby" style="font-size: 2rem; color: #FFD60A;"></i>
