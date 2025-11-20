@@ -40,8 +40,9 @@ export const guestbookPage = (publicUrl: string) => `
         /* 세로 모드 (모바일 기본) */
         @media (orientation: portrait) {
             body, html {
-                overflow: hidden;
-                height: 100vh;
+                overflow-x: hidden;
+                overflow-y: auto;
+                min-height: 100vh;
                 width: 100vw;
             }
         }
@@ -194,11 +195,12 @@ export const guestbookPage = (publicUrl: string) => `
             flex-direction: column;
         }
         
-        /* 세로 모드 - 고정 높이 */
+        /* 세로 모드 - 최소 높이 + 스크롤 */
         @media (orientation: portrait) {
             .container-wrapper {
-                height: 100vh;
-                overflow: hidden;
+                min-height: 100vh;
+                overflow-y: auto;
+                overflow-x: hidden;
             }
         }
         
@@ -214,14 +216,15 @@ export const guestbookPage = (publicUrl: string) => `
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             padding: 1rem 0;
+            overflow-y: visible;
         }
         
-        /* 세로 모드 - 스크롤 */
+        /* 세로 모드 - 자연스러운 흐름 */
         @media (orientation: portrait) {
             .content-area {
-                overflow-y: auto;
+                padding: 0.5rem 0 2rem 0;
             }
         }
         
@@ -235,13 +238,32 @@ export const guestbookPage = (publicUrl: string) => `
         /* 모바일 최적화 */
         @media (max-width: 640px) {
             .content-area {
-                padding: 0.5rem 0;
+                padding: 0.5rem 0 2rem 0;
             }
             h2 {
-                font-size: 1.25rem !important;
+                font-size: 1.125rem !important;
+                margin-bottom: 0.75rem !important;
             }
             .text-lg {
-                font-size: 1rem !important;
+                font-size: 0.9375rem !important;
+            }
+            /* 폼 요소 간격 줄이기 */
+            .form-section {
+                padding-top: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+            /* 카드 패딩 줄이기 */
+            .main-card {
+                padding: 1rem !important;
+            }
+            /* 버튼 크기 조정 */
+            button {
+                padding: 0.75rem 1.5rem !important;
+                font-size: 0.9375rem !important;
+            }
+            /* Select 박스 간격 */
+            select {
+                margin-bottom: 0.5rem !important;
             }
         }
         
