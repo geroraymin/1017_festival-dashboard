@@ -310,4 +310,78 @@ participants.delete('/:id', authMiddleware, adminOnly, async (c) => {
   }
 })
 
+/**
+ * DELETE /api/participants/reset
+ * 참가자 명단 전체 리셋 (운영자 또는 관리자)
+ * 운영자: 자신의 부스 참가자만 삭제
+ * 관리자: booth_id 파라미터로 특정 부스 또는 전체 삭제
+ */
+participants.delete('/reset/all', authMiddleware, operatorOrAdmin, async (c) => {
+  try {
+    const db = c.env.DB
+    const user = c.get('user')
+    const boothId = c.req.query('booth_id')
+
+    // 운영자는 자신의 부스 참가자만 삭제
+    if (user.role === 'operator' && user.booth_id) {
+      // 해당 부스의 대기열 먼저 삭제
+      await db
+        .prepare('DELETE FROM queue WHERE booth_id = ?')
+        .bind(user.booth_id)
+        .run()
+
+      // 참가자 삭제
+      const result = await db
+        .prepare('DELETE FROM participants WHERE booth_id = ?')
+        .bind(user.booth_id)
+        .run()
+
+      return c.json({ 
+        message: '참가자 명단이 초기화되었습니다.',
+        deleted_count: result.meta.changes || 0
+      })
+    }
+
+    // 관리자는 특정 부스 또는 전체 삭제 가능
+    if (user.role === 'admin') {
+      if (boothId) {
+        // 특정 부스 삭제
+        await db
+          .prepare('DELETE FROM queue WHERE booth_id = ?')
+          .bind(boothId)
+          .run()
+
+        const result = await db
+          .prepare('DELETE FROM participants WHERE booth_id = ?')
+          .bind(boothId)
+          .run()
+
+        return c.json({ 
+          message: '해당 부스의 참가자 명단이 초기화되었습니다.',
+          deleted_count: result.meta.changes || 0
+        })
+      } else {
+        // 전체 삭제
+        await db
+          .prepare('DELETE FROM queue')
+          .run()
+
+        const result = await db
+          .prepare('DELETE FROM participants')
+          .run()
+
+        return c.json({ 
+          message: '모든 참가자 명단이 초기화되었습니다.',
+          deleted_count: result.meta.changes || 0
+        })
+      }
+    }
+
+    return c.json({ error: '권한이 없습니다.' }, 403)
+  } catch (error) {
+    console.error('Error resetting participants:', error)
+    return c.json({ error: '참가자 명단 초기화에 실패했습니다.' }, 500)
+  }
+})
+
 export default participants

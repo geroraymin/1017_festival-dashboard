@@ -2008,6 +2008,46 @@ function renderLeaderboard(booths, maxCount) {
     }).join('')
 }
 
+// 전체 참가자 명단 초기화 (관리자 전용)
+async function resetAllParticipants() {
+    const confirmed = confirm('정말로 전체 참가자 명단을 초기화하시겠습니까?\n\n이 작업은 되돌릴 수 없으며, 다음 내용이 삭제됩니다:\n- 모든 부스의 참가자 정보\n- 모든 대기열 정보\n\n모든 부스의 데이터가 삭제됩니다!')
+    
+    if (!confirmed) return
+    
+    const doubleCheck = confirm('최종 확인\n\n전체 참가자 명단을 정말로 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다!')
+    
+    if (!doubleCheck) return
+    
+    try {
+        const response = await ParticipantsAPI.reset() // booth_id 없이 호출하면 전체 삭제
+        alert(response.message + '\n삭제된 항목: ' + response.deleted_count + '개')
+        
+        // 개요 및 부스 목록 새로고침
+        loadOverview()
+    } catch (error) {
+        console.error('전체 명단 초기화 실패:', error)
+        alert('전체 명단 초기화에 실패했습니다.\n' + (error.message || '알 수 없는 오류'))
+    }
+}
+
+// 특정 부스 참가자 명단 초기화
+async function resetBoothParticipants(boothId, boothName) {
+    const confirmed = confirm('"' + boothName + '" 부스의 참가자 명단을 초기화하시겠습니까?\n\n이 작업은 되돌릴 수 없으며, 다음 내용이 삭제됩니다:\n- 해당 부스의 모든 참가자 정보\n- 해당 부스의 대기열 정보')
+    
+    if (!confirmed) return
+    
+    try {
+        const response = await ParticipantsAPI.reset(boothId)
+        alert(response.message + '\n삭제된 항목: ' + response.deleted_count + '개')
+        
+        // 개요 및 부스 목록 새로고침
+        loadOverview()
+    } catch (error) {
+        console.error('부스 명단 초기화 실패:', error)
+        alert('부스 명단 초기화에 실패했습니다.\n' + (error.message || '알 수 없는 오류'))
+    }
+}
+
 // HTML onclick에서 사용하는 함수들을 전역으로 노출
 window.logout = logout
 window.switchTab = switchTab
@@ -2023,3 +2063,5 @@ window.enterChartMode = enterChartMode
 window.exitChartMode = exitChartMode
 window.enterCardMode = enterCardMode
 window.exitCardMode = exitCardMode
+window.resetAllParticipants = resetAllParticipants
+window.resetBoothParticipants = resetBoothParticipants

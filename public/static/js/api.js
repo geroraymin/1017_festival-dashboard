@@ -252,7 +252,15 @@ const ParticipantsAPI = {
   // 참가자 삭제
   delete: (id) => request(`/participants/${id}`, {
     method: 'DELETE'
-  })
+  }),
+  
+  // 참가자 명단 리셋
+  reset: (boothId = null) => {
+    const query = boothId ? `?booth_id=${boothId}` : ''
+    return request(`/participants/reset/all${query}`, {
+      method: 'DELETE'
+    })
+  }
 }
 
 /**

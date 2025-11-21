@@ -206,6 +206,18 @@ export const operatorDashboardPage = `
                 </div>
                 <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
             </button>
+
+            <button onclick="resetParticipants()" class="card"
+                style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; border: none; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); text-align: left;">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: -0.2px;">
+                        <i class="fas fa-trash-alt" style="color: #FF375F; margin-right: 0.75rem;"></i>
+                        명단 초기화
+                    </h3>
+                    <p style="font-size: 0.9375rem; color: #6E6E73; margin: 0;">참가자 명단 삭제</p>
+                </div>
+                <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
+            </button>
         </div>
 
         <!-- 통계 카드 -->
@@ -435,6 +447,28 @@ export const operatorDashboardPage = `
             refreshButton.disabled = false
             refreshIcon.classList.remove('fa-spin')
             refreshText.textContent = '통계 새로고침'
+        }
+
+        // 참가자 명단 초기화
+        async function resetParticipants() {
+            const confirmed = confirm('정말로 참가자 명단을 초기화하시겠습니까?\\n\\n이 작업은 되돌릴 수 없으며, 다음 내용이 삭제됩니다:\\n- 모든 참가자 정보\\n- 대기열 정보\\n\\n통계 데이터는 실시간으로 0으로 초기화됩니다.')
+            
+            if (!confirmed) return
+            
+            const doubleCheck = confirm('최종 확인\\n\\n참가자 명단을 정말로 삭제하시겠습니까?\\n이 작업은 되돌릴 수 없습니다!')
+            
+            if (!doubleCheck) return
+            
+            try {
+                const response = await ParticipantsAPI.reset()
+                alert(response.message + '\\n삭제된 항목: ' + response.deleted_count + '개')
+                
+                // 통계 새로고침
+                await loadStats()
+            } catch (error) {
+                console.error('명단 초기화 실패:', error)
+                alert('명단 초기화에 실패했습니다.\\n' + (error.message || '알 수 없는 오류'))
+            }
         }
 
         // 통계 로드

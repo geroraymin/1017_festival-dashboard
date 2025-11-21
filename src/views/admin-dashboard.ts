@@ -399,13 +399,18 @@ export const adminDashboardPage = `
 
         <!-- 부스 관리 탭 -->
         <div id="tab-booths" class="tab-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
                 <h2 class="text-title1" style="font-size: 2rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;">
                     <i class="fas fa-store" style="margin-right: 0.5rem;"></i>부스 목록
                 </h2>
-                <button onclick="openBoothModal()" style="background: linear-gradient(135deg, #5856D6 0%, #4F46E5 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(88, 86, 214, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(88, 86, 214, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #5856D6 0%, #4F46E5 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(88, 86, 214, 0.3)'">
-                    <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>새 부스 추가
-                </button>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button onclick="resetAllParticipants()" style="background: linear-gradient(135deg, #FF375F 0%, #FF2D55 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(255, 55, 95, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #FF2D55 0%, #FF1744 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(255, 55, 95, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(255, 55, 95, 0.3)'">
+                        <i class="fas fa-trash-alt" style="margin-right: 0.5rem;"></i>전체 명단 초기화
+                    </button>
+                    <button onclick="openBoothModal()" style="background: linear-gradient(135deg, #5856D6 0%, #4F46E5 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(88, 86, 214, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(88, 86, 214, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #5856D6 0%, #4F46E5 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(88, 86, 214, 0.3)'">
+                        <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>새 부스 추가
+                    </button>
+                </div>
             </div>
 
             <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); overflow: hidden; backdrop-filter: blur(20px);">
