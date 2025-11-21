@@ -1057,8 +1057,10 @@ export const guestbookPage = (publicUrl: string) => `
         function generateQRCode() {
             // 프로덕션 URL 사용 (서버에서 주입된 PUBLIC_URL)
             const publicUrl = '${publicUrl}'
-            // 쿼리 파라미터 유지
-            const guestbookUrl = publicUrl + window.location.pathname + window.location.search
+            // 쿼리 파라미터에 from=qr 추가
+            const currentParams = new URLSearchParams(window.location.search)
+            currentParams.set('from', 'qr')
+            const guestbookUrl = publicUrl + window.location.pathname + '?' + currentParams.toString()
             
             // QRCode.js 라이브러리로 QR 코드 생성
             // 작은 QR 코드 (80x80)
@@ -1400,8 +1402,11 @@ export const guestbookPage = (publicUrl: string) => `
                 // 작성 완료 플래그 설정 (페이지 이탈 경고 비활성화)
                 isFormCompleted = true
                 
-                // 큐 정보가 있으면 큐 티켓 페이지로 리다이렉트
-                if (queueInfo && queueInfo.queue_id) {
+                // QR 코드로 접속했는지 확인
+                const isFromQR = urlParams.get('from') === 'qr'
+                
+                // QR 접속이고 큐 정보가 있으면 큐 티켓 페이지로 리다이렉트
+                if (isFromQR && queueInfo && queueInfo.queue_id) {
                     const redirectParams = new URLSearchParams({
                         queue_id: queueInfo.queue_id.toString()
                     })
@@ -1417,7 +1422,7 @@ export const guestbookPage = (publicUrl: string) => `
                     return
                 }
                 
-                // 큐 정보가 없으면 기존 완료 화면 표시
+                // 직접 접속이거나 큐 정보가 없으면 완료 화면 표시 후 리셋
                 showSection('section6')
                 updateProgress(6)
                 currentStep = 6
@@ -1428,16 +1433,19 @@ export const guestbookPage = (publicUrl: string) => `
                     heading.innerHTML = '다시 방문해주셔서 감사합니다! 🎉'
                     
                     const messagePara = document.querySelector('#section6 p.text-gray-600')
-                    messagePara.innerHTML = \`
-                        소중한 시간 내어 방명록을 작성해주셔서 감사합니다.<br>
-                        <strong class="text-purple-600">[이전 방문] \${data.previous_booth}</strong><br>
-                        <strong>즐거운 시간 되세요!</strong> 🎉
-                    \`
+                    if (messagePara) {
+                        messagePara.innerHTML = \`
+                            소중한 시간 내어 방명록을 작성해주셔서 감사합니다.<br>
+                            <strong class="text-purple-600">[이전 방문] \${data.previous_booth}</strong><br>
+                            <strong>즐거운 시간 되세요!</strong> 🎉
+                        \`
+                    }
                 }
                 
-                // 3초 후 페이지 새로고침 (다음 참가자 작성 가능)
+                // 3초 후 방명록 첫 화면으로 리셋 (다음 참가자 작성 가능)
                 setTimeout(() => {
-                    window.location.reload()
+                    // 현재 booth_id 유지하면서 첫 화면으로
+                    window.location.href = '/guestbook?booth_id=' + boothId
                 }, 3000)
             } catch (error) {
                 console.error('참가자 등록 실패:', error)
