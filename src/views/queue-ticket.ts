@@ -380,8 +380,8 @@ export const queueTicketPage = `
                 const statusText = document.getElementById('statusText')
                 const statusMessage = document.getElementById('statusMessage')
                 
-                if (data.is_my_turn) {
-                    // 정확히 내 차례
+                if (data.is_my_turn || data.remaining === 0) {
+                    // 정확히 내 차례 (is_my_turn 또는 앞에 0명)
                     statusMessage.className = 'status-alert status-alert-my-turn pulse-grow'
                     statusText.innerHTML = '<i class="fas fa-door-open" aria-hidden="true" style="margin-right: var(--space-2);"></i><strong>지금 바로 입장하세요!</strong> 🎉'
                     statusText.style = 'font-size: 1.375rem; font-weight: 700; margin: 0;'
@@ -391,18 +391,18 @@ export const queueTicketPage = `
                         const audio = new Audio('/static/notification.mp3')
                         audio.play().catch(() => {}) // 재생 실패 무시
                     }
-                } else if (data.remaining === 0) {
-                    // 다음 차례
+                } else if (data.remaining === 1) {
+                    // 다음 차례 (1명 남음)
                     statusMessage.className = 'status-alert status-alert-next'
                     statusText.innerHTML = '<i class="fas fa-exclamation-triangle" aria-hidden="true" style="margin-right: var(--space-2);"></i><strong>다음 차례입니다!</strong> 준비해주세요'
                     statusText.style = 'font-size: 1.25rem; font-weight: 700; margin: 0;'
-                } else if (data.remaining <= 2) {
+                } else if (data.remaining <= 3) {
                     // 곧 차례 (2-3명 남음)
                     statusMessage.className = 'status-alert status-alert-soon'
                     statusText.innerHTML = '<i class="fas fa-hourglass-half" aria-hidden="true" style="margin-right: var(--space-2);"></i>곧 차례입니다 (앞에 ' + data.remaining + '명)'
                     statusText.style = 'font-size: 1.0625rem; font-weight: 600; margin: 0;'
                 } else {
-                    // 대기 중 (3명 이상 남음)
+                    // 대기 중 (4명 이상 남음)
                     statusMessage.className = 'status-alert status-alert-waiting'
                     statusText.innerHTML = '<i class="fas fa-clock" aria-hidden="true" style="margin-right: var(--space-2);"></i>대기 중입니다 (앞에 ' + data.remaining + '명)'
                     statusText.style = 'font-size: 1.0625rem; font-weight: 600; margin: 0;'
