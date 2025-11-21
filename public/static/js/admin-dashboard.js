@@ -650,11 +650,11 @@ async function loadParticipants() {
 
 // 행사 모달 열기/닫기
 function openEventModal() {
-    document.getElementById('eventModal').classList.add('active')
+    document.getElementById('eventModal').style.display = 'flex'
 }
 
 function closeEventModal() {
-    document.getElementById('eventModal').classList.remove('active')
+    document.getElementById('eventModal').style.display = 'none'
     document.getElementById('eventForm').reset()
 }
 
@@ -673,14 +673,14 @@ async function openBoothModal() {
             select.appendChild(option)
         })
 
-        document.getElementById('boothModal').classList.add('active')
+        document.getElementById('boothModal').style.display = 'flex'
     } catch (error) {
         alert('행사 목록을 불러오는데 실패했습니다.')
     }
 }
 
 function closeBoothModal() {
-    document.getElementById('boothModal').classList.remove('active')
+    document.getElementById('boothModal').style.display = 'none'
     document.getElementById('boothForm').reset()
 }
 
