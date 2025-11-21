@@ -235,35 +235,165 @@ export const guestbookPage = (publicUrl: string) => `
             }
         }
         
-        /* 모바일 최적화 */
+        /* 모바일 최적화 - 한 화면에 모두 표시 */
         @media (max-width: 640px) {
+            body, html {
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            .container-wrapper {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+            
             .content-area {
-                padding: 0.5rem 0 2rem 0;
+                flex: 1;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 0.5rem 0 0.5rem 0;
+                min-height: 0; /* Flexbox overflow 수정 */
             }
-            h2 {
-                font-size: 1.125rem !important;
-                margin-bottom: 0.75rem !important;
+            
+            /* 헤더 최소화 */
+            .page-header {
+                padding: 0.75rem 0 !important;
             }
-            .text-lg {
-                font-size: 0.9375rem !important;
+            
+            .page-header h1 {
+                font-size: 1.25rem !important;
+                margin-bottom: 0.25rem !important;
             }
-            /* 폼 요소 간격 줄이기 */
+            
+            .page-header .icon-circle {
+                width: 48px !important;
+                height: 48px !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .page-header .icon-circle i {
+                font-size: 1.25rem !important;
+            }
+            
+            /* 진행률 바 최소화 */
+            .progress-section {
+                padding: 0.5rem 0 !important;
+            }
+            
+            /* 폼 섹션 최적화 */
             .form-section {
-                padding-top: 0.5rem !important;
-                padding-bottom: 0.5rem !important;
+                padding: 0 !important;
             }
+            
+            /* 섹션 헤더 최소화 */
+            .section-header {
+                margin-bottom: 1rem !important;
+            }
+            
+            .section-header .icon-circle {
+                width: 56px !important;
+                height: 56px !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .section-header .icon-circle i {
+                font-size: 1.5rem !important;
+            }
+            
+            .section-header h2 {
+                font-size: 1.25rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+            
+            .section-header p {
+                font-size: 0.875rem !important;
+            }
+            
             /* 카드 패딩 줄이기 */
             .main-card {
                 padding: 1rem !important;
+                margin-bottom: 0.5rem !important;
             }
+            
             /* 버튼 크기 조정 */
             button {
-                padding: 0.75rem 1.5rem !important;
+                padding: 0.75rem 1rem !important;
                 font-size: 0.9375rem !important;
+                min-height: 44px !important;
             }
+            
             /* Select 박스 간격 */
             select {
+                margin-bottom: 0.75rem !important;
+                padding: 0.75rem !important;
+            }
+            
+            /* Input 필드 */
+            input {
+                padding: 0.75rem !important;
+                font-size: 1rem !important;
+            }
+            
+            /* 동의 섹션 컴팩트 */
+            .privacy-box {
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .privacy-item {
                 margin-bottom: 0.5rem !important;
+                font-size: 0.875rem !important;
+            }
+            
+            /* 라디오 카드 최적화 */
+            .radio-card > div {
+                padding: 1rem !important;
+            }
+            
+            .radio-card i.fa-mars,
+            .radio-card i.fa-venus {
+                font-size: 2rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            /* 날짜 선택기 */
+            .date-selectors {
+                gap: 0.5rem !important;
+            }
+            
+            .date-selectors select {
+                padding: 0.75rem 0.5rem !important;
+            }
+        }
+        
+        /* 태블릿 세로 모드 최적화 */
+        @media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait) {
+            .container-wrapper {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .content-area {
+                flex: 1;
+                overflow-y: auto;
+                padding: 1rem 0;
+            }
+            
+            .main-card {
+                padding: 1.5rem !important;
+            }
+            
+            .section-header .icon-circle {
+                width: 64px !important;
+                height: 64px !important;
+            }
+            
+            button {
+                padding: 0.875rem 1.5rem !important;
+                font-size: 1rem !important;
             }
         }
         
@@ -370,7 +500,7 @@ export const guestbookPage = (publicUrl: string) => `
 
     <div class="container-wrapper" style="max-width: 600px; margin: 0 auto; padding: 0 var(--space-4);">
         <!-- 헤더 -->
-        <div class="compact-spacing" style="padding: var(--space-3) 0;">
+        <div class="page-header compact-spacing" style="padding: var(--space-3) 0;">
             <!-- 뒤로가기 버튼 -->
             <button onclick="goBack()" class="btn btn-tertiary btn-sm" style="display: flex; align-items: center; gap: var(--space-2); color: white; margin-bottom: var(--space-2);">
                 <i class="fas fa-arrow-left" aria-hidden="true"></i>
@@ -378,7 +508,7 @@ export const guestbookPage = (publicUrl: string) => `
             </button>
             
             <div style="text-align: center; padding: var(--space-2) 0;">
-                <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: 50%; margin-bottom: var(--space-2);">
+                <div class="icon-circle" style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: 50%; margin-bottom: var(--space-2);">
                     <i class="fas fa-pen-fancy" aria-hidden="true" style="color: white; font-size: 1.5rem;"></i>
                 </div>
                 <h1 class="text-title2" style="color: white; margin-bottom: var(--space-1);">방명록 작성</h1>
@@ -387,7 +517,7 @@ export const guestbookPage = (publicUrl: string) => `
         </div>
 
         <!-- 진행률 바 -->
-        <div class="compact-spacing" role="progressbar" aria-valuenow="17" aria-valuemin="0" aria-valuemax="100" aria-label="방명록 작성 진행률" style="padding: var(--space-2) 0;">
+        <div class="progress-section compact-spacing" role="progressbar" aria-valuenow="17" aria-valuemin="0" aria-valuemax="100" aria-label="방명록 작성 진행률" style="padding: var(--space-2) 0;">
             <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);">
                 <span id="stepText" class="text-caption1" style="color: rgba(255, 255, 255, 0.9);">1 / 6 단계</span>
                 <span id="stepPercent" class="text-caption1" style="color: rgba(255, 255, 255, 0.9);">17%</span>
@@ -402,29 +532,29 @@ export const guestbookPage = (publicUrl: string) => `
             <div class="card card-lg main-card" role="main" style="box-shadow: var(--shadow-xl);">
             <!-- Step 1: 개인정보 수집 동의 -->
             <div id="section1" class="form-section active" role="region" aria-labelledby="step1-heading">
-                <div style="text-align: center; margin-bottom: var(--space-4);">
-                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
+                <div class="section-header" style="text-align: center; margin-bottom: var(--space-4);">
+                    <div class="icon-circle" style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
                         <i class="fas fa-shield-alt" style="color: var(--color-primary); font-size: 2rem;"></i>
                     </div>
                     <h2 id="step1-heading" class="text-title2" style="margin-bottom: var(--space-1);">개인정보 수집 동의</h2>
                     <p class="text-subheadline" style="color: var(--color-text-tertiary);">방명록 작성을 위해 동의가 필요합니다</p>
                 </div>
                 
-                <div style="background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(88, 86, 214, 0.05)); padding: var(--space-4); border-radius: var(--radius-xl); margin-bottom: var(--space-4);">
+                <div class="privacy-box" style="background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(88, 86, 214, 0.05)); padding: var(--space-4); border-radius: var(--radius-xl); margin-bottom: var(--space-4);">
                     <div style="display: flex; flex-direction: column; gap: var(--space-2);">
-                        <div style="display: flex; align-items: flex-start; gap: var(--space-2);">
+                        <div class="privacy-item" style="display: flex; align-items: flex-start; gap: var(--space-2);">
                             <i class="fas fa-check-circle" aria-hidden="true" style="color: var(--color-primary); margin-top: 2px; font-size: 0.75rem;"></i>
                             <div class="text-subheadline" style="color: var(--color-text-secondary);">
                                 <strong>수집 항목:</strong> 이름, 성별, 교급, 생년월일
                             </div>
                         </div>
-                        <div style="display: flex; align-items: flex-start; gap: var(--space-2);">
+                        <div class="privacy-item" style="display: flex; align-items: flex-start; gap: var(--space-2);">
                             <i class="fas fa-check-circle" aria-hidden="true" style="color: var(--color-primary); margin-top: 2px; font-size: 0.75rem;"></i>
                             <div class="text-subheadline" style="color: var(--color-text-secondary);">
                                 <strong>이용 목적:</strong> 행사 참가자 현황 파악 및 통계 분석
                             </div>
                         </div>
-                        <div style="display: flex; align-items: flex-start; gap: var(--space-2);">
+                        <div class="privacy-item" style="display: flex; align-items: flex-start; gap: var(--space-2);">
                             <i class="fas fa-check-circle" aria-hidden="true" style="color: var(--color-primary); margin-top: 2px; font-size: 0.75rem;"></i>
                             <div class="text-subheadline" style="color: var(--color-text-secondary);">
                                 <strong>보유 기간:</strong> 수집일로부터 90일 후 자동 파기
@@ -458,8 +588,8 @@ export const guestbookPage = (publicUrl: string) => `
 
             <!-- Step 2: 이름 -->
             <div id="section2" class="form-section" role="region" aria-labelledby="step2-heading">
-                <div style="text-align: center; margin-bottom: var(--space-4);">
-                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
+                <div class="section-header" style="text-align: center; margin-bottom: var(--space-4);">
+                    <div class="icon-circle" style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
                         <i class="fas fa-id-card" style="color: var(--color-primary); font-size: 2rem;"></i>
                     </div>
                     <h2 id="step2-heading" class="text-title2" style="margin-bottom: var(--space-1);">이름을 알려주세요</h2>
@@ -496,8 +626,8 @@ export const guestbookPage = (publicUrl: string) => `
 
             <!-- Step 3: 성별 -->
             <div id="section3" class="form-section" role="region" aria-labelledby="step3-heading">
-                <div style="text-align: center; margin-bottom: var(--space-4);">
-                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
+                <div class="section-header" style="text-align: center; margin-bottom: var(--space-4);">
+                    <div class="icon-circle" style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
                         <i class="fas fa-venus-mars" style="color: var(--color-primary); font-size: 2rem;"></i>
                     </div>
                     <h2 id="step3-heading" class="text-title2" style="margin-bottom: var(--space-1);">성별을 선택해주세요</h2>
@@ -543,8 +673,8 @@ export const guestbookPage = (publicUrl: string) => `
 
             <!-- Step 4: 교급 -->
             <div id="section4" class="form-section" role="region" aria-labelledby="step4-heading">
-                <div style="text-align: center; margin-bottom: var(--space-3);">
-                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
+                <div class="section-header" style="text-align: center; margin-bottom: var(--space-3);">
+                    <div class="icon-circle" style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
                         <i class="fas fa-graduation-cap" style="color: var(--color-primary); font-size: 2rem;"></i>
                     </div>
                     <h2 id="step4-heading" class="text-title2" style="margin-bottom: var(--space-1);">학교급을 선택해주세요</h2>
@@ -614,8 +744,8 @@ export const guestbookPage = (publicUrl: string) => `
 
             <!-- Step 5: 생년월일 -->
             <div id="section5" class="form-section" role="region" aria-labelledby="step5-heading">
-                <div style="text-align: center; margin-bottom: var(--space-3);">
-                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
+                <div class="section-header" style="text-align: center; margin-bottom: var(--space-3);">
+                    <div class="icon-circle" style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(0, 122, 255, 0.1); border-radius: 50%; margin-bottom: var(--space-2);" aria-hidden="true">
                         <i class="fas fa-calendar-alt" style="color: var(--color-primary); font-size: 2rem;"></i>
                     </div>
                     <h2 id="step5-heading" class="text-title2" style="margin-bottom: var(--space-1);">생년월일을 알려주세요</h2>
