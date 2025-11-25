@@ -235,7 +235,7 @@ export const guestbookPage = (publicUrl: string) => `
             }
         }
         
-        /* 모바일 최적화 - 한 화면에 모두 표시 */
+        /* 모바일 최적화 - 한 화면에 모두 표시 (갤럭시 S22 등 소형 디바이스 대응) */
         @media (max-width: 640px) {
             body, html {
                 height: 100vh;
@@ -253,33 +253,39 @@ export const guestbookPage = (publicUrl: string) => `
                 flex: 1;
                 overflow-y: auto;
                 overflow-x: hidden;
-                padding: 0.5rem 0 0.5rem 0;
+                padding: 0.25rem 0 0.25rem 0;
                 min-height: 0; /* Flexbox overflow 수정 */
+                -webkit-overflow-scrolling: touch;
             }
             
             /* 헤더 최소화 */
             .page-header {
-                padding: 0.75rem 0 !important;
+                padding: 0.5rem 0 !important;
             }
             
             .page-header h1 {
-                font-size: 1.25rem !important;
-                margin-bottom: 0.25rem !important;
+                font-size: 1.125rem !important;
+                margin-bottom: 0.125rem !important;
             }
             
             .page-header .icon-circle {
-                width: 48px !important;
-                height: 48px !important;
-                margin-bottom: 0.5rem !important;
+                width: 40px !important;
+                height: 40px !important;
+                margin-bottom: 0.25rem !important;
             }
             
             .page-header .icon-circle i {
-                font-size: 1.25rem !important;
+                font-size: 1.125rem !important;
             }
             
             /* 진행률 바 최소화 */
             .progress-section {
-                padding: 0.5rem 0 !important;
+                padding: 0.25rem 0 !important;
+            }
+            
+            .progress-section p {
+                font-size: 0.8125rem !important;
+                margin-bottom: 0.25rem !important;
             }
             
             /* 폼 섹션 최적화 */
@@ -289,82 +295,106 @@ export const guestbookPage = (publicUrl: string) => `
             
             /* 섹션 헤더 최소화 */
             .section-header {
-                margin-bottom: 1rem !important;
+                margin-bottom: 0.75rem !important;
             }
             
             .section-header .icon-circle {
-                width: 56px !important;
-                height: 56px !important;
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .section-header .icon-circle i {
-                font-size: 1.5rem !important;
-            }
-            
-            .section-header h2 {
-                font-size: 1.25rem !important;
+                width: 48px !important;
+                height: 48px !important;
                 margin-bottom: 0.25rem !important;
             }
             
+            .section-header .icon-circle i {
+                font-size: 1.25rem !important;
+            }
+            
+            .section-header h2 {
+                font-size: 1.125rem !important;
+                margin-bottom: 0.125rem !important;
+            }
+            
             .section-header p {
-                font-size: 0.875rem !important;
+                font-size: 0.8125rem !important;
             }
             
             /* 카드 패딩 줄이기 */
             .main-card {
-                padding: 1rem !important;
-                margin-bottom: 0.5rem !important;
+                padding: 0.75rem !important;
+                margin-bottom: 0.375rem !important;
             }
             
             /* 버튼 크기 조정 */
             button {
-                padding: 0.75rem 1rem !important;
-                font-size: 0.9375rem !important;
-                min-height: 44px !important;
+                padding: 0.625rem 0.875rem !important;
+                font-size: 0.875rem !important;
+                min-height: 40px !important;
             }
             
             /* Select 박스 간격 */
             select {
-                margin-bottom: 0.75rem !important;
-                padding: 0.75rem !important;
+                margin-bottom: 0.5rem !important;
+                padding: 0.625rem !important;
+                font-size: 0.9375rem !important;
             }
             
             /* Input 필드 */
             input {
-                padding: 0.75rem !important;
-                font-size: 1rem !important;
+                padding: 0.625rem !important;
+                font-size: 0.9375rem !important;
             }
             
             /* 동의 섹션 컴팩트 */
             .privacy-box {
-                padding: 1rem !important;
-                margin-bottom: 1rem !important;
+                padding: 0.75rem !important;
+                margin-bottom: 0.75rem !important;
             }
             
             .privacy-item {
-                margin-bottom: 0.5rem !important;
-                font-size: 0.875rem !important;
+                margin-bottom: 0.375rem !important;
+                font-size: 0.8125rem !important;
+                line-height: 1.3 !important;
             }
             
             /* 라디오 카드 최적화 */
             .radio-card > div {
-                padding: 1rem !important;
+                padding: 0.75rem !important;
             }
             
             .radio-card i.fa-mars,
             .radio-card i.fa-venus {
-                font-size: 2rem !important;
-                margin-bottom: 0.5rem !important;
+                font-size: 1.75rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+            
+            .radio-card label {
+                font-size: 0.9375rem !important;
             }
             
             /* 날짜 선택기 */
             .date-selectors {
-                gap: 0.5rem !important;
+                gap: 0.375rem !important;
             }
             
             .date-selectors select {
-                padding: 0.75rem 0.5rem !important;
+                padding: 0.625rem 0.375rem !important;
+                font-size: 0.875rem !important;
+            }
+            
+            .date-selectors label {
+                font-size: 0.8125rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+            
+            /* 에러 메시지 */
+            .error-message {
+                font-size: 0.8125rem !important;
+                padding: 0.5rem !important;
+            }
+            
+            /* 뒤로가기 버튼 */
+            .back-button {
+                padding: 0.5rem 0.875rem !important;
+                font-size: 0.875rem !important;
             }
         }
         
