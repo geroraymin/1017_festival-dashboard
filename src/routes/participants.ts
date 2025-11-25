@@ -189,7 +189,7 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
   try {
     const boothId = c.req.query('booth_id')
     const eventId = c.req.query('event_id')
-    const limit = parseInt(c.req.query('limit') || '100')
+    const limit = parseInt(c.req.query('limit') || '100000')
     const offset = parseInt(c.req.query('offset') || '0')
 
     const db = c.env.DB

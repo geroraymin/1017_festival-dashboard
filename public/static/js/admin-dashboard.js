@@ -605,7 +605,7 @@ async function loadBooths() {
 // 참가자 목록 로드
 async function loadParticipants() {
     try {
-        const data = await ParticipantsAPI.getAll({ limit: 100 })
+        const data = await ParticipantsAPI.getAll({ limit: 100000 })
         allParticipants = data.participants
 
         // 부스 필터 드롭다운 채우기
