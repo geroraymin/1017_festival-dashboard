@@ -650,7 +650,9 @@ export const operatorDashboardPage = `
                 
                 // CSV 데이터 (부스명 제외 - 자신의 부스니까 불필요)
                 boothParticipants.forEach(p => {
-                    const createdAt = new Date(p.created_at).toLocaleString('ko-KR', {
+                    // created_at_kst가 있으면 사용, 없으면 created_at 사용 (UTC이므로 +9시간 필요)
+                    const timestamp = p.created_at_kst || p.created_at
+                    const createdAt = new Date(timestamp).toLocaleString('ko-KR', {
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit',

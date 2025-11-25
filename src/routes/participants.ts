@@ -199,7 +199,8 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
     if (user.role === 'operator' && user.booth_id) {
       const participantsResult = await db
         .prepare(`
-          SELECT p.*, b.name as booth_name, b.booth_code 
+          SELECT p.*, b.name as booth_name, b.booth_code,
+                 datetime(p.created_at, '+9 hours') as created_at_kst
           FROM participants p 
           LEFT JOIN booths b ON p.booth_id = b.id 
           WHERE p.booth_id = ? 
@@ -226,7 +227,8 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
     // 관리자는 모든 참가자 조회 가능
     if (user.role === 'admin') {
       let query = `
-        SELECT p.*, b.name as booth_name, b.booth_code 
+        SELECT p.*, b.name as booth_name, b.booth_code,
+               datetime(p.created_at, '+9 hours') as created_at_kst
         FROM participants p 
         LEFT JOIN booths b ON p.booth_id = b.id 
         WHERE 1=1

@@ -85,11 +85,11 @@ stats.get('/booth/:booth_id', async (c) => {
       }
     })
 
-    // 시간대별 분포
+    // 시간대별 분포 (한국 시간 기준)
     const hourlyResult = await db
       .prepare(`
         SELECT 
-          strftime('%H', created_at) as hour,
+          strftime('%H', datetime(created_at, '+9 hours')) as hour,
           COUNT(*) as count 
         FROM participants 
         WHERE booth_id = ? 

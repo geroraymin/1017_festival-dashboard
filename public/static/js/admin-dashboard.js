@@ -822,7 +822,7 @@ function exportCSV() {
     // CSV 데이터
     participantsToExport.forEach(p => {
         const visitType = p.is_duplicate === 1 ? '재방문' : '첫방문'
-        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booth_name || '-'},${formatDateTime(p.created_at)},${visitType}\n`
+        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booth_name || '-'},${formatDateTime(p.created_at_kst || p.created_at)},${visitType}\n`
     })
 
     // 다운로드
@@ -1088,7 +1088,7 @@ function renderParticipantsTable(participants) {
                 ${p.booth_name || '-'}
             </td>
             <td class="px-6 py-4 text-gray-600" data-label="등록일시">
-                ${formatDateTime(p.created_at)}
+                ${formatDateTime(p.created_at_kst || p.created_at)}
             </td>
         `
         tbody.appendChild(row)
