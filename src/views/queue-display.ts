@@ -35,7 +35,7 @@ export const queueDisplayPage = `
         }
     </style>
 </head>
-<body style="background: linear-gradient(135deg, #1E3A8A 0%, #6B21A8 50%, #4338CA 100%); min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+<body class="service-page service-display" style="min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
     <!-- 헤더 -->
     <header style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); padding: 1.5rem;">
         <div style="max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">

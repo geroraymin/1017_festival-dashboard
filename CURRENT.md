@@ -31,6 +31,8 @@ Design and day-of-operation usability pass:
 - Make booth operator workflows status-first and action-focused.
 - Reduce decorative gradient-heavy UI in favor of operational clarity.
 - Keep visitor, operator, admin, and display screens separated by job.
+- Apply shared service UI skin across login, guestbook, admin, queue, and display surfaces.
+- Fix queue display launch so it can recover the booth ID from the logged-in operator session.
 
 ## Verification Notes
 

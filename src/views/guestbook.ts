@@ -495,7 +495,7 @@ export const guestbookPage = (publicUrl: string) => `
         }
     </style>
 </head>
-<body>
+<body class="service-page service-guestbook">
     <!-- 우측 상단 작은 QR 코드 -->
     <div class="qr-code-small" onclick="openQRModal()" title="QR 코드 크게 보기">
         <div class="card" style="padding: var(--space-2); border: 2px solid var(--color-primary);">

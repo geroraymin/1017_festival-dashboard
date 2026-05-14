@@ -116,10 +116,10 @@ app.get('/', (c) => {
         <link rel="stylesheet" href="/static/style.css">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     </head>
-    <body style="background: linear-gradient(135deg, #F5F7FA, #E3F2FD); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+    <body class="service-page service-auth" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
         <div style="max-width: 28rem; width: 100%;">
             <div style="text-align: center; margin-bottom: 2rem;">
-                <div style="display: inline-block; padding: 1rem; background: linear-gradient(135deg, #007AFF, #00A0B0); border-radius: 50%; margin-bottom: 1rem; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);">
+                <div class="service-icon" style="margin-bottom: 1rem;">
                     <i class="fas fa-clipboard-list" style="color: white; font-size: 2.5rem;"></i>
                 </div>
                 <h1 class="text-title1" style="color: #1D1D1F; margin-bottom: 0.5rem;">축제 디지털방명록</h1>
@@ -127,12 +127,12 @@ app.get('/', (c) => {
             </div>
 
             <div class="card" style="padding: 2rem;">
-                <a href="/admin" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #007AFF, #0051D5); font-size: 1.125rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);">
+                <a href="/admin" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 1.125rem; font-weight: 600;">
                     <i class="fas fa-user-shield" style="margin-right: 0.75rem; font-size: 1.25rem;"></i>
                     관리자 로그인
                 </a>
 
-                <a href="/operator" class="btn btn-lg" style="width: 100%; text-decoration: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #5856D6, #AF52DE); color: white; font-size: 1.125rem; font-weight: 600; box-shadow: 0 4px 12px rgba(88, 86, 214, 0.3); border: none; padding: 0.875rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s;">
+                <a href="/operator" class="btn btn-secondary btn-lg" style="width: 100%; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 1.125rem; font-weight: 600;">
                     <i class="fas fa-users" style="margin-right: 0.75rem; font-size: 1.25rem;"></i>
                     부스 운영자 로그인
                 </a>

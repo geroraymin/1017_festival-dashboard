@@ -153,7 +153,7 @@ export const adminDashboardPage = `
         }
     </style>
 </head>
-<body style="background: linear-gradient(135deg, #F5F7FA 0%, #E3F2FD 100%); min-height: 100vh; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+<body class="service-page service-admin" style="min-height: 100vh; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
     <!-- 헤더 -->
     <header style="background: rgba(255, 255, 255, 0.95); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(20px);">
         <div style="max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">

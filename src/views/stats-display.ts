@@ -204,7 +204,7 @@ export const statsDisplayPage = `
         }
     </style>
 </head>
-<body>
+<body class="service-page">
     <!-- 세로모드 경고 화면 -->
     <div class="portrait-warning">
         <i class="fas fa-mobile-screen-button"></i>

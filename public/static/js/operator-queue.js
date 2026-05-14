@@ -4,12 +4,27 @@
 
 let currentBoothId = null
 
+function resolveCurrentBoothId() {
+  if (currentBoothId) return currentBoothId
+
+  if (typeof getUser === 'function') {
+    const user = getUser()
+    if (user?.booth_id) {
+      currentBoothId = user.booth_id
+      console.log('[대기열] 세션에서 부스 ID 복구:', currentBoothId)
+    }
+  }
+
+  return currentBoothId
+}
+
 // 대기열 상태 새로고침
 async function refreshQueue() {
-  if (!currentBoothId) return
+  const boothId = resolveCurrentBoothId()
+  if (!boothId) return
   
   try {
-    const data = await QueueAPI.getStatus(currentBoothId)
+    const data = await QueueAPI.getStatus(boothId)
     
     document.getElementById('currentQueueNumber').textContent = data.current_number || '-'
     document.getElementById('lastQueueNumber').textContent = data.last_number || '-'
@@ -23,7 +38,8 @@ async function refreshQueue() {
 
 // 다음 손님 호출
 async function callNextGuest() {
-  if (!currentBoothId) {
+  const boothId = resolveCurrentBoothId()
+  if (!boothId) {
     alert('부스 정보를 불러오는 중입니다.')
     return
   }
@@ -33,7 +49,7 @@ async function callNextGuest() {
   }
   
   try {
-    const data = await QueueAPI.callNext(currentBoothId)
+    const data = await QueueAPI.callNext(boothId)
     
     if (data.has_next) {
       alert(`${data.queue_number}번 손님 (${data.participant_name || '이름 없음'})을 호출했습니다!`)
@@ -53,12 +69,13 @@ async function callNextGuest() {
 
 // 대기 화면 열기 (새 창)
 function openQueueDisplay() {
-  if (!currentBoothId) {
+  const boothId = resolveCurrentBoothId()
+  if (!boothId) {
     alert('부스 정보를 불러오는 중입니다.')
     return
   }
   
-  const url = `/queue-display?booth_id=${currentBoothId}`
+  const url = `/queue-display?booth_id=${encodeURIComponent(boothId)}`
   window.open(url, 'QueueDisplay', 'width=1920,height=1080,fullscreen=yes')
 }
 

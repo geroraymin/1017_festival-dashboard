@@ -17,10 +17,10 @@ export const adminLoginPage = `
     <link rel="stylesheet" href="/static/style.css">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body style="background: linear-gradient(135deg, #F5F7FA, #E3F2FD); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+<body class="service-page service-auth" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
     <div style="max-width: 28rem; width: 100%;">
         <div style="text-align: center; margin-bottom: 2rem;">
-            <a href="/" style="display: inline-block; padding: 1rem; background: linear-gradient(135deg, #007AFF, #0051D5); border-radius: 50%; margin-bottom: 1rem; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);">
+            <a href="/" class="service-icon" style="margin-bottom: 1rem; text-decoration: none; transition: all 0.2s;">
                 <i class="fas fa-user-shield" style="color: white; font-size: 2.5rem;"></i>
             </a>
             <h1 class="text-title1" style="color: #1D1D1F; margin-bottom: 0.5rem;">관리자 로그인</h1>
@@ -56,7 +56,7 @@ export const adminLoginPage = `
 
                 <button type="submit" id="loginButton"
                     class="btn btn-primary btn-lg"
-                    style="width: 100%; background: linear-gradient(135deg, #007AFF, #0051D5);">
+                    style="width: 100%;">
                     <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>
                     로그인
                 </button>
@@ -121,10 +121,10 @@ export const operatorLoginPage = `
     <link rel="stylesheet" href="/static/style.css">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body style="background: linear-gradient(135deg, #E0F7FA, #B2EBF2); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+<body class="service-page service-auth" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
     <div style="max-width: 28rem; width: 100%;">
         <div style="text-align: center; margin-bottom: 2rem;">
-            <a href="/" style="display: inline-block; padding: 1rem; background: linear-gradient(135deg, #00A0B0, #0099CC); border-radius: 50%; margin-bottom: 1rem; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 160, 176, 0.3);">
+            <a href="/" class="service-icon" style="margin-bottom: 1rem; text-decoration: none; transition: all 0.2s;">
                 <i class="fas fa-users" style="color: white; font-size: 2.5rem;"></i>
             </a>
             <h1 class="text-title1" style="color: #1D1D1F; margin-bottom: 0.5rem;">부스 운영자 로그인</h1>
@@ -162,8 +162,8 @@ export const operatorLoginPage = `
                 </div>
 
                 <button type="submit" id="loginButton"
-                    class="btn btn-secondary btn-lg"
-                    style="width: 100%; background: linear-gradient(135deg, #00A0B0, #0099CC);">
+                    class="btn btn-primary btn-lg"
+                    style="width: 100%;">
                     <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>
                     로그인
                 </button>
@@ -220,9 +220,9 @@ export const operatorLoginPage = `
                     <span id="finderErrorText"></span>
                 </div>
                 
-                <button type="submit" id="searchButton"
-                    class="btn btn-secondary btn-lg"
-                    style="width: 100%; background: linear-gradient(135deg, #00A0B0, #0099CC);">
+                    <button type="submit" id="searchButton"
+                    class="btn btn-primary btn-lg"
+                    style="width: 100%;">
                     <i class="fas fa-search" style="margin-right: 0.5rem;"></i>
                     검색
                 </button>

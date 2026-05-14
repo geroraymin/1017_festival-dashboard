@@ -254,6 +254,113 @@ body {
 }
 
 /* ========================================
+   Service UI Skin - operational dashboard direction
+   ======================================== */
+
+.service-page {
+  --service-bg: #F4F6F8;
+  --service-surface: #FFFFFF;
+  --service-border: #E5E7EB;
+  --service-text: #111827;
+  --service-muted: #6B7280;
+  --service-primary: #0A66D8;
+  --service-primary-hover: #084FA8;
+  background: var(--service-bg) !important;
+  color: var(--service-text);
+  letter-spacing: 0;
+}
+
+.service-page .card,
+.service-page .status-alert,
+.service-page .info-box {
+  border-radius: 8px !important;
+  border: 1px solid var(--service-border) !important;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06) !important;
+  backdrop-filter: none !important;
+}
+
+.service-page .btn-primary,
+.service-page button.btn-primary,
+.service-page a.btn-primary {
+  background: var(--service-primary) !important;
+  box-shadow: none !important;
+}
+
+.service-page .btn-primary:hover:not(:disabled) {
+  background: var(--service-primary-hover) !important;
+}
+
+.service-page .btn-secondary {
+  color: var(--service-primary) !important;
+  border-color: var(--service-primary) !important;
+  background: #FFFFFF !important;
+}
+
+.service-page .input,
+.service-page select,
+.service-page textarea {
+  border-radius: 8px !important;
+  border-color: var(--service-border) !important;
+}
+
+.service-auth .card {
+  padding: 1.5rem !important;
+}
+
+.service-auth .service-icon {
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--service-primary) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+.service-admin header,
+.service-admin nav {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-bottom: 1px solid var(--service-border) !important;
+  box-shadow: none !important;
+}
+
+.service-admin main {
+  max-width: 1180px !important;
+}
+
+.service-guestbook .main-card,
+.service-guestbook .card {
+  max-width: 720px;
+}
+
+.service-guestbook .page-header h1,
+.service-guestbook .page-header p,
+.service-guestbook .page-header button,
+.service-guestbook .progress-section span {
+  color: var(--service-text) !important;
+}
+
+.service-guestbook .icon-circle {
+  border-radius: 12px !important;
+}
+
+.service-ticket .success-icon h1,
+.service-ticket #thankYouMessage,
+.service-ticket .booth-info {
+  color: var(--service-text) !important;
+}
+
+.service-display {
+  background: #111827 !important;
+}
+
+.service-display .card,
+.service-display [style*="backdrop-filter"] {
+  backdrop-filter: none !important;
+}
+
+/* ========================================
    5. 버튼 컴포넌트
    ======================================== */
 

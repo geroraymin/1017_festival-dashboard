@@ -218,7 +218,7 @@ export const queueTicketPage = `
         }
     </style>
 </head>
-<body>
+<body class="service-page service-ticket">
     <!-- 컨페티 효과 -->
     <div id="confettiContainer" aria-hidden="true"></div>
 
