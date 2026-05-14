@@ -48,117 +48,372 @@ export const operatorDashboardPage = `
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        body.operator-page {
+            background: #F4F6F8;
+            min-height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+        }
+
+        .operator-header {
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid #E5E7EB;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            backdrop-filter: blur(16px);
+        }
+
+        .operator-shell {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 1.25rem;
+        }
+
+        .operator-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .operator-title-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 0;
+        }
+
+        .operator-app-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #0A66D8;
+            color: white;
+            flex: 0 0 auto;
+        }
+
+        .operator-title {
+            margin: 0;
+            font-size: 1.125rem;
+            line-height: 1.25;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: 0;
+        }
+
+        .operator-subtitle {
+            margin: 0.125rem 0 0;
+            color: #6B7280;
+            font-size: 0.875rem;
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .operator-main {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 1.25rem;
+        }
+
+        .operator-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .operator-panel {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+            padding: 1.25rem;
+        }
+
+        .operator-panel-muted {
+            background: #F9FAFB;
+        }
+
+        .operator-panel-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .operator-label {
+            color: #6B7280;
+            font-size: 0.8125rem;
+            line-height: 1.2;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .operator-booth-name {
+            margin: 0.25rem 0 0;
+            color: #111827;
+            font-size: 1.625rem;
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        .operator-event-name {
+            margin: 0.375rem 0 0;
+            color: #4B5563;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .operator-code-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            background: #EEF6FF;
+            color: #0A66D8;
+            font-family: ui-monospace, 'SF Mono', Monaco, Consolas, monospace;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+
+        .operator-count-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+
+        .operator-count-card {
+            min-height: 112px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 1rem;
+            background: #FFFFFF;
+        }
+
+        .operator-count-value {
+            margin-top: 0.5rem;
+            color: #111827;
+            font-size: 2.25rem;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        .operator-queue-panel {
+            border-color: #F59E0B;
+            background: #FFFBEB;
+        }
+
+        .operator-queue-value {
+            color: #92400E;
+        }
+
+        .operator-primary-action {
+            width: 100%;
+            min-height: 60px;
+            margin-top: 1rem;
+            background: #0A66D8;
+            color: white;
+            border: 0;
+            border-radius: 8px;
+            font-size: 1.0625rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .operator-secondary-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .operator-action {
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            color: #111827;
+            text-align: left;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .operator-action i {
+            color: #0A66D8;
+            width: 20px;
+            text-align: center;
+        }
+
+        .operator-action-title {
+            display: block;
+            font-size: 0.9375rem;
+            line-height: 1.25;
+            font-weight: 800;
+        }
+
+        .operator-action-caption {
+            display: block;
+            margin-top: 0.125rem;
+            color: #6B7280;
+            font-size: 0.8125rem;
+            line-height: 1.3;
+        }
+
+        .operator-utility-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 820px) {
+            .operator-hero,
+            .operator-secondary-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .operator-count-grid {
+                grid-template-columns: repeat(3, minmax(88px, 1fr));
+                overflow-x: auto;
+            }
+
+            .operator-header-inner {
+                align-items: flex-start;
+            }
+
+            .operator-header .btn span {
+                display: none;
+            }
+        }
     </style>
 </head>
-<body style="background: linear-gradient(135deg, #F5F7FA 0%, #E3F2FD 100%); min-height: 100vh; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+<body class="operator-page">
     <!-- 헤더 -->
-    <header style="background: rgba(255, 255, 255, 0.95); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); backdrop-filter: blur(20px);">
-        <div style="max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 1rem;">
-                <div style="padding: 0.625rem; background: linear-gradient(135deg, #007AFF, #0051D5); border-radius: 12px; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-store" style="color: white; font-size: 1.25rem;"></i>
+    <header class="operator-header">
+        <div class="operator-shell operator-header-inner">
+            <div class="operator-title-row">
+                <div class="operator-app-icon" aria-hidden="true">
+                    <i class="fas fa-store"></i>
                 </div>
-                <div>
-                    <h1 style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin: 0; letter-spacing: -0.3px;">운영자 대시보드</h1>
-                    <p style="font-size: 0.875rem; color: #6E6E73; margin: 0.25rem 0 0 0;" id="boothName">부스명 로딩 중...</p>
+                <div style="min-width: 0;">
+                    <h1 class="operator-title">운영자 대시보드</h1>
+                    <p class="operator-subtitle" id="boothName">부스명 로딩 중...</p>
                 </div>
             </div>
-            <button onclick="logout()" class="btn" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: linear-gradient(135deg, #FF375F, #D32F2F); color: white; border: none; border-radius: 12px; cursor: pointer; min-height: 44px; font-weight: 600; font-size: 1rem; transition: all 0.2s ease;">
+            <button onclick="logout()" class="btn btn-danger">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>로그아웃</span>
             </button>
         </div>
     </header>
 
-    <main style="max-width: 1280px; margin: 0 auto; padding: 2rem 1.5rem;">
-        <!-- 부스 정보 카드 -->
-        <div class="card" style="background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%); border-radius: 16px; box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3); padding: 2rem; margin-bottom: 2rem; color: white;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
-                <div style="flex: 1; min-width: 250px;">
-                    <h2 class="text-title1" style="font-size: 2rem; font-weight: 800; margin: 0 0 0.5rem 0; letter-spacing: -0.5px;" id="boothNameLarge">부스명</h2>
-                    <p style="font-size: 1rem; color: rgba(255, 255, 255, 0.85); margin: 0 0 1.5rem 0; font-weight: 500;" id="eventName">행사명</p>
-                    <div style="display: inline-flex; align-items: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.2); padding: 0.875rem 1.25rem; border-radius: 12px; backdrop-filter: blur(10px);">
-                        <i class="fas fa-key" style="font-size: 1.125rem;"></i>
-                        <span style="font-family: 'SF Mono', Monaco, monospace; font-weight: 700; font-size: 1.125rem; letter-spacing: 1px;" id="boothCode">------</span>
+    <main class="operator-main">
+        <section class="operator-hero" aria-label="부스 운영 현황">
+            <div class="operator-panel">
+                <div class="operator-panel-header">
+                    <div>
+                        <div class="operator-label">현재 부스</div>
+                        <h2 class="operator-booth-name" id="boothNameLarge">부스명</h2>
+                        <p class="operator-event-name" id="eventName">행사명</p>
+                    </div>
+                    <div class="operator-code-pill" title="부스 코드">
+                        <i class="fas fa-key" aria-hidden="true"></i>
+                        <span id="boothCode">------</span>
                     </div>
                 </div>
-                <div style="text-align: right; min-width: 200px;">
-                    <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 1rem; margin-bottom: 0.75rem;">
-                        <div>
-                            <div style="font-size: 3.5rem; font-weight: 800; line-height: 1; letter-spacing: -2px;" id="totalParticipants">0</div>
-                            <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.85); margin-top: 0.25rem; font-weight: 500;">연인원</div>
-                        </div>
-                        <div style="font-size: 2rem; color: rgba(255, 255, 255, 0.5); font-weight: 300;">/</div>
-                        <div>
-                            <div style="font-size: 2rem; font-weight: 700; line-height: 1; letter-spacing: -1px;" id="uniqueParticipants">0</div>
-                            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.85); margin-top: 0.25rem; font-weight: 500;">실인원</div>
-                        </div>
-                    </div>
-                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.85); font-weight: 500;">
-                        <span id="duplicateVisits">0</span>명 중복 방문
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- 대기열 관리 섹션 -->
-        <div class="card" style="background: linear-gradient(135deg, #FF9F0A 0%, #FF375F 100%); border-radius: 16px; box-shadow: 0 8px 24px rgba(255, 159, 10, 0.3); padding: 1.5rem; margin-bottom: 2rem; color: white;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                <div>
-                    <h2 style="font-size: 1.5rem; font-weight: 700; margin: 0 0 0.5rem 0; letter-spacing: -0.3px;">
-                        <i class="fas fa-users-line" style="margin-right: 0.75rem;"></i>
-                        대기열 관리
-                    </h2>
-                    <p style="font-size: 0.9375rem; color: rgba(255, 255, 255, 0.85); margin: 0; font-weight: 500;">현재 대기 중인 손님을 관리하세요</p>
-                </div>
-                <button onclick="refreshQueue()" class="btn" style="padding: 0.75rem 1.25rem; background: rgba(255, 255, 255, 0.2); border: none; border-radius: 12px; cursor: pointer; color: white; font-weight: 600; min-height: 44px; transition: all 0.2s ease; backdrop-filter: blur(10px);">
-                    <i class="fas fa-sync-alt" style="margin-right: 0.5rem;"></i>새로고침
-                </button>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-                <div style="background: rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1.25rem; backdrop-filter: blur(10px);">
-                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.85); margin-bottom: 0.5rem; font-weight: 500;">현재 진행 번호</div>
-                    <div style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1px;" id="currentQueueNumber">-</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1.25rem; backdrop-filter: blur(10px);">
-                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.85); margin-bottom: 0.5rem; font-weight: 500;">마지막 발급 번호</div>
-                    <div style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1px;" id="lastQueueNumber">-</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 1.25rem; backdrop-filter: blur(10px);">
-                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.85); margin-bottom: 0.5rem; font-weight: 500;">대기 인원</div>
-                    <div style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1px;" id="waitingCount">-</div>
+                <div class="operator-count-grid">
+                    <div class="operator-count-card">
+                        <div class="operator-label">연인원</div>
+                        <div class="operator-count-value" id="totalParticipants">0</div>
+                    </div>
+                    <div class="operator-count-card">
+                        <div class="operator-label">실인원</div>
+                        <div class="operator-count-value" id="uniqueParticipants">0</div>
+                    </div>
+                    <div class="operator-count-card">
+                        <div class="operator-label">중복 방문</div>
+                        <div class="operator-count-value"><span id="duplicateVisits">0</span></div>
+                    </div>
                 </div>
             </div>
-            
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <button onclick="callNextGuest()" class="btn btn-primary" 
-                    style="flex: 1; min-width: 200px; background: white; color: #FF9F0A; font-weight: 700; padding: 1.25rem 1.5rem; border-radius: 12px; border: none; cursor: pointer; min-height: 44px; font-size: 1.0625rem; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-                    <i class="fas fa-bell" style="margin-right: 0.75rem;"></i>
+
+            <div class="operator-panel operator-queue-panel">
+                <div class="operator-panel-header">
+                    <div>
+                        <div class="operator-label">대기열</div>
+                        <h2 class="operator-booth-name" style="font-size: 1.375rem;">호출 관리</h2>
+                    </div>
+                    <button onclick="refreshQueue()" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-sync-alt" style="margin-right: 0.375rem;"></i>새로고침
+                    </button>
+                </div>
+
+                <div class="operator-count-grid">
+                    <div class="operator-count-card">
+                        <div class="operator-label">현재 번호</div>
+                        <div class="operator-count-value operator-queue-value" id="currentQueueNumber">-</div>
+                    </div>
+                    <div class="operator-count-card">
+                        <div class="operator-label">마지막 번호</div>
+                        <div class="operator-count-value operator-queue-value" id="lastQueueNumber">-</div>
+                    </div>
+                    <div class="operator-count-card">
+                        <div class="operator-label">대기 인원</div>
+                        <div class="operator-count-value operator-queue-value" id="waitingCount">-</div>
+                    </div>
+                </div>
+
+                <button onclick="callNextGuest()" class="operator-primary-action">
+                    <i class="fas fa-bell" style="margin-right: 0.5rem;"></i>
                     다음 손님 호출
                 </button>
-                <button onclick="openQueueDisplay()" class="btn"
-                    style="padding: 1.25rem 1.5rem; background: rgba(255, 255, 255, 0.2); border: none; border-radius: 12px; cursor: pointer; color: white; font-weight: 600; min-height: 44px; font-size: 1rem; transition: all 0.2s ease; backdrop-filter: blur(10px);">
-                    <i class="fas fa-tv" style="margin-right: 0.5rem;"></i>
-                    대기 화면 보기
-                </button>
             </div>
-        </div>
+        </section>
+
+        <section class="operator-secondary-actions" aria-label="주요 운영 작업">
+            <a href="#" onclick="openGuestbook(); return false;" class="operator-action">
+                <i class="fas fa-pen-fancy" aria-hidden="true"></i>
+                <span>
+                    <span class="operator-action-title">방명록 작성</span>
+                    <span class="operator-action-caption">참가자 정보 등록</span>
+                </span>
+            </a>
+            <button onclick="openQueueDisplay()" class="operator-action">
+                <i class="fas fa-tv" aria-hidden="true"></i>
+                <span>
+                    <span class="operator-action-title">대기 화면</span>
+                    <span class="operator-action-caption">외부 화면으로 표시</span>
+                </span>
+            </button>
+            <button id="refreshButton" onclick="refreshStats()" class="operator-action">
+                <i id="refreshIcon" class="fas fa-sync-alt" aria-hidden="true"></i>
+                <span>
+                    <span class="operator-action-title" id="refreshText">통계 새로고침</span>
+                    <span class="operator-action-caption">최신 데이터 불러오기</span>
+                </span>
+            </button>
+        </section>
 
         <!-- 액션 버튼 -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-            <a href="#" onclick="openGuestbook(); return false;" class="card"
-                style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; text-decoration: none; transition: all 0.2s ease; backdrop-filter: blur(20px);">
-                <div>
-                    <h3 style="font-size: 1.125rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: -0.2px;">
-                        <i class="fas fa-pen-fancy" style="color: #007AFF; margin-right: 0.75rem;"></i>
-                        방명록 작성
-                    </h3>
-                    <p style="font-size: 0.9375rem; color: #6E6E73; margin: 0;">참가자 정보 등록하기</p>
-                </div>
-                <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
-            </a>
-
+        <section class="operator-utility-grid" aria-label="데이터 관리 작업">
             <button onclick="exportBoothCSV()" class="card"
                 style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; border: none; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); text-align: left;">
                 <div>
@@ -182,7 +437,6 @@ export const operatorDashboardPage = `
                 </div>
                 <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
             </button>
-
             <button onclick="openDisplayMode()" class="card"
                 style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; border: none; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); text-align: left;">
                 <div>
@@ -194,19 +448,6 @@ export const operatorDashboardPage = `
                 </div>
                 <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
             </button>
-
-            <button id="refreshButton" onclick="refreshStats()" class="card"
-                style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; border: none; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); text-align: left;">
-                <div>
-                    <h3 style="font-size: 1.125rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: -0.2px;">
-                        <i id="refreshIcon" class="fas fa-sync-alt" style="color: #007AFF; margin-right: 0.75rem;"></i>
-                        <span id="refreshText">통계 새로고침</span>
-                    </h3>
-                    <p style="font-size: 0.9375rem; color: #6E6E73; margin: 0;">최신 데이터 불러오기</p>
-                </div>
-                <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
-            </button>
-
             <button onclick="resetParticipants()" class="card"
                 style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; border: none; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); text-align: left;">
                 <div>
@@ -218,7 +459,7 @@ export const operatorDashboardPage = `
                 </div>
                 <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
             </button>
-        </div>
+        </section>
 
         <!-- 통계 카드 -->
         <!-- 성별 카드 -->
