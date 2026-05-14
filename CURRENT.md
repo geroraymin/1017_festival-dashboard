@@ -33,6 +33,7 @@ Initial improvement pass for operational safety:
 - Backup export safety.
 - Documentation alignment for default credentials and deployment setup.
 - DB deployment diagnostics through `/api/health/db`.
+- Auth dependency diagnostics through `/api/health/auth`.
 
 ## Verification Notes
 
@@ -46,7 +47,7 @@ Latest local checks:
 ## Production Debug Notes
 
 - `JWT_SECRET` was fixed after setting Cloudflare Production variables and triggering a redeploy.
-- Login APIs still returned 500 after JWT was fixed, so `/api/health/db` was added to distinguish missing D1 binding from missing D1 tables.
+- Login APIs still returned 500 after JWT and D1 table existence were fixed, so `/api/health/auth` was added to distinguish schema/hash-format issues without exposing secrets.
 
 ## Deployment Notes
 

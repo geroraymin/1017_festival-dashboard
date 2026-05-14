@@ -143,6 +143,57 @@ app.get('/api/health/db', async (c) => {
   }
 })
 
+// Auth dependency health check. Returns schema/format status only, never credentials.
+app.get('/api/health/auth', async (c) => {
+  const db = c.env.DB
+
+  if (!db) {
+    return c.json({ status: 'error', db_bound: false }, 500)
+  }
+
+  try {
+    const [adminColumnsResult, loginAttemptColumnsResult, adminCountResult] = await Promise.all([
+      db.prepare('PRAGMA table_info(admins)').all<{ name: string }>(),
+      db.prepare('PRAGMA table_info(login_attempts)').all<{ name: string }>(),
+      db.prepare('SELECT COUNT(*) as count FROM admins').first<{ count: number }>(),
+    ])
+
+    const adminColumns = new Set((adminColumnsResult.results || []).map((row) => row.name))
+    const loginAttemptColumns = new Set((loginAttemptColumnsResult.results || []).map((row) => row.name))
+    const firstAdmin = await db
+      .prepare('SELECT password_hash FROM admins ORDER BY id LIMIT 1')
+      .first<{ password_hash?: string }>()
+
+    const hashParts = firstAdmin?.password_hash?.split(':') || []
+    const checks = {
+      admins_columns: {
+        id: adminColumns.has('id'),
+        username: adminColumns.has('username'),
+        password_hash: adminColumns.has('password_hash'),
+      },
+      login_attempts_columns: {
+        id: loginAttemptColumns.has('id'),
+        username: loginAttemptColumns.has('username'),
+        ip_address: loginAttemptColumns.has('ip_address'),
+        success: loginAttemptColumns.has('success'),
+        attempted_at: loginAttemptColumns.has('attempted_at'),
+      },
+      admin_count: Number(adminCountResult?.count || 0),
+      first_admin_hash_format_ok: hashParts.length === 3 && hashParts[0] === 'pbkdf2',
+    }
+
+    const ok = Object.values(checks.admins_columns).every(Boolean)
+      && Object.values(checks.login_attempts_columns).every(Boolean)
+      && checks.admin_count > 0
+      && checks.first_admin_hash_format_ok
+
+    return c.json({ status: ok ? 'ok' : 'incomplete', ...checks }, ok ? 200 : 500)
+  } catch (error) {
+    console.error('Auth health check failed:', error)
+    return c.json({ status: 'error', message: 'Auth dependency query failed.' }, 500)
+  }
+})
+
 // 메인 페이지 (로그인 선택)
 app.get('/', (c) => {
   return c.html(`
