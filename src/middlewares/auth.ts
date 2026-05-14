@@ -1,6 +1,7 @@
 import { Context, Next } from 'hono'
 import { verifyToken, extractToken, JWTPayload } from '../lib/jwt'
 import type { Env } from '../lib/d1'
+import { isJwtSecretConfigured } from '../lib/security'
 
 // Context에 user 정보 추가
 declare module 'hono' {
@@ -14,6 +15,10 @@ declare module 'hono' {
  * Authorization 헤더에서 토큰을 추출하고 검증
  */
 export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) {
+  if (!isJwtSecretConfigured(c.env.JWT_SECRET)) {
+    return c.json({ error: 'JWT secret is not configured securely.' }, 500)
+  }
+
   const authHeader = c.req.header('Authorization')
   const token = extractToken(authHeader)
 

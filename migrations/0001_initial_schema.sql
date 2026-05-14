@@ -52,6 +52,7 @@ CREATE INDEX IF NOT EXISTS idx_participants_created_at ON participants(created_a
 CREATE INDEX IF NOT EXISTS idx_events_dates ON events(start_date, end_date);
 
 -- 기본 관리자 계정 생성 (username: admin, password: admin123)
+-- 운영 배포 직후 반드시 새 비밀번호 해시로 교체하세요.
 INSERT INTO admins (username, password_hash) VALUES 
     ('admin', 'pbkdf2:/EZG8mUs5gdNdFRFC6Eztw==:hlC98+Y7Jp5XgBeeKbW9Saa9G9UbUMObDbZq3G8rHbY=');
 

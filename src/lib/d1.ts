@@ -8,6 +8,9 @@ export type Env = {
   JWT_SECRET: string
   SENDGRID_API_KEY?: string
   SENDGRID_FROM_EMAIL?: string
+  PUBLIC_URL?: string
+  ALLOWED_ORIGINS?: string
+  APP_ENV?: string
 }
 
 /**

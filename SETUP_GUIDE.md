@@ -136,7 +136,9 @@ SUPABASE_ANON_KEY=eyJhbGci...
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGci...
 
 # JWT 시크릿 (32자 이상의 강력한 랜덤 문자열)
-JWT_SECRET=your-super-secret-jwt-key-min-32-characters-long
+JWT_SECRET=replace-with-a-random-secret-at-least-32-characters-long
+PUBLIC_URL=https://1017-festival-dashboard.pages.dev
+ALLOWED_ORIGINS=https://1017-festival-dashboard.pages.dev
 
 # 애플리케이션 설정
 APP_ENV=development
@@ -155,6 +157,8 @@ Cloudflare Dashboard에서 환경 변수 설정:
    - `SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `JWT_SECRET`
+   - `PUBLIC_URL`
+   - `ALLOWED_ORIGINS`
    - `APP_ENV=production`
 
 ---
@@ -248,6 +252,8 @@ wrangler pages secret put SUPABASE_URL --project-name webapp
 wrangler pages secret put SUPABASE_ANON_KEY --project-name webapp
 wrangler pages secret put SUPABASE_SERVICE_ROLE_KEY --project-name webapp
 wrangler pages secret put JWT_SECRET --project-name webapp
+wrangler pages secret put PUBLIC_URL --project-name webapp
+wrangler pages secret put ALLOWED_ORIGINS --project-name webapp
 ```
 
 ### 6.5 배포 실행

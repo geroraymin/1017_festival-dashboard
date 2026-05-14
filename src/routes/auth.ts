@@ -2,9 +2,54 @@ import { Hono } from 'hono'
 import { type Env, getFirst } from '../lib/d1'
 import { createToken } from '../lib/jwt'
 import { verifyPassword } from '../lib/password'
+import { getClientIp, isJwtSecretConfigured } from '../lib/security'
 import type { LoginRequest, BoothLoginRequest, LoginResponse } from '../types/database'
 
 const auth = new Hono<{ Bindings: Env }>()
+const ADMIN_LOGIN_WINDOW_MINUTES = 15
+const ADMIN_LOGIN_MAX_FAILURES = 5
+
+async function countRecentAdminFailures(db: Env['DB'], username: string, ipAddress: string): Promise<number> {
+  try {
+    const row = await db
+      .prepare(`
+        SELECT COUNT(*) as count
+        FROM login_attempts
+        WHERE username = ?
+          AND ip_address = ?
+          AND success = 0
+          AND attempted_at >= datetime('now', ?)
+      `)
+      .bind(username, ipAddress, `-${ADMIN_LOGIN_WINDOW_MINUTES} minutes`)
+      .first<{ count: number }>()
+
+    return Number(row?.count || 0)
+  } catch (error) {
+    console.warn('Admin login throttling unavailable:', error)
+    return 0
+  }
+}
+
+async function recordAdminLoginAttempt(db: Env['DB'], username: string, ipAddress: string, success: boolean): Promise<void> {
+  try {
+    await db
+      .prepare(`
+        INSERT INTO login_attempts (username, ip_address, success)
+        VALUES (?, ?, ?)
+      `)
+      .bind(username, ipAddress, success ? 1 : 0)
+      .run()
+
+    if (success) {
+      await db
+        .prepare('DELETE FROM login_attempts WHERE username = ? AND ip_address = ? AND success = 0')
+        .bind(username, ipAddress)
+        .run()
+    }
+  } catch (error) {
+    console.warn('Failed to record admin login attempt:', error)
+  }
+}
 
 /**
  * POST /api/auth/admin
@@ -12,21 +57,37 @@ const auth = new Hono<{ Bindings: Env }>()
  */
 auth.post('/admin', async (c) => {
   try {
+    if (!isJwtSecretConfigured(c.env.JWT_SECRET)) {
+      return c.json({ error: 'JWT secret is not configured securely.' }, 500)
+    }
+
     const body = await c.req.json<LoginRequest>()
-    const { username, password } = body
+    const username = body.username?.trim()
+    const { password } = body
 
     if (!username || !password) {
       return c.json({ error: '아이디와 비밀번호를 입력해주세요.' }, 400)
     }
 
-    // D1에서 관리자 정보 조회
     const db = c.env.DB
+    const ipAddress = getClientIp(c)
+    const recentFailures = await countRecentAdminFailures(db, username, ipAddress)
+
+    if (recentFailures >= ADMIN_LOGIN_MAX_FAILURES) {
+      return c.json({
+        error: '로그인 시도가 너무 많습니다.',
+        message: `${ADMIN_LOGIN_WINDOW_MINUTES}분 후 다시 시도해주세요.`
+      }, 429)
+    }
+
+    // D1에서 관리자 정보 조회
     const adminResult = await db
       .prepare('SELECT * FROM admins WHERE username = ?')
       .bind(username)
       .first()
 
     if (!adminResult) {
+      await recordAdminLoginAttempt(db, username, ipAddress, false)
       return c.json({ 
         error: '아이디 또는 비밀번호가 올바르지 않습니다.',
         message: '다시 한 번 확인해주세요. 문제가 계속되면 관리자에게 문의하세요.'
@@ -37,11 +98,14 @@ auth.post('/admin', async (c) => {
     const isValidPassword = await verifyPassword(password, adminResult.password_hash as string)
 
     if (!isValidPassword) {
+      await recordAdminLoginAttempt(db, username, ipAddress, false)
       return c.json({ 
         error: '아이디 또는 비밀번호가 올바르지 않습니다.',
         message: '다시 한 번 확인해주세요. 문제가 계속되면 관리자에게 문의하세요.'
       }, 401)
     }
+
+    await recordAdminLoginAttempt(db, username, ipAddress, true)
 
     // JWT 토큰 생성
     const token = await createToken(
@@ -75,6 +139,10 @@ auth.post('/admin', async (c) => {
  */
 auth.post('/operator', async (c) => {
   try {
+    if (!isJwtSecretConfigured(c.env.JWT_SECRET)) {
+      return c.json({ error: 'JWT secret is not configured securely.' }, 500)
+    }
+
     const body = await c.req.json<BoothLoginRequest>()
     const { booth_code } = body
 
@@ -137,6 +205,10 @@ auth.post('/verify', async (c) => {
   }
 
   try {
+    if (!isJwtSecretConfigured(c.env.JWT_SECRET)) {
+      return c.json({ error: 'JWT secret is not configured securely.' }, 500)
+    }
+
     const { verifyToken } = await import('../lib/jwt')
     const payload = await verifyToken(token, c.env.JWT_SECRET)
 

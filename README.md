@@ -125,7 +125,7 @@ QR 스캔 → 본인 스마트폰으로 작성 → 완료 후 대기번호 페�
 1. 웹브라우저에서 접속: https://1017-festival-dashboard.pages.dev/admin
 2. 기본 계정으로 로그인:
    - 아이디: admin
-   - 비밀번호: admin123!@#
+   - 비밀번호: admin123
    
 ⚠️ 첫 로그인 후 비밀번호를 변경하세요!
 ```
@@ -198,7 +198,7 @@ QR 스캔 → 본인 스마트폰으로 작성 → 완료 후 대기번호 페�
 #### 로그인
 ```
 URL: /admin
-계정: admin / admin123!@#
+계정: admin / admin123
 ```
 
 #### 주요 작업
@@ -441,7 +441,7 @@ STEP 5: 차례가 되면 부스 입장
 **관리자 로그인**:
 ```
 ✓ URL 확인: /admin 맞나요?
-✓ 기본 계정: admin / admin123!@#
+✓ 기본 계정: admin / admin123
 ✓ 브라우저 쿠키 차단 해제
 ```
 
@@ -632,10 +632,11 @@ called_at, created_at
 프로덕션 배포 시 Cloudflare Dashboard에서 설정:
 
 ```bash
-JWT_SECRET=your-secret-key-min-32-chars
+JWT_SECRET=replace-with-a-random-secret-at-least-32-characters-long
+PUBLIC_URL=https://1017-festival-dashboard.pages.dev
+ALLOWED_ORIGINS=https://1017-festival-dashboard.pages.dev
 SENDGRID_API_KEY=SG.xxxxxxxxxxxxxxxxxxxxxx
 SENDGRID_FROM_EMAIL=noreply@yourdomain.com
-PUBLIC_URL=https://1017-festival-dashboard.pages.dev
 ```
 
 ---

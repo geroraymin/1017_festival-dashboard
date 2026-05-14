@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serveStatic } from 'hono/cloudflare-workers'
 import type { Env } from './lib/d1'
+import { resolveCorsOrigin, securityHeaders } from './lib/security'
 
 // 라우트 임포트
 import auth from './routes/auth'
@@ -25,9 +26,12 @@ import { queueTicketPage } from './views/queue-ticket'
 
 const app = new Hono<{ Bindings: Env }>()
 
+// Security headers for pages and API responses.
+app.use('*', securityHeaders)
+
 // CORS 설정
 app.use('/api/*', cors({
-  origin: '*',
+  origin: (origin, c) => resolveCorsOrigin(origin, c.env),
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   exposeHeaders: ['Content-Length'],

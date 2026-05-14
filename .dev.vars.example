@@ -4,7 +4,9 @@ SUPABASE_ANON_KEY=your-anon-key-here
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 
 # JWT 시크릿 (32자 이상의 랜덤 문자열)
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_SECRET=replace-with-a-random-secret-at-least-32-characters-long
+PUBLIC_URL=https://1017-festival-dashboard.pages.dev
+ALLOWED_ORIGINS=https://1017-festival-dashboard.pages.dev
 
 # 애플리케이션 설정
 APP_ENV=development
