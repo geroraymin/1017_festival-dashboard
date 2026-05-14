@@ -32,6 +32,7 @@ Initial improvement pass for operational safety:
 - Admin login throttling.
 - Backup export safety.
 - Documentation alignment for default credentials and deployment setup.
+- DB deployment diagnostics through `/api/health/db`.
 
 ## Verification Notes
 
@@ -41,6 +42,11 @@ Latest local checks:
 - `cmd /c npm run build`: passed.
 - `cmd /c npx tsc --noEmit`: failed on pre-existing strict type issues in route and Hono helper typings. The production Vite build still succeeds.
 - `cmd /c npm audit --audit-level=high`: failed because the npm audit endpoint returned an error, not because a parsed audit report was produced.
+
+## Production Debug Notes
+
+- `JWT_SECRET` was fixed after setting Cloudflare Production variables and triggering a redeploy.
+- Login APIs still returned 500 after JWT was fixed, so `/api/health/db` was added to distinguish missing D1 binding from missing D1 tables.
 
 ## Deployment Notes
 

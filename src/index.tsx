@@ -99,6 +99,50 @@ app.get('/api/health', (c) => {
   })
 })
 
+// DB binding/schema health check. Returns only table existence, never row data.
+app.get('/api/health/db', async (c) => {
+  const db = c.env.DB
+
+  if (!db) {
+    return c.json({
+      status: 'error',
+      db_bound: false,
+      message: 'D1 binding DB is not configured for this deployment.',
+    }, 500)
+  }
+
+  try {
+    const result = await db
+      .prepare(`
+        SELECT name
+        FROM sqlite_master
+        WHERE type = 'table'
+          AND name IN ('admins', 'events', 'booths', 'participants', 'queue', 'login_attempts')
+        ORDER BY name
+      `)
+      .all<{ name: string }>()
+
+    const tables = new Set((result.results || []).map((row) => row.name))
+    const expectedTables = ['admins', 'events', 'booths', 'participants', 'queue', 'login_attempts']
+    const tableStatus = Object.fromEntries(expectedTables.map((table) => [table, tables.has(table)]))
+    const missingTables = expectedTables.filter((table) => !tables.has(table))
+
+    return c.json({
+      status: missingTables.length === 0 ? 'ok' : 'incomplete',
+      db_bound: true,
+      tables: tableStatus,
+      missing_tables: missingTables,
+    }, missingTables.length === 0 ? 200 : 500)
+  } catch (error) {
+    console.error('DB health check failed:', error)
+    return c.json({
+      status: 'error',
+      db_bound: true,
+      message: 'D1 query failed for this deployment.',
+    }, 500)
+  }
+})
+
 // 메인 페이지 (로그인 선택)
 app.get('/', (c) => {
   return c.html(`
