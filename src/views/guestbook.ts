@@ -475,6 +475,18 @@ export const guestbookPage = (publicUrl: string) => `
             max-width: 90%;
             animation: slideUp 0.3s ease;
         }
+
+        .validation-hint {
+            margin-top: var(--space-2);
+            background: #FFF7ED;
+            color: #9A3412;
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid #FED7AA;
+            border-radius: var(--radius-md);
+            text-align: center;
+            font-size: 0.9375rem;
+            font-weight: 600;
+        }
         
         @keyframes slideUp {
             from {
@@ -636,7 +648,7 @@ export const guestbookPage = (publicUrl: string) => `
                         autocomplete="off"
                         aria-required="true"
                         aria-describedby="nameError">
-                    <div id="nameError" class="hidden" style="margin-top: var(--space-2); background: var(--color-error-bg); color: var(--color-error); padding: var(--space-2); border-radius: var(--radius-lg); text-align: center;" role="alert" aria-live="polite">
+                    <div id="nameError" class="validation-hint hidden" role="status" aria-live="polite">
                         <i class="fas fa-exclamation-circle" aria-hidden="true" style="margin-right: var(--space-1);"></i>
                         이름을 입력해주세요.
                     </div>
@@ -684,7 +696,7 @@ export const guestbookPage = (publicUrl: string) => `
                     </label>
                 </fieldset>
 
-                <div id="genderError" class="hidden" style="margin-bottom: var(--space-4); background: var(--color-error-bg); color: var(--color-error); padding: var(--space-3); border-radius: var(--radius-lg); text-align: center;" role="alert" aria-live="polite">
+                <div id="genderError" class="validation-hint hidden" style="margin-bottom: var(--space-4);" role="status" aria-live="polite">
                     <i class="fas fa-exclamation-circle" aria-hidden="true" style="margin-right: var(--space-2);"></i>
                     성별을 선택해주세요.
                 </div>
@@ -755,7 +767,7 @@ export const guestbookPage = (publicUrl: string) => `
                     </label>
                 </fieldset>
 
-                <div id="gradeError" class="hidden" style="margin-bottom: var(--space-4); background: var(--color-error-bg); color: var(--color-error); padding: var(--space-3); border-radius: var(--radius-lg); text-align: center;" role="alert" aria-live="polite">
+                <div id="gradeError" class="validation-hint hidden" style="margin-bottom: var(--space-4);" role="status" aria-live="polite">
                     <i class="fas fa-exclamation-circle" aria-hidden="true" style="margin-right: var(--space-2);"></i>
                     학교급을 선택해주세요.
                 </div>
@@ -840,7 +852,7 @@ export const guestbookPage = (publicUrl: string) => `
                         </p>
                     </div>
                     
-                    <div id="dateError" class="hidden" style="margin-top: var(--space-2); background: var(--color-error-bg); color: var(--color-error); padding: var(--space-3); border-radius: var(--radius-lg); text-align: center;" role="alert" aria-live="polite">
+                    <div id="dateError" class="validation-hint hidden" role="status" aria-live="polite">
                         <i class="fas fa-exclamation-circle" aria-hidden="true" style="margin-right: var(--space-1);"></i>
                         <span id="dateErrorText">생년월일을 모두 선택해주세요.</span>
                     </div>
@@ -1046,6 +1058,33 @@ export const guestbookPage = (publicUrl: string) => `
         // 작성 완료 여부
         let isFormCompleted = false
 
+        function hideValidationHint(id) {
+            const element = document.getElementById(id)
+            if (element) element.classList.add('hidden')
+        }
+
+        function clearValidationHints() {
+            ;['nameError', 'genderError', 'gradeError', 'dateError'].forEach(hideValidationHint)
+        }
+
+        document.getElementById('name')?.addEventListener('input', (event) => {
+            if (event.target.value.trim()) {
+                hideValidationHint('nameError')
+            }
+        })
+
+        document.querySelectorAll('input[name="gender"]').forEach(input => {
+            input.addEventListener('change', () => hideValidationHint('genderError'))
+        })
+
+        document.querySelectorAll('input[name="grade"]').forEach(input => {
+            input.addEventListener('change', () => hideValidationHint('gradeError'))
+        })
+
+        ;['birthYear', 'birthMonth', 'birthDay'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', () => hideValidationHint('dateError'))
+        })
+
         // 뒤로가기 함수
         function goBack() {
             if (currentStep > 1 && !isFormCompleted) {
@@ -1250,6 +1289,7 @@ export const guestbookPage = (publicUrl: string) => `
             }
 
             // Section 전환
+            clearValidationHints()
             showSection(\`section\${step}\`)
             updateProgress(step)
             
@@ -1320,6 +1360,7 @@ export const guestbookPage = (publicUrl: string) => `
                     await offlineDB.addPendingParticipant(participantData)
                     
                     // 성공 메시지 표시
+                    clearValidationHints()
                     showSection('section6')
                     updateProgress(6)
                     currentStep = 6
@@ -1363,6 +1404,7 @@ export const guestbookPage = (publicUrl: string) => `
                     console.log('[Guestbook] Server error: Falling back to offline storage')
                     await offlineDB.addPendingParticipant(participantData)
                     
+                    clearValidationHints()
                     showSection('section6')
                     updateProgress(6)
                     currentStep = 6
@@ -1409,6 +1451,7 @@ export const guestbookPage = (publicUrl: string) => `
                     console.log('[Guestbook] Server error:', data.error)
                     await offlineDB.addPendingParticipant(participantData)
                     
+                    clearValidationHints()
                     showSection('section6')
                     updateProgress(6)
                     currentStep = 6
@@ -1453,6 +1496,7 @@ export const guestbookPage = (publicUrl: string) => `
                 }
                 
                 // 직접 접속이거나 큐 정보가 없으면 완료 화면 표시 후 리셋
+                clearValidationHints()
                 showSection('section6')
                 updateProgress(6)
                 currentStep = 6
@@ -1485,6 +1529,7 @@ export const guestbookPage = (publicUrl: string) => `
                     console.log('[Guestbook] Network error: Falling back to offline storage')
                     await offlineDB.addPendingParticipant(participantData)
                     
+                    clearValidationHints()
                     showSection('section6')
                     updateProgress(6)
                     currentStep = 6
