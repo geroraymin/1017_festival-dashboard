@@ -403,6 +403,16 @@ export const adminDashboardPage = `
                 <h2 class="text-title1" style="font-size: 2rem; font-weight: 800; color: #1D1D1F; letter-spacing: -1px;">
                     <i class="fas fa-store" style="margin-right: 0.5rem;"></i>부스 목록
                 </h2>
+                <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 240px; flex: 1; max-width: 360px;">
+                    <label for="boothEventFilter" style="font-size: 0.875rem; font-weight: 600; color: #6E6E73; white-space: nowrap;">
+                        행사
+                    </label>
+                    <select id="boothEventFilter"
+                        style="width: 100%; padding: 0.625rem 0.875rem; font-size: 0.875rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;"
+                        onchange="setAdminEventFilter(this.value)" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'">
+                        <option value="">전체 행사</option>
+                    </select>
+                </div>
                 <div style="display: flex; gap: 0.75rem;">
                     <button onclick="resetAllParticipants()" style="background: linear-gradient(135deg, #FF375F 0%, #FF2D55 100%); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 12px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s ease; min-height: 44px; box-shadow: 0 4px 12px rgba(255, 55, 95, 0.3);" onmouseover="this.style.background='linear-gradient(135deg, #FF2D55 0%, #FF1744 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(255, 55, 95, 0.4)'" onmouseout="this.style.background='linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(255, 55, 95, 0.3)'">
                         <i class="fas fa-trash-alt" style="margin-right: 0.5rem;"></i>전체 명단 초기화
@@ -450,6 +460,18 @@ export const adminDashboardPage = `
 
             <!-- 검색 및 필터 -->
             <div class="card" style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; margin-bottom: 1.5rem; backdrop-filter: blur(20px);">
+                <!-- 행사 필터 -->
+                <div style="margin-bottom: 1rem;">
+                    <label for="participantEventFilter" style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
+                        <i class="fas fa-calendar mr-1"></i>행사
+                    </label>
+                    <select id="participantEventFilter"
+                        style="width: 100%; padding: 0.5rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'"
+                        onchange="setAdminEventFilter(this.value)">
+                        <option value="">전체 행사</option>
+                    </select>
+                </div>
+
                 <!-- 이름 검색 -->
                 <div style="margin-bottom: 1rem;">
                     <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">

@@ -8,6 +8,67 @@ let allBooths = []
 let allParticipants = []
 let selectedEventId = '' // 선택된 행사 ID (빈 문자열 = 전체)
 
+function getEventId(event) {
+    return String(event?.id || event?.event_id || '')
+}
+
+function getEventName(event) {
+    return event?.name || event?.event_name || ''
+}
+
+function getEventFilterElements() {
+    return ['eventFilter', 'boothEventFilter', 'participantEventFilter']
+        .map(id => document.getElementById(id))
+        .filter(Boolean)
+}
+
+function populateEventFilters(events = allEvents) {
+    getEventFilterElements().forEach(select => {
+        const currentValue = select.value || selectedEventId || ''
+        select.innerHTML = '<option value="">전체 행사</option>'
+
+        events.forEach(event => {
+            const eventId = getEventId(event)
+            if (!eventId) return
+
+            const option = document.createElement('option')
+            option.value = eventId
+            option.textContent = getEventName(event) || eventId
+            select.appendChild(option)
+        })
+
+        select.value = [...select.options].some(option => option.value === currentValue) ? currentValue : ''
+    })
+}
+
+function syncEventFilters() {
+    getEventFilterElements().forEach(select => {
+        select.value = selectedEventId || ''
+    })
+}
+
+async function ensureEventFiltersLoaded(events = null) {
+    if (events) {
+        allEvents = events
+        populateEventFilters(allEvents)
+        syncEventFilters()
+        return
+    }
+
+    if (allEvents.length === 0) {
+        const data = await EventsAPI.getAll()
+        allEvents = data.events || []
+    }
+
+    populateEventFilters(allEvents)
+    syncEventFilters()
+}
+
+function getActiveTabName() {
+    const activeTab = document.querySelector('.tab-content.active')
+    return activeTab ? activeTab.id.replace('tab-', '') : 'overview'
+}
+
 // 인증 확인
 const user = getUser()
 if (!user || user.role !== 'admin') {
@@ -51,6 +112,8 @@ function switchTab(tabName) {
     } else if (tabName === 'participants') {
         loadParticipants()
     }
+
+    syncEventFilters()
 }
 
 // 통계 개요 로드
@@ -58,23 +121,7 @@ async function loadOverview() {
     try {
         const data = await StatsAPI.getAll()
 
-        // 행사 필터 드롭다운 채우기 (최초 로드 시)
-        const eventFilter = document.getElementById('eventFilter')
-        if (eventFilter.options.length === 1) { // "전체 행사"만 있을 때
-            data.events.forEach(event => {
-                const option = document.createElement('option')
-                const eventId = event.id || event.event_id
-                const eventName = event.name || event.event_name
-                option.value = eventId
-                option.textContent = eventName
-                eventFilter.appendChild(option)
-            })
-        }
-        
-        // 선택된 값 유지
-        if (selectedEventId) {
-            eventFilter.value = selectedEventId
-        }
+        await ensureEventFiltersLoaded(data.events)
 
         // 선택된 행사 필터링
         let filteredEvents = data.events
@@ -460,6 +507,8 @@ async function loadEvents() {
     try {
         const data = await EventsAPI.getAll()
         allEvents = data.events
+        populateEventFilters(allEvents)
+        syncEventFilters()
 
         const tbody = document.getElementById('eventsTableBody')
         tbody.innerHTML = ''
@@ -526,7 +575,8 @@ async function loadEvents() {
 // 부스 목록 로드
 async function loadBooths() {
     try {
-        const data = await BoothsAPI.getAll()
+        await ensureEventFiltersLoaded()
+        const data = await BoothsAPI.getAll(selectedEventId || undefined)
         allBooths = data.booths
 
         const tbody = document.getElementById('boothsTableBody')
@@ -590,11 +640,18 @@ async function loadBooths() {
 // 참가자 목록 로드
 async function loadParticipants() {
     try {
-        const data = await ParticipantsAPI.getAll({ limit: 100000 })
+        await ensureEventFiltersLoaded()
+        const params = { limit: 100000 }
+        if (selectedEventId) {
+            params.event_id = selectedEventId
+        }
+
+        const data = await ParticipantsAPI.getAll(params)
         allParticipants = data.participants
 
         // 부스 필터 드롭다운 채우기
         const boothSelect = document.getElementById('filterBooth')
+        const previousBooth = boothSelect.value
         const uniqueBooths = [...new Set(allParticipants.map(p => p.booth_id).filter(Boolean))]
         const boothMap = {}
         
@@ -611,6 +668,7 @@ async function loadParticipants() {
             option.textContent = boothMap[boothId] || `부스 ${boothId}`
             boothSelect.appendChild(option)
         })
+        boothSelect.value = uniqueBooths.includes(previousBooth) ? previousBooth : ''
 
         // 테이블 렌더링 (새 함수 사용)
         renderParticipantsTable(allParticipants)
@@ -1081,9 +1139,18 @@ function renderParticipantsTable(participants) {
 }
 
 // 행사별 필터링
-function filterByEvent() {
-    selectedEventId = document.getElementById('eventFilter').value
-    loadOverview()
+async function setAdminEventFilter(value) {
+    selectedEventId = value || ''
+    syncEventFilters()
+
+    const activeTabName = getActiveTabName()
+    if (activeTabName === 'overview') {
+        await loadOverview()
+    } else if (activeTabName === 'booths') {
+        await loadBooths()
+    } else if (activeTabName === 'participants') {
+        await loadParticipants()
+    }
     
     // 리더보드 업데이트
     if (selectedEventId) {
@@ -1094,10 +1161,18 @@ function filterByEvent() {
     }
     
     // 차트 모드가 활성화되어 있으면 차트 모드도 업데이트
-    if (document.getElementById('chartMode').classList.contains('active')) {
+    const chartMode = document.getElementById('chartMode')
+    if (chartMode && chartMode.classList.contains('active')) {
         updateChartMode()
     }
 }
+
+function filterByEvent() {
+    const eventFilter = document.getElementById('eventFilter')
+    setAdminEventFilter(eventFilter ? eventFilter.value : '')
+}
+
+window.setAdminEventFilter = setAdminEventFilter
 
 // 풀스크린 모드 전역 변수
 let chartModeInterval = null
@@ -1834,8 +1909,9 @@ function renderBoothCards(event) {
 // 행사 카드 클릭 시 해당 행사 선택
 function selectEventFromCard(eventId) {
     const eventFilter = document.getElementById('eventFilter')
-    eventFilter.value = eventId
     selectedEventId = eventId
+    if (eventFilter) eventFilter.value = eventId
+    syncEventFilters()
     
     // 카드 모드 업데이트
     updateCardMode()
@@ -1844,8 +1920,9 @@ function selectEventFromCard(eventId) {
 // 행사 목록으로 돌아가기
 function backToEventList() {
     const eventFilter = document.getElementById('eventFilter')
-    eventFilter.value = ''
-    selectedEventId = null
+    selectedEventId = ''
+    if (eventFilter) eventFilter.value = ''
+    syncEventFilters()
     
     // 카드 모드 업데이트 (행사 목록 표시)
     updateCardMode()
