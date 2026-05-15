@@ -329,6 +329,55 @@ body {
   max-width: 1180px !important;
 }
 
+.service-admin .chart-mode {
+  background: #F4F6F8 !important;
+}
+
+.service-admin .chart-mode-header {
+  background: #FFFFFF !important;
+  border-bottom: 1px solid var(--service-border) !important;
+  backdrop-filter: none !important;
+}
+
+.service-admin .filter-btn:hover {
+  border-color: var(--service-primary) !important;
+  background: #F8FAFC !important;
+  color: var(--service-primary) !important;
+  box-shadow: none !important;
+}
+
+.service-admin .filter-btn.active,
+.service-admin .filter-btn.active:hover {
+  border-color: var(--service-primary) !important;
+  background: var(--service-primary) !important;
+  color: #FFFFFF !important;
+  box-shadow: none !important;
+}
+
+.service-admin button[style*="#5856D6"],
+.service-admin button[style*="#4F46E5"],
+.service-admin button[style*="#6366f1"],
+.service-admin button[style*="#8b5cf6"] {
+  background: var(--service-primary) !important;
+  box-shadow: none !important;
+}
+
+.service-admin .card[style*="border-left"] {
+  border-left: 1px solid var(--service-border) !important;
+}
+
+.service-admin .card i[style*="#5856D6"],
+.service-admin .card i[style*="#FFD60A"],
+.service-admin .card i[style*="#FF375F"],
+.service-admin .card i[style*="#32D74B"] {
+  color: #6B7280 !important;
+  opacity: 1 !important;
+}
+
+.service-admin #leaderboardSection .fa-trophy {
+  color: #6B7280 !important;
+}
+
 .service-guestbook .main-card,
 .service-guestbook .card {
   max-width: 720px;

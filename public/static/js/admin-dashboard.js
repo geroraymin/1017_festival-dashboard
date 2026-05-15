@@ -404,35 +404,20 @@ function updateOverallBoothChart(boothData) {
     // 데이터를 참가자 수로 정렬
     boothData.sort((a, b) => b.count - a.count)
     
-    // Apple HIG 색상 팔레트
-    const colors = [
-        { bg: 'linear-gradient(135deg, #FFD60A 0%, #FF9F0A 100%)', icon: '🥇', border: '#FFD60A' }, // 금메달
-        { bg: 'linear-gradient(135deg, #C7C7CC 0%, #8E8E93 100%)', icon: '🥈', border: '#C7C7CC' }, // 은메달
-        { bg: 'linear-gradient(135deg, #FF9F0A 0%, #FF6B35 100%)', icon: '🥉', border: '#FF9F0A' }, // 동메달
-        { bg: 'rgba(255, 55, 95, 0.1)', icon: '🎪', border: '#FF375F' },
-        { bg: 'rgba(88, 86, 214, 0.1)', icon: '🎪', border: '#5856D6' },
-        { bg: 'rgba(0, 122, 255, 0.1)', icon: '🎪', border: '#007AFF' },
-        { bg: 'rgba(50, 215, 75, 0.1)', icon: '🎪', border: '#32D74B' },
-        { bg: 'rgba(255, 214, 10, 0.1)', icon: '🎪', border: '#FFD60A' },
-        { bg: 'rgba(175, 82, 222, 0.1)', icon: '🎪', border: '#AF52DE' },
-    ]
-    
     // 카드 HTML 생성
     let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">'
     
     boothData.forEach((booth, index) => {
-        const colorScheme = colors[index % colors.length]
         const rank = index + 1
-        const medal = index < 3 ? colorScheme.icon : `<span style="font-weight: 800; color: #8E8E93;">#${rank}</span>`
         
         html += `
-            <div class="booth-card" style="background: ${colorScheme.bg}; border: 2px solid ${colorScheme.border}; border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px);"
-                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.15)'"
-                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            <div class="booth-card" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 1.25rem; cursor: pointer; transition: all 0.2s ease;"
+                 onmouseover="this.style.boxShadow='0 4px 12px rgba(16, 24, 40, 0.08)'"
+                 onmouseout="this.style.boxShadow='none'">
                 
                 <!-- 순위 표시 -->
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                    <div style="font-size: 2rem;">${medal}</div>
+                    <div style="display: inline-flex; align-items: center; justify-content: center; min-width: 2.25rem; height: 2.25rem; padding: 0 0.625rem; background: #F3F4F6; border-radius: 999px; color: #374151; font-weight: 800; font-size: 0.9375rem;">#${rank}</div>
                     <div style="font-size: 0.875rem; color: #6E6E73; font-weight: 600;">${booth.booth_code || ''}</div>
                 </div>
                 
@@ -443,13 +428,13 @@ function updateOverallBoothChart(boothData) {
                 
                 <!-- 참가자 수 -->
                 <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.75rem;">
-                    <span style="font-size: 2.5rem; font-weight: 900; color: #1D1D1F; letter-spacing: -2px;">${booth.count}</span>
+                    <span style="font-size: 2.25rem; font-weight: 900; color: #111827; letter-spacing: 0;">${booth.count}</span>
                     <span style="font-size: 1rem; color: #6E6E73; font-weight: 600;">명</span>
                 </div>
                 
                 <!-- 행사명 태그 -->
                 ${booth.event_name ? `
-                <div style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(0, 122, 255, 0.1); border-radius: 12px; font-size: 0.75rem; color: #007AFF; font-weight: 600;">
+                <div style="display: inline-block; padding: 0.25rem 0.75rem; background: #F3F4F6; border-radius: 999px; font-size: 0.75rem; color: #4B5563; font-weight: 600;">
                     <i class="fas fa-calendar" style="margin-right: 0.25rem;"></i>${booth.event_name}
                 </div>
                 ` : ''}
@@ -1504,52 +1489,37 @@ function updateChartModeBoothChart(boothData) {
     // 데이터를 참가자 수로 정렬
     boothData.sort((a, b) => b.count - a.count)
     
-    // Apple HIG 색상 팔레트 (컴팩트 버전)
-    const colors = [
-        { bg: 'linear-gradient(135deg, #FFD60A 0%, #FF9F0A 100%)', icon: '🥇', border: '#FFD60A' }, // 금메달
-        { bg: 'linear-gradient(135deg, #C7C7CC 0%, #8E8E93 100%)', icon: '🥈', border: '#C7C7CC' }, // 은메달
-        { bg: 'linear-gradient(135deg, #FF9F0A 0%, #FF6B35 100%)', icon: '🥉', border: '#FF9F0A' }, // 동메달
-        { bg: 'rgba(255, 55, 95, 0.1)', icon: '🎪', border: '#FF375F' },
-        { bg: 'rgba(88, 86, 214, 0.1)', icon: '🎪', border: '#5856D6' },
-        { bg: 'rgba(0, 122, 255, 0.1)', icon: '🎪', border: '#007AFF' },
-        { bg: 'rgba(50, 215, 75, 0.1)', icon: '🎪', border: '#32D74B' },
-        { bg: 'rgba(255, 214, 10, 0.1)', icon: '🎪', border: '#FFD60A' },
-        { bg: 'rgba(175, 82, 222, 0.1)', icon: '🎪', border: '#AF52DE' },
-    ]
-    
     // 카드 HTML 생성 (컴팩트 버전)
     let html = ''
     
     boothData.forEach((booth, index) => {
-        const colorScheme = colors[index % colors.length]
         const rank = index + 1
-        const medal = index < 3 ? colorScheme.icon : `<span style="font-weight: 800; color: #8E8E93; font-size: 0.875rem;">#${rank}</span>`
         
         html += `
-            <div class="booth-card" style="background: ${colorScheme.bg}; border: 2px solid ${colorScheme.border}; border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px);"
-                 onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0, 0, 0, 0.12)'"
-                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            <div class="booth-card" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s ease;"
+                 onmouseover="this.style.boxShadow='0 4px 12px rgba(16, 24, 40, 0.08)'"
+                 onmouseout="this.style.boxShadow='none'">
                 
                 <!-- 순위 표시 -->
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <div style="font-size: 1.5rem;">${medal}</div>
+                    <div style="display: inline-flex; align-items: center; justify-content: center; min-width: 2rem; height: 2rem; padding: 0 0.5rem; background: #F3F4F6; border-radius: 999px; color: #374151; font-weight: 800; font-size: 0.8125rem;">#${rank}</div>
                     <div style="font-size: 0.75rem; color: #6E6E73; font-weight: 600;">${booth.booth_code || ''}</div>
                 </div>
                 
                 <!-- 부스명 -->
-                <h4 style="font-size: 1rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: -0.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <h4 style="font-size: 1rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                     ${booth.name}
                 </h4>
                 
                 <!-- 참가자 수 -->
                 <div style="display: flex; align-items: baseline; gap: 0.25rem; margin-bottom: 0.5rem;">
-                    <span style="font-size: 1.75rem; font-weight: 900; color: #1D1D1F; letter-spacing: -1px;">${booth.count}</span>
+                    <span style="font-size: 1.75rem; font-weight: 900; color: #111827; letter-spacing: 0;">${booth.count}</span>
                     <span style="font-size: 0.875rem; color: #6E6E73; font-weight: 600;">명</span>
                 </div>
                 
                 <!-- 행사명 태그 -->
                 ${booth.event_name ? `
-                <div style="display: inline-block; padding: 0.25rem 0.5rem; background: rgba(0, 122, 255, 0.1); border-radius: 8px; font-size: 0.625rem; color: #007AFF; font-weight: 600;">
+                <div style="display: inline-block; padding: 0.25rem 0.5rem; background: #F3F4F6; border-radius: 999px; font-size: 0.625rem; color: #4B5563; font-weight: 600;">
                     <i class="fas fa-calendar" style="margin-right: 0.125rem;"></i>${booth.event_name}
                 </div>
                 ` : ''}
@@ -1698,16 +1668,6 @@ function renderEventCards(events) {
         }
     })
     
-    // Apple HIG 색상 팔레트
-    const colors = [
-        { bg: 'linear-gradient(135deg, #5856D6 0%, #4F46E5 100%)', icon: 'fa-calendar-alt', border: '#5856D6' },
-        { bg: 'linear-gradient(135deg, #FF375F 0%, #FF2D55 100%)', icon: 'fa-rocket', border: '#FF375F' },
-        { bg: 'linear-gradient(135deg, #007AFF 0%, #0051D5 100%)', icon: 'fa-star', border: '#007AFF' },
-        { bg: 'linear-gradient(135deg, #32D74B 0%, #30B24D 100%)', icon: 'fa-trophy', border: '#32D74B' },
-        { bg: 'linear-gradient(135deg, #FFD60A 0%, #FF9F0A 100%)', icon: 'fa-fire', border: '#FFD60A' },
-        { bg: 'linear-gradient(135deg, #AF52DE 0%, #9747FF 100%)', icon: 'fa-magic', border: '#AF52DE' },
-    ]
-    
     // 카드 생성
     container.innerHTML = sortedEvents.map((event, index) => {
         const eventId = event.id || event.event_id
@@ -1717,28 +1677,28 @@ function renderEventCards(events) {
         const startDate = event.start_date ? new Date(event.start_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : ''
         const endDate = event.end_date ? new Date(event.end_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : ''
         
-        const colorScheme = colors[index % colors.length]
-        
         return `
             <div onclick="selectEventFromCard('${eventId}')" 
-                style="background: ${colorScheme.bg}; border: 2px solid ${colorScheme.border}; border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);"
-                onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.2)'"
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(0, 0, 0, 0.1)'">
-                <div style="color: white;">
+                style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 1.25rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);"
+                onmouseover="this.style.boxShadow='0 4px 12px rgba(16, 24, 40, 0.08)'"
+                onmouseout="this.style.boxShadow='0 1px 2px rgba(16, 24, 40, 0.06)'">
+                <div style="color: #111827;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-                        <i class="fas ${colorScheme.icon}" style="font-size: 2.5rem; opacity: 0.9;"></i>
-                        <span style="font-size: 0.875rem; opacity: 0.9;">${startDate}${endDate ? ' - ' + endDate : ''}</span>
+                        <div style="display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; background: #F3F4F6; border-radius: 8px; color: #6B7280;">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <span style="font-size: 0.875rem; color: #6B7280;">${startDate}${endDate ? ' - ' + endDate : ''}</span>
                     </div>
-                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; letter-spacing: -0.5px;">${eventName}</h3>
-                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.3);">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; letter-spacing: 0;">${eventName}</h3>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div>
-                                <div style="font-size: 2rem; font-weight: 800; letter-spacing: -1px;">${participantCount}</div>
-                                <div style="font-size: 0.875rem; opacity: 0.9;">참가자</div>
+                                <div style="font-size: 2rem; font-weight: 800; letter-spacing: 0;">${participantCount}</div>
+                                <div style="font-size: 0.875rem; color: #6B7280;">참가자</div>
                             </div>
                             <div style="text-align: right;">
-                                <div style="font-size: 1.5rem; font-weight: 800; letter-spacing: -1px;">${boothCount}</div>
-                                <div style="font-size: 0.875rem; opacity: 0.9;">부스</div>
+                                <div style="font-size: 1.5rem; font-weight: 800; letter-spacing: 0;">${boothCount}</div>
+                                <div style="font-size: 0.875rem; color: #6B7280;">부스</div>
                             </div>
                         </div>
                     </div>
@@ -1767,9 +1727,9 @@ function renderBoothCards(event) {
     const backButton = `
         <div style="grid-column: 1 / -1; margin-bottom: 1rem;">
             <button onclick="backToEventList()" 
-                style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: rgba(255, 255, 255, 0.2); color: white; border: none; border-radius: 12px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(10px);"
-                onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='translateX(-4px)'"
-                onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='translateX(0)'">
+                style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: #FFFFFF; color: #111827; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;"
+                onmouseover="this.style.background='#F9FAFB'"
+                onmouseout="this.style.background='#FFFFFF'">
                 <i class="fas fa-arrow-left"></i>
                 <span>행사 목록으로 돌아가기</span>
             </button>
@@ -1785,26 +1745,11 @@ function renderBoothCards(event) {
         return bCount - aCount
     })
     
-    // Apple HIG 색상 팔레트
-    const colors = [
-        { bg: 'linear-gradient(135deg, #FFD60A 0%, #FF9F0A 100%)', icon: '🥇', border: '#FFD60A' }, // 금메달
-        { bg: 'linear-gradient(135deg, #C7C7CC 0%, #8E8E93 100%)', icon: '🥈', border: '#C7C7CC' }, // 은메달
-        { bg: 'linear-gradient(135deg, #FF9F0A 0%, #FF6B35 100%)', icon: '🥉', border: '#FF9F0A' }, // 동메달
-        { bg: 'rgba(255, 55, 95, 0.1)', icon: '🎪', border: '#FF375F' },
-        { bg: 'rgba(88, 86, 214, 0.1)', icon: '🎪', border: '#5856D6' },
-        { bg: 'rgba(0, 122, 255, 0.1)', icon: '🎪', border: '#007AFF' },
-        { bg: 'rgba(50, 215, 75, 0.1)', icon: '🎪', border: '#32D74B' },
-        { bg: 'rgba(255, 214, 10, 0.1)', icon: '🎪', border: '#FFD60A' },
-        { bg: 'rgba(175, 82, 222, 0.1)', icon: '🎪', border: '#AF52DE' },
-    ]
-    
     // 카드 생성
     container.innerHTML = backButton + sortedBooths.map((booth, index) => {
         const boothName = booth.name || booth.booth_name
         const participantCount = booth.total_participants || booth.participant_count || 0
-        const colorScheme = colors[index % colors.length]
         const rank = index + 1
-        const medal = index < 3 ? colorScheme.icon : `<span style="font-weight: 800; color: #8E8E93;">#${rank}</span>`
         
         // 성별 분포
         const genderDist = booth.gender_distribution || {}
@@ -1844,26 +1789,26 @@ function renderBoothCards(event) {
         }).join('')
         
         return `
-            <div style="background: ${colorScheme.bg}; border: 2px solid ${colorScheme.border}; border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px);"
-                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.15)'"
-                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 1.25rem; cursor: pointer; transition: all 0.2s ease;"
+                 onmouseover="this.style.boxShadow='0 4px 12px rgba(16, 24, 40, 0.08)'"
+                 onmouseout="this.style.boxShadow='none'">
                 
                 <!-- 순위 표시 -->
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                    <div style="font-size: 2rem;">${medal}</div>
+                    <div style="display: inline-flex; align-items: center; justify-content: center; min-width: 2.25rem; height: 2.25rem; padding: 0 0.625rem; background: #F3F4F6; border-radius: 999px; color: #374151; font-weight: 800; font-size: 0.9375rem;">#${rank}</div>
                     <div style="text-align: right;">
-                        <div style="font-size: 2.5rem; font-weight: 900; color: #1D1D1F; letter-spacing: -2px;">${participantCount}</div>
+                        <div style="font-size: 2.25rem; font-weight: 900; color: #111827; letter-spacing: 0;">${participantCount}</div>
                         <div style="font-size: 0.875rem; color: #6E6E73; font-weight: 600;">명</div>
                     </div>
                 </div>
                 
                 <!-- 부스명 -->
-                <h3 style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin: 0 0 1rem 0; letter-spacing: -0.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: #1D1D1F; margin: 0 0 1rem 0; letter-spacing: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                     ${boothName}
                 </h3>
                 
                 <!-- 성별 분포 -->
-                <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid rgba(0, 0, 0, 0.1);">
+                <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #E5E7EB;">
                     <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.875rem; color: #6E6E73;">
                         <span style="font-weight: 600;">
                             <i class="fas fa-venus-mars" style="margin-right: 0.25rem; color: #FF375F;"></i>성별 분포
@@ -1959,30 +1904,12 @@ function renderLeaderboard(booths, maxCount) {
     
     list.innerHTML = booths.map((booth, index) => {
         const percentage = maxCount > 0 ? (booth.participant_count / maxCount * 100) : 0
-        const isTop3 = index < 3
-        
-        // 순위별 메달/색상
-        let rankBadge, rankColor
-        if (booth.rank === 1) {
-            rankBadge = '<i class="fas fa-trophy text-yellow-500"></i>'
-            rankColor = 'border-yellow-500'
-        } else if (booth.rank === 2) {
-            rankBadge = '<i class="fas fa-medal text-gray-400"></i>'
-            rankColor = 'border-gray-400'
-        } else if (booth.rank === 3) {
-            rankBadge = '<i class="fas fa-medal text-orange-600"></i>'
-            rankColor = 'border-orange-600'
-        } else {
-            rankBadge = `<span class="text-gray-600 font-bold">${booth.rank}</span>`
-            rankColor = 'border-gray-300'
-        }
-        
         return `
-            <div class="bg-white rounded-lg p-4 mb-3 shadow-md border-l-4 ${rankColor} hover:shadow-lg transition">
+            <div class="admin-leaderboard-row" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem;">
                 <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 flex items-center justify-center text-2xl">
-                            ${rankBadge}
+                        <div style="display: inline-flex; align-items: center; justify-content: center; min-width: 2.5rem; height: 2.5rem; padding: 0 0.625rem; background: #F3F4F6; border-radius: 999px; color: #374151; font-weight: 800;">
+                            #${booth.rank}
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-800">${booth.booth_name}</h4>
@@ -1990,15 +1917,14 @@ function renderLeaderboard(booths, maxCount) {
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-2xl font-bold text-indigo-600">${booth.participant_count}</div>
+                        <div style="font-size: 1.75rem; line-height: 1; font-weight: 800; color: #111827;">${booth.participant_count}</div>
                         <div class="text-xs text-gray-500">참가자</div>
                     </div>
                 </div>
                 
                 <!-- 진행률 바 -->
                 <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full transition-all duration-500" 
-                         style="width: ${percentage}%"></div>
+                    <div style="width: ${percentage}%; height: 0.625rem; border-radius: 999px; background: #0A66D8; transition: width 500ms ease;"></div>
                 </div>
                 <div class="text-right text-xs text-gray-500 mt-1">${percentage.toFixed(1)}%</div>
                 
