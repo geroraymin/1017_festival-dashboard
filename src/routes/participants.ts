@@ -62,22 +62,20 @@ participants.post('/', async (c) => {
       return c.json({ error: '현재 비활성화된 부스입니다.' }, 400)
     }
 
-    // 이전 방문 이력 확인 (동일 부스 포함, 모든 부스)
-    // 동일 부스든 다른 부스든 이전 방문이 있으면 중복으로 간주
+    // 이전 방문 이력 확인: 이름, 성별, 교급, 생년월일이 모두 같을 때만 재방문으로 간주
     const previousVisit = await db
       .prepare(`
         SELECT p.id, p.name, p.created_at, b.name as booth_name, b.id as previous_booth_id
         FROM participants p
         LEFT JOIN booths b ON p.booth_id = b.id
-        WHERE p.name = ? AND p.date_of_birth = ?
+        WHERE p.name = ? AND p.gender = ? AND p.grade = ? AND p.date_of_birth = ?
         ORDER BY p.created_at DESC
         LIMIT 1
       `)
-      .bind(name, date_of_birth)
+      .bind(name, gender, grade, date_of_birth)
       .first()
 
     // is_duplicate 플래그 결정 (이전 방문 이력이 있으면 1, 없으면 0)
-    // 동일 부스든 다른 부스든 이전 방문이 있으면 중복(재방문)
     const isDuplicate = previousVisit ? 1 : 0
     
     // 동일 부스 재방문인지 확인

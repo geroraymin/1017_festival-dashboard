@@ -236,16 +236,16 @@ export const operatorDashboardPage = `
         .operator-secondary-actions {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .operator-action {
-            min-height: 72px;
+            min-height: 56px;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 1rem;
+            gap: 0.625rem;
+            padding: 0.75rem 0.875rem;
             background: #FFFFFF;
             border: 1px solid #E5E7EB;
             border-radius: 8px;
@@ -263,7 +263,7 @@ export const operatorDashboardPage = `
 
         .operator-action-title {
             display: block;
-            font-size: 0.9375rem;
+            font-size: 0.875rem;
             line-height: 1.25;
             font-weight: 800;
         }
@@ -272,15 +272,40 @@ export const operatorDashboardPage = `
             display: block;
             margin-top: 0.125rem;
             color: #6B7280;
-            font-size: 0.8125rem;
+            font-size: 0.75rem;
             line-height: 1.3;
         }
 
         .operator-utility-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 0.75rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            padding: 0.875rem;
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+        }
+
+        .operator-utility-title {
+            margin: 0;
+            color: #111827;
+            font-size: 0.9375rem;
+            font-weight: 800;
+        }
+
+        .operator-utility-caption {
+            margin: 0.125rem 0 0;
+            color: #6B7280;
+            font-size: 0.8125rem;
+        }
+
+        .operator-utility-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 0.5rem;
         }
 
         .operator-tabs {
@@ -426,6 +451,19 @@ export const operatorDashboardPage = `
             .operator-header .btn span {
                 display: none;
             }
+
+            .operator-utility-grid {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .operator-utility-actions {
+                justify-content: stretch;
+            }
+
+            .operator-utility-actions .btn {
+                flex: 1 1 auto;
+            }
         }
     </style>
 </head>
@@ -549,51 +587,24 @@ export const operatorDashboardPage = `
 
         <!-- 액션 버튼 -->
         <section class="operator-utility-grid" aria-label="데이터 관리 작업">
-            <button onclick="exportBoothCSV()" class="card"
-                style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; border: none; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); text-align: left;">
-                <div>
-                    <h3 style="font-size: 1.125rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: -0.2px;">
-                        <i class="fas fa-file-csv" style="color: #32D74B; margin-right: 0.75rem;"></i>
-                        CSV 다운로드
-                    </h3>
-                    <p style="font-size: 0.9375rem; color: #6E6E73; margin: 0;">참가자 명단 저장</p>
-                </div>
-                <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
-            </button>
-
-            <button onclick="sendCSVEmail()" class="card"
-                style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; border: none; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); text-align: left;">
-                <div>
-                    <h3 style="font-size: 1.125rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: -0.2px;">
-                        <i class="fas fa-envelope" style="color: #007AFF; margin-right: 0.75rem;"></i>
-                        이메일로 받기
-                    </h3>
-                    <p style="font-size: 0.9375rem; color: #6E6E73; margin: 0;">CSV를 이메일로 전송</p>
-                </div>
-                <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
-            </button>
-            <button onclick="openDisplayMode()" class="card"
-                style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; border: none; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); text-align: left;">
-                <div>
-                    <h3 style="font-size: 1.125rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: -0.2px;">
-                        <i class="fas fa-tv" style="color: #5856D6; margin-right: 0.75rem;"></i>
-                        디스플레이 모드
-                    </h3>
-                    <p style="font-size: 0.9375rem; color: #6E6E73; margin: 0;">통계 크게 보기</p>
-                </div>
-                <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
-            </button>
-            <button onclick="resetParticipants()" class="card"
-                style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; border: none; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(20px); text-align: left;">
-                <div>
-                    <h3 style="font-size: 1.125rem; font-weight: 700; color: #1D1D1F; margin: 0 0 0.5rem 0; letter-spacing: -0.2px;">
-                        <i class="fas fa-trash-alt" style="color: #FF375F; margin-right: 0.75rem;"></i>
-                        명단 초기화
-                    </h3>
-                    <p style="font-size: 0.9375rem; color: #6E6E73; margin: 0;">참가자 명단 삭제</p>
-                </div>
-                <i class="fas fa-chevron-right" style="font-size: 1.5rem; color: #C7C7CC;"></i>
-            </button>
+            <div>
+                <p class="operator-utility-title">운영 도구</p>
+                <p class="operator-utility-caption">참가자 관리 탭에서 목록 확인과 개별 수정이 가능합니다.</p>
+            </div>
+            <div class="operator-utility-actions">
+                <button onclick="exportBoothCSV()" class="btn btn-secondary">
+                    <i class="fas fa-file-csv" style="margin-right: 0.375rem;"></i>CSV
+                </button>
+                <button onclick="sendCSVEmail()" class="btn btn-secondary">
+                    <i class="fas fa-envelope" style="margin-right: 0.375rem;"></i>이메일
+                </button>
+                <button onclick="openDisplayMode()" class="btn btn-secondary">
+                    <i class="fas fa-tv" style="margin-right: 0.375rem;"></i>디스플레이
+                </button>
+                <button onclick="resetParticipants()" class="btn btn-danger">
+                    <i class="fas fa-trash-alt" style="margin-right: 0.375rem;"></i>초기화
+                </button>
+            </div>
         </section>
 
         <!-- 통계 카드 -->
