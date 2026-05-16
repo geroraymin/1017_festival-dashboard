@@ -253,6 +253,12 @@ const ParticipantsAPI = {
   delete: (id) => request(`/participants/${id}`, {
     method: 'DELETE'
   }),
+
+  // 실제 참석 확인 상태 변경
+  updateAttendance: (id, attended) => request(`/participants/${id}/attendance`, {
+    method: 'PATCH',
+    body: JSON.stringify({ attended })
+  }),
   
   // 참가자 명단 리셋
   reset: (boothId = null) => {

@@ -96,8 +96,8 @@ backup.post('/import', async (c) => {
       for (const participant of data.participants) {
         const result = await db
           .prepare(`
-            INSERT OR IGNORE INTO participants (id, booth_id, name, gender, grade, date_of_birth, has_consented, is_duplicate, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT OR IGNORE INTO participants (id, booth_id, name, gender, grade, date_of_birth, has_consented, is_duplicate, attended, attended_at, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `)
           .bind(
             participant.id,
@@ -108,6 +108,8 @@ backup.post('/import', async (c) => {
             participant.date_of_birth,
             participant.has_consented,
             participant.is_duplicate,
+            participant.attended || 0,
+            participant.attended_at || null,
             participant.created_at,
           )
           .run()

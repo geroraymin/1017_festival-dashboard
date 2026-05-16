@@ -213,6 +213,21 @@ export const adminDashboardPage = `
                         </select>
                     </div>
                 </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <i class="fas fa-calendar-day" style="color: #6E6E73; font-size: 1.125rem;"></i>
+                    <div style="flex: 1; min-width: 0;">
+                        <label for="countDateFilter" style="display: block; font-size: 0.875rem; font-weight: 600; color: #6E6E73; margin-bottom: 0.25rem;">
+                            집계일
+                        </label>
+                        <input type="date" id="countDateFilter"
+                            style="width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;"
+                            onchange="setAdminCountDate(this.value)" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'">
+                    </div>
+                    <button onclick="document.getElementById('countDateFilter').value=''; setAdminCountDate('')"
+                        style="align-self: end; padding: 0.5rem 0.75rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #4B5563; font-size: 0.875rem; font-weight: 600; cursor: pointer; min-height: 40px;">
+                        전체 기간
+                    </button>
+                </div>
                 
                 <!-- 버튼 그룹 (전체 너비, 균등 분할) -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem;">
@@ -241,7 +256,7 @@ export const adminDashboardPage = `
                 <!-- 안내 문구 -->
                 <div style="font-size: 0.75rem; color: #6E6E73; margin-top: 0.75rem;">
                     <i class="fas fa-info-circle mr-1"></i>
-                    행사를 선택하면 해당 행사의 통계만 표시됩니다
+                    행사를 선택하면 해당 행사 기준으로, 집계일을 선택하면 해당 날짜의 방명록 작성 건수 기준으로 표시됩니다
                 </div>
             </div>
 
@@ -472,6 +487,22 @@ export const adminDashboardPage = `
                     </select>
                 </div>
 
+                <!-- 등록일 필터 -->
+                <div style="margin-bottom: 1rem;">
+                    <label for="participantDateFilter" style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
+                        <i class="fas fa-calendar-day mr-1"></i>등록일
+                    </label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="date" id="participantDateFilter"
+                            style="width: 100%; padding: 0.5rem 1rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #1D1D1F; transition: all 0.2s ease;" onfocus="this.style.borderColor='#007AFF'; this.style.boxShadow='0 0 0 3px rgba(0, 122, 255, 0.1)'" onblur="this.style.borderColor='#E5E5E7'; this.style.boxShadow='none'"
+                            onchange="setAdminCountDate(this.value)">
+                        <button onclick="document.getElementById('participantDateFilter').value=''; setAdminCountDate('')"
+                            style="padding: 0.5rem 0.75rem; border: 2px solid #E5E5E7; border-radius: 12px; background: white; color: #4B5563; font-size: 0.875rem; font-weight: 600; cursor: pointer; min-height: 40px; white-space: nowrap;">
+                            전체
+                        </button>
+                    </div>
+                </div>
+
                 <!-- 이름 검색 -->
                 <div style="margin-bottom: 1rem;">
                     <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #1D1D1F; margin-bottom: 0.5rem;">
@@ -581,11 +612,12 @@ export const adminDashboardPage = `
                             <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">교급</th>
                             <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">부스</th>
                             <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">등록일시</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">참석</th>
                         </tr>
                     </thead>
                     <tbody id="participantsTableBody" class="divide-y">
                         <tr>
-                            <td colspan="5" style="padding: 2rem 1.5rem; text-align: center; color: #6E6E73;">
+                            <td colspan="6" style="padding: 2rem 1.5rem; text-align: center; color: #6E6E73;">
                                 <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
                                 <p>데이터 로딩 중...</p>
                             </td>

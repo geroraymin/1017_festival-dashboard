@@ -7,6 +7,7 @@ let allEvents = []
 let allBooths = []
 let allParticipants = []
 let selectedEventId = '' // 선택된 행사 ID (빈 문자열 = 전체)
+let selectedCountDate = '' // 일자별 집계 기준일 (빈 문자열 = 전체 기간)
 
 function getEventId(event) {
     return String(event?.id || event?.event_id || '')
@@ -47,6 +48,15 @@ function syncEventFilters() {
     })
 }
 
+function syncCountDateFilters() {
+    ['countDateFilter', 'participantDateFilter']
+        .map(id => document.getElementById(id))
+        .filter(Boolean)
+        .forEach(input => {
+            input.value = selectedCountDate || ''
+        })
+}
+
 async function ensureEventFiltersLoaded(events = null) {
     if (events) {
         allEvents = events
@@ -67,6 +77,60 @@ async function ensureEventFiltersLoaded(events = null) {
 function getActiveTabName() {
     const activeTab = document.querySelector('.tab-content.active')
     return activeTab ? activeTab.id.replace('tab-', '') : 'overview'
+}
+
+function buildOverviewFromParticipants(participants) {
+    const genderDistribution = { '남성': 0, '여성': 0 }
+    const gradeDistribution = { '유아': 0, '초등': 0, '중등': 0, '고등': 0, '성인': 0 }
+    const boothMap = new Map()
+    const eventIds = new Set()
+    const boothIds = new Set()
+
+    participants.forEach(participant => {
+        if (participant.event_id) eventIds.add(String(participant.event_id))
+        if (participant.booth_id) boothIds.add(String(participant.booth_id))
+
+        if (genderDistribution[participant.gender] !== undefined) {
+            genderDistribution[participant.gender] += 1
+        }
+
+        if (gradeDistribution[participant.grade] !== undefined) {
+            gradeDistribution[participant.grade] += 1
+        }
+
+        const boothKey = participant.booth_id || participant.booth_name || 'unknown'
+        const boothName = participant.booth_name || '-'
+        const eventName = participant.event_name || ''
+        const displayName = selectedEventId || !eventName ? boothName : `${eventName}-${boothName}`
+        const current = boothMap.get(boothKey) || { name: displayName, count: 0 }
+        current.count += 1
+        boothMap.set(boothKey, current)
+    })
+
+    return {
+        totalParticipants: participants.length,
+        uniqueParticipants: participants.filter(participant => Number(participant.is_duplicate || 0) === 0).length,
+        totalEvents: eventIds.size,
+        totalBooths: boothIds.size,
+        genderDistribution,
+        gradeDistribution,
+        boothData: [...boothMap.values()].sort((a, b) => b.count - a.count).slice(0, 10)
+    }
+}
+
+function setOverviewCounts(summary) {
+    document.getElementById('totalParticipants').textContent = summary.totalParticipants || 0
+    document.getElementById('uniqueParticipants').textContent = summary.uniqueParticipants || 0
+    document.getElementById('totalEvents').textContent = summary.totalEvents || 0
+    document.getElementById('totalBooths').textContent = summary.totalBooths || 0
+}
+
+function setLastUpdateTime() {
+    const now = new Date()
+    document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    })
 }
 
 // 인증 확인
@@ -114,6 +178,7 @@ function switchTab(tabName) {
     }
 
     syncEventFilters()
+    syncCountDateFilters()
 }
 
 // 통계 개요 로드
@@ -130,6 +195,23 @@ async function loadOverview() {
                 const eventId = String(event.id || event.event_id)
                 return eventId === String(selectedEventId)
             })
+        }
+
+        if (selectedCountDate) {
+            const params = { limit: 100000, date: selectedCountDate }
+            if (selectedEventId) {
+                params.event_id = selectedEventId
+            }
+
+            const participantsData = await ParticipantsAPI.getAll(params)
+            const dailySummary = buildOverviewFromParticipants(participantsData.participants || [])
+
+            setOverviewCounts(dailySummary)
+            setLastUpdateTime()
+            updateOverallGenderChart(dailySummary.genderDistribution)
+            updateOverallGradeChart(dailySummary.gradeDistribution)
+            updateOverallBoothChart(dailySummary.boothData)
+            return
         }
 
         // 총 참가자 계산 (필터링된 행사 기준)
@@ -156,12 +238,14 @@ async function loadOverview() {
         const displayTotal = isNaN(totalParticipants) ? 0 : totalParticipants
         const displayUnique = isNaN(uniqueParticipants) ? 0 : uniqueParticipants
         
-        document.getElementById('totalParticipants').textContent = displayTotal
-        document.getElementById('uniqueParticipants').textContent = displayUnique
+        setOverviewCounts({
+            totalParticipants: displayTotal,
+            uniqueParticipants: displayUnique,
+            totalEvents: filteredEvents.length,
+            totalBooths: 0
+        })
 
         // 행사 및 부스 수 (필터링된 기준)
-        document.getElementById('totalEvents').textContent = filteredEvents.length
-
         let totalBooths = 0
         filteredEvents.forEach(event => {
             totalBooths += event.booth_count
@@ -169,11 +253,7 @@ async function loadOverview() {
         document.getElementById('totalBooths').textContent = totalBooths
 
         // 마지막 업데이트 시간
-        const now = new Date()
-        document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('ko-KR', {
-            hour: '2-digit',
-            minute: '2-digit'
-        })
+        setLastUpdateTime()
 
         // 성별/교급 분포 계산 (필터링된 행사 기준)
         let genderDistribution = { '남성': 0, '여성': 0 }
@@ -645,6 +725,9 @@ async function loadParticipants() {
         if (selectedEventId) {
             params.event_id = selectedEventId
         }
+        if (selectedCountDate) {
+            params.date = selectedCountDate
+        }
 
         const data = await ParticipantsAPI.getAll(params)
         allParticipants = data.participants
@@ -860,12 +943,13 @@ function exportCSV() {
     }
 
     // CSV 헤더 (UTF-8 BOM 추가 + 중복방문 컬럼)
-    let csv = '\uFEFF이름,성별,교급,생년월일,부스명,등록일시,방문형태\n'
+    let csv = '\uFEFF이름,성별,교급,생년월일,부스명,등록일시,방문형태,참석확인\n'
 
     // CSV 데이터
     participantsToExport.forEach(p => {
         const visitType = p.is_duplicate === 1 ? '재방문' : '첫방문'
-        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booth_name || '-'},${formatDateTime(p.created_at_kst || p.created_at)},${visitType}\n`
+        const attended = Number(p.attended || 0) === 1 ? '참석' : '미확인'
+        csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booth_name || '-'},${formatDateTime(p.created_at_kst || p.created_at)},${visitType},${attended}\n`
     })
 
     // 다운로드
@@ -1097,7 +1181,7 @@ function renderParticipantsTable(participants) {
     if (participants.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
                     <i class="fas fa-inbox text-3xl mb-2"></i>
                     <p>검색 결과가 없습니다</p>
                 </td>
@@ -1133,10 +1217,35 @@ function renderParticipantsTable(participants) {
             <td class="px-6 py-4 text-gray-600" data-label="등록일시">
                 ${formatDateTime(p.created_at_kst || p.created_at)}
             </td>
+            <td class="px-6 py-4 text-gray-600" data-label="참석">
+                <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
+                    <input type="checkbox" ${Number(p.attended || 0) === 1 ? 'checked' : ''}
+                        onchange="toggleParticipantAttendance('${p.id}', this.checked)"
+                        style="width: 18px; height: 18px; accent-color: #111827;">
+                    <span>${Number(p.attended || 0) === 1 ? '확인' : '미확인'}</span>
+                </label>
+            </td>
         `
         tbody.appendChild(row)
     })
 }
+
+async function toggleParticipantAttendance(participantId, attended) {
+    try {
+        await ParticipantsAPI.updateAttendance(participantId, attended)
+        const participant = allParticipants.find(item => String(item.id) === String(participantId))
+        if (participant) {
+            participant.attended = attended ? 1 : 0
+            participant.attended_at = attended ? new Date().toISOString() : null
+        }
+        filterParticipants()
+    } catch (error) {
+        alert('참석 상태 변경에 실패했습니다: ' + error.message)
+        await loadParticipants()
+    }
+}
+
+window.toggleParticipantAttendance = toggleParticipantAttendance
 
 // 행사별 필터링
 async function setAdminEventFilter(value) {
@@ -1173,6 +1282,20 @@ function filterByEvent() {
 }
 
 window.setAdminEventFilter = setAdminEventFilter
+
+async function setAdminCountDate(value) {
+    selectedCountDate = value || ''
+    syncCountDateFilters()
+    const activeTabName = getActiveTabName()
+
+    if (activeTabName === 'overview') {
+        await loadOverview()
+    } else if (activeTabName === 'participants') {
+        await loadParticipants()
+    }
+}
+
+window.setAdminCountDate = setAdminCountDate
 
 // 풀스크린 모드 전역 변수
 let chartModeInterval = null

@@ -36,6 +36,8 @@ export interface Participant {
   grade: '초등' | '중등' | '고등' | '기타'
   date_of_birth: string
   has_consented: boolean
+  attended: boolean
+  attended_at?: string | null
   created_at: string
 }
 

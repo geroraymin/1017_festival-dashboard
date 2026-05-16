@@ -183,12 +183,13 @@ participants.post('/', async (c) => {
 /**
  * GET /api/participants
  * 참가자 목록 조회 (인증 필요)
- * 쿼리 파라미터: booth_id, event_id, limit, offset
+ * 쿼리 파라미터: booth_id, event_id, date, limit, offset
  */
 participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
   try {
     const boothId = c.req.query('booth_id')
     const eventId = c.req.query('event_id')
+    const date = c.req.query('date')
     const limit = parseInt(c.req.query('limit') || '100000')
     const offset = parseInt(c.req.query('offset') || '0')
 
@@ -197,23 +198,42 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
 
     // 운영자는 자신의 부스 참가자만 조회 가능
     if (user.role === 'operator' && user.booth_id) {
-      const participantsResult = await db
-        .prepare(`
-          SELECT p.*, b.name as booth_name, b.booth_code,
+      let operatorQuery = `
+          SELECT p.*, b.name as booth_name, b.booth_code, b.event_id,
+                 e.name as event_name,
                  datetime(p.created_at, '+9 hours') as created_at_kst
           FROM participants p 
           LEFT JOIN booths b ON p.booth_id = b.id 
-          WHERE p.booth_id = ? 
-          ORDER BY p.created_at DESC 
-          LIMIT ? OFFSET ?
-        `)
-        .bind(user.booth_id, limit, offset)
+          LEFT JOIN events e ON b.event_id = e.id
+          WHERE p.booth_id = ?
+      `
+      const operatorBindings: any[] = [user.booth_id]
+
+      if (date) {
+        operatorQuery += " AND date(datetime(p.created_at, '+9 hours')) = ?"
+        operatorBindings.push(date)
+      }
+
+      operatorQuery += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?'
+      operatorBindings.push(limit, offset)
+
+      const participantsResult = await db
+        .prepare(operatorQuery)
+        .bind(...operatorBindings)
         .all()
 
       // 전체 카운트
+      let operatorCountQuery = 'SELECT COUNT(*) as count FROM participants WHERE booth_id = ?'
+      const operatorCountBindings: any[] = [user.booth_id]
+
+      if (date) {
+        operatorCountQuery += " AND date(datetime(created_at, '+9 hours')) = ?"
+        operatorCountBindings.push(date)
+      }
+
       const countResult = await db
-        .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ?')
-        .bind(user.booth_id)
+        .prepare(operatorCountQuery)
+        .bind(...operatorCountBindings)
         .first()
 
       return c.json({
@@ -227,10 +247,12 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
     // 관리자는 모든 참가자 조회 가능
     if (user.role === 'admin') {
       let query = `
-        SELECT p.*, b.name as booth_name, b.booth_code,
+        SELECT p.*, b.name as booth_name, b.booth_code, b.event_id,
+               e.name as event_name,
                datetime(p.created_at, '+9 hours') as created_at_kst
         FROM participants p 
         LEFT JOIN booths b ON p.booth_id = b.id 
+        LEFT JOIN events e ON b.event_id = e.id
         WHERE 1=1
       `
       const bindings: any[] = []
@@ -243,6 +265,11 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
       if (eventId) {
         query += ' AND b.event_id = ?'
         bindings.push(eventId)
+      }
+
+      if (date) {
+        query += " AND date(datetime(p.created_at, '+9 hours')) = ?"
+        bindings.push(date)
       }
 
       query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?'
@@ -267,6 +294,11 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
         countBindings.push(eventId)
       }
 
+      if (date) {
+        countQuery += " AND date(datetime(p.created_at, '+9 hours')) = ?"
+        countBindings.push(date)
+      }
+
       const countResult = await db
         .prepare(countQuery)
         .bind(...countBindings)
@@ -284,6 +316,45 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
   } catch (error) {
     console.error('Error fetching participants:', error)
     return c.json({ error: '참가자 목록을 불러오는데 실패했습니다.' }, 500)
+  }
+})
+
+/**
+ * PATCH /api/participants/:id/attendance
+ * 참가자 실제 참석 확인 상태 변경 (관리자 전용)
+ */
+participants.patch('/:id/attendance', authMiddleware, adminOnly, async (c) => {
+  try {
+    const id = c.req.param('id')
+    const body = await c.req.json<{ attended?: boolean }>()
+    const attended = body.attended ? 1 : 0
+    const db = c.env.DB
+
+    const result = await db
+      .prepare(`
+        UPDATE participants
+        SET attended = ?, attended_at = CASE WHEN ? = 1 THEN CURRENT_TIMESTAMP ELSE NULL END
+        WHERE id = ?
+      `)
+      .bind(attended, attended, id)
+      .run()
+
+    if (!result.success || result.meta.changes === 0) {
+      return c.json({ error: '참가자를 찾을 수 없습니다.' }, 404)
+    }
+
+    const participant = await db
+      .prepare('SELECT * FROM participants WHERE id = ?')
+      .bind(id)
+      .first()
+
+    return c.json({
+      message: attended ? '참석으로 체크했습니다.' : '참석 체크를 해제했습니다.',
+      participant
+    })
+  } catch (error) {
+    console.error('Error updating participant attendance:', error)
+    return c.json({ error: '참석 상태 변경에 실패했습니다.' }, 500)
   }
 })
 
