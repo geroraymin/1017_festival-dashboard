@@ -7,6 +7,36 @@ const stats = new Hono<{ Bindings: Env }>()
 // 모든 라우트에 인증 미들웨어 적용
 stats.use('/*', authMiddleware, operatorOrAdmin)
 
+const uniqueIdentitySelect = `
+  SELECT COUNT(*) as count
+  FROM (
+    SELECT name, gender, grade, date_of_birth
+    FROM participants
+    WHERE booth_id = ?
+    GROUP BY name, gender, grade, date_of_birth
+  )
+`
+
+const uniqueEventIdentitySelect = `
+  SELECT COUNT(*) as count
+  FROM (
+    SELECT p.name, p.gender, p.grade, p.date_of_birth
+    FROM participants p
+    JOIN booths b ON p.booth_id = b.id
+    WHERE b.event_id = ?
+    GROUP BY p.name, p.gender, p.grade, p.date_of_birth
+  )
+`
+
+const uniqueAllIdentitySelect = `
+  SELECT COUNT(*) as count
+  FROM (
+    SELECT name, gender, grade, date_of_birth
+    FROM participants
+    GROUP BY name, gender, grade, date_of_birth
+  )
+`
+
 /**
  * GET /api/stats/booth/:booth_id
  * 특정 부스의 통계 조회
@@ -39,9 +69,9 @@ stats.get('/booth/:booth_id', async (c) => {
       .bind(boothId)
       .first()
 
-    // 실인원 (고유 참가자 수 - is_duplicate = 0인 경우만)
+    // 부스 기준 실인원
     const uniqueResult = await db
-      .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ? AND is_duplicate = 0')
+      .prepare(uniqueIdentitySelect)
       .bind(boothId)
       .first()
 
@@ -168,9 +198,9 @@ stats.get('/event/:event_id', async (c) => {
           .bind(booth.id)
           .first()
 
-        // 실인원 (고유 참가자 수)
+        // 부스 기준 실인원
         const uniqueResult = await db
-          .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ? AND is_duplicate = 0')
+          .prepare(uniqueIdentitySelect)
           .bind(booth.id)
           .first()
 
@@ -220,12 +250,17 @@ stats.get('/event/:event_id', async (c) => {
     )
 
     const totalParticipants = boothsStats.reduce((sum, b) => sum + b.total_participants, 0)
+    const eventUniqueResult = await db
+      .prepare(uniqueEventIdentitySelect)
+      .bind(event.id)
+      .first()
 
     return c.json({
       stats: {
         event_id: event.id,
         event_name: event.name,
         total_participants: totalParticipants,
+        unique_participants: eventUniqueResult?.count || 0,
         booth_count: booths.length,
         booths: boothsStats
       }
@@ -277,9 +312,9 @@ stats.get('/all', async (c) => {
               .bind(booth.id)
               .first()
 
-            // 실인원 (고유 참가자 수)
+            // 부스 기준 실인원
             const uniqueResult = await db
-              .prepare('SELECT COUNT(*) as count FROM participants WHERE booth_id = ? AND is_duplicate = 0')
+              .prepare(uniqueIdentitySelect)
               .bind(booth.id)
               .first()
 
@@ -332,6 +367,10 @@ stats.get('/all', async (c) => {
         )
 
         const totalParticipants = boothsStats.reduce((sum, b) => sum + b.total_participants, 0)
+        const eventUniqueResult = await db
+          .prepare(uniqueEventIdentitySelect)
+          .bind(event.id)
+          .first()
 
         return {
           id: event.id,
@@ -341,18 +380,23 @@ stats.get('/all', async (c) => {
           start_date: event.start_date,
           end_date: event.end_date,
           booth_count: booths.length,
+          unique_participants: eventUniqueResult?.count || 0,
           booths: boothsStats
         }
       })
     )
 
     const grandTotal = eventStats.reduce((sum: number, e: any) => sum + e.booth_count, 0)
+    const globalUniqueResult = await db
+      .prepare(uniqueAllIdentitySelect)
+      .first()
 
     return c.json({
       events: eventStats,
       total_participants: eventStats.reduce((sum: number, e: any) => 
         sum + e.booths.reduce((s: number, b: any) => s + b.total_participants, 0), 0
       ),
+      unique_participants: globalUniqueResult?.count || 0,
       total_booths: grandTotal
     })
   } catch (error) {

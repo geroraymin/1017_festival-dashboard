@@ -612,12 +612,13 @@ export const adminDashboardPage = `
                             <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">교급</th>
                             <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">부스</th>
                             <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">등록일시</th>
+                            <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">방문형태</th>
                             <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: #1D1D1F;">참석</th>
                         </tr>
                     </thead>
                     <tbody id="participantsTableBody" class="divide-y">
                         <tr>
-                            <td colspan="6" style="padding: 2rem 1.5rem; text-align: center; color: #6E6E73;">
+                            <td colspan="7" style="padding: 2rem 1.5rem; text-align: center; color: #6E6E73;">
                                 <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
                                 <p>데이터 로딩 중...</p>
                             </td>

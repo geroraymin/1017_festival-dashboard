@@ -109,7 +109,12 @@ function buildOverviewFromParticipants(participants) {
 
     return {
         totalParticipants: participants.length,
-        uniqueParticipants: participants.filter(participant => Number(participant.is_duplicate || 0) === 0).length,
+        uniqueParticipants: new Set(participants.map(participant => [
+            participant.name,
+            participant.gender,
+            participant.grade,
+            participant.date_of_birth
+        ].join('|'))).size,
         totalEvents: eventIds.size,
         totalBooths: boothIds.size,
         genderDistribution,
@@ -217,7 +222,11 @@ async function loadOverview() {
         // 총 참가자 계산 (필터링된 행사 기준)
         let totalParticipants = 0  // 연인원
         let uniqueParticipants = 0  // 실인원
-        
+
+        if (!selectedEventId && data.unique_participants !== undefined) {
+            uniqueParticipants = data.unique_participants || 0
+        }
+
         filteredEvents.forEach((event, eventIndex) => {
             
             if (event.booths) {
@@ -225,11 +234,11 @@ async function loadOverview() {
                     // 연인원 (total_participants)
                     const count = booth.total_participants || booth.participant_count || 0
                     totalParticipants += count
-                    
-                    // 실인원 (unique_participants)
-                    const uniqueCount = booth.unique_participants || count  // fallback: unique가 없으면 total 사용
-                    uniqueParticipants += uniqueCount
                 })
+            }
+
+            if (selectedEventId) {
+                uniqueParticipants += event.unique_participants || 0
             }
         })
         
@@ -947,7 +956,7 @@ function exportCSV() {
 
     // CSV 데이터
     participantsToExport.forEach(p => {
-        const visitType = p.is_duplicate === 1 ? '재방문' : '첫방문'
+        const visitType = p.visit_label || (p.is_duplicate === 1 ? '재방문' : '첫방문')
         const attended = Number(p.attended || 0) === 1 ? '참석' : '미확인'
         csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${p.booth_name || '-'},${formatDateTime(p.created_at_kst || p.created_at)},${visitType},${attended}\n`
     })
@@ -1181,7 +1190,7 @@ function renderParticipantsTable(participants) {
     if (participants.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                <td colspan="7" class="px-6 py-8 text-center text-gray-500">
                     <i class="fas fa-inbox text-3xl mb-2"></i>
                     <p>검색 결과가 없습니다</p>
                 </td>
@@ -1216,6 +1225,9 @@ function renderParticipantsTable(participants) {
             </td>
             <td class="px-6 py-4 text-gray-600" data-label="등록일시">
                 ${formatDateTime(p.created_at_kst || p.created_at)}
+            </td>
+            <td class="px-6 py-4 text-gray-600" data-label="방문형태">
+                ${p.visit_label || (Number(p.is_duplicate || 0) === 1 ? '재방문' : '첫방문')}
             </td>
             <td class="px-6 py-4 text-gray-600" data-label="참석">
                 <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">

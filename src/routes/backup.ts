@@ -20,7 +20,13 @@ backup.get('/export', async (c) => {
     ])
 
     const totalParticipants = participantsResult.results?.length || 0
-    const uniqueParticipants = participantsResult.results?.filter((participant: any) => participant.is_duplicate === 0).length || 0
+    const uniqueKeys = new Set((participantsResult.results || []).map((participant: any) => [
+      participant.name,
+      participant.gender,
+      participant.grade,
+      participant.date_of_birth,
+    ].join('|')))
+    const uniqueParticipants = uniqueKeys.size
     const user = c.get('user')
 
     return c.json({

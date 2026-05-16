@@ -55,8 +55,54 @@ email.post('/send-csv', authMiddleware, operatorOrAdmin, async (c) => {
     // 참가자 데이터 가져오기
     const participantsResult = await db
       .prepare(`
-        SELECT p.* 
+        SELECT p.*,
+          CASE
+            WHEN EXISTS (
+              SELECT 1
+              FROM participants earlier
+              WHERE earlier.name = p.name
+                AND earlier.gender = p.gender
+                AND earlier.grade = p.grade
+                AND earlier.date_of_birth = p.date_of_birth
+                AND earlier.booth_id = p.booth_id
+                AND (
+                  datetime(earlier.created_at) < datetime(p.created_at)
+                  OR (datetime(earlier.created_at) = datetime(p.created_at) AND earlier.id < p.id)
+                )
+            ) THEN '같은 부스 재방문'
+            WHEN EXISTS (
+              SELECT 1
+              FROM participants earlier
+              LEFT JOIN booths earlier_booth ON earlier.booth_id = earlier_booth.id
+              WHERE earlier.name = p.name
+                AND earlier.gender = p.gender
+                AND earlier.grade = p.grade
+                AND earlier.date_of_birth = p.date_of_birth
+                AND earlier.booth_id != p.booth_id
+                AND earlier_booth.event_id = b.event_id
+                AND (
+                  datetime(earlier.created_at) < datetime(p.created_at)
+                  OR (datetime(earlier.created_at) = datetime(p.created_at) AND earlier.id < p.id)
+                )
+            ) THEN '행사 내 타부스 방문'
+            WHEN EXISTS (
+              SELECT 1
+              FROM participants earlier
+              LEFT JOIN booths earlier_booth ON earlier.booth_id = earlier_booth.id
+              WHERE earlier.name = p.name
+                AND earlier.gender = p.gender
+                AND earlier.grade = p.grade
+                AND earlier.date_of_birth = p.date_of_birth
+                AND earlier_booth.event_id != b.event_id
+                AND (
+                  datetime(earlier.created_at) < datetime(p.created_at)
+                  OR (datetime(earlier.created_at) = datetime(p.created_at) AND earlier.id < p.id)
+                )
+            ) THEN '다른 행사 방문자'
+            ELSE '첫방문'
+          END as visit_label
         FROM participants p 
+        LEFT JOIN booths b ON p.booth_id = b.id
         WHERE p.booth_id = ? 
         ORDER BY p.created_at DESC
       `)
@@ -70,7 +116,7 @@ email.post('/send-csv', authMiddleware, operatorOrAdmin, async (c) => {
     }
 
     // CSV 생성
-    let csv = '\uFEFF이름,성별,교급,생년월일,등록일시\n'
+    let csv = '\uFEFF이름,성별,교급,생년월일,등록일시,방문형태,참석확인\n'
     
     participants.forEach((p: any) => {
       const createdAt = new Date(p.created_at).toLocaleString('ko-KR', {
@@ -81,7 +127,8 @@ email.post('/send-csv', authMiddleware, operatorOrAdmin, async (c) => {
         minute: '2-digit',
         second: '2-digit'
       })
-      csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${createdAt}\n`
+      const attended = Number(p.attended || 0) === 1 ? '참석' : '미확인'
+      csv += `${p.name},${p.gender},${p.grade},${p.date_of_birth},${createdAt},${p.visit_label || '첫방문'},${attended}\n`
     })
 
     // CSV를 Base64로 인코딩

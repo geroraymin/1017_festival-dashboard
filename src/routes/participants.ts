@@ -17,6 +17,68 @@ function canManageParticipant(user: any, participant: any) {
   return user.role === 'operator' && String(user.booth_id) === String(participant.booth_id)
 }
 
+const visitScopeSql = `
+  CASE
+    WHEN EXISTS (
+      SELECT 1
+      FROM participants earlier
+      WHERE earlier.name = p.name
+        AND earlier.gender = p.gender
+        AND earlier.grade = p.grade
+        AND earlier.date_of_birth = p.date_of_birth
+        AND earlier.booth_id = p.booth_id
+        AND (
+          datetime(earlier.created_at) < datetime(p.created_at)
+          OR (datetime(earlier.created_at) = datetime(p.created_at) AND earlier.id < p.id)
+        )
+    ) THEN 'same_booth'
+    WHEN EXISTS (
+      SELECT 1
+      FROM participants earlier
+      LEFT JOIN booths earlier_booth ON earlier.booth_id = earlier_booth.id
+      WHERE earlier.name = p.name
+        AND earlier.gender = p.gender
+        AND earlier.grade = p.grade
+        AND earlier.date_of_birth = p.date_of_birth
+        AND earlier.booth_id != p.booth_id
+        AND earlier_booth.event_id = b.event_id
+        AND (
+          datetime(earlier.created_at) < datetime(p.created_at)
+          OR (datetime(earlier.created_at) = datetime(p.created_at) AND earlier.id < p.id)
+        )
+    ) THEN 'same_event_other_booth'
+    WHEN EXISTS (
+      SELECT 1
+      FROM participants earlier
+      LEFT JOIN booths earlier_booth ON earlier.booth_id = earlier_booth.id
+      WHERE earlier.name = p.name
+        AND earlier.gender = p.gender
+        AND earlier.grade = p.grade
+        AND earlier.date_of_birth = p.date_of_birth
+        AND earlier_booth.event_id != b.event_id
+        AND (
+          datetime(earlier.created_at) < datetime(p.created_at)
+          OR (datetime(earlier.created_at) = datetime(p.created_at) AND earlier.id < p.id)
+        )
+    ) THEN 'other_event'
+    ELSE 'first'
+  END
+`
+
+function withVisitLabel(participant: any) {
+  const labels: Record<string, string> = {
+    first: '첫방문',
+    same_booth: '같은 부스 재방문',
+    same_event_other_booth: '행사 내 타부스 방문',
+    other_event: '다른 행사 방문자',
+  }
+
+  return {
+    ...participant,
+    visit_label: labels[participant.visit_scope] || '첫방문',
+  }
+}
+
 /**
  * POST /api/participants
  * 참가자 등록 (인증 불필요 - 부스 코드 확인 후 등록)
@@ -50,7 +112,7 @@ participants.post('/', async (c) => {
 
     // 부스 존재 및 활성화 상태 확인
     const boothResult = await db
-      .prepare('SELECT id, is_active FROM booths WHERE id = ?')
+      .prepare('SELECT id, event_id, is_active FROM booths WHERE id = ?')
       .bind(booth_id)
       .first()
 
@@ -65,7 +127,7 @@ participants.post('/', async (c) => {
     // 이전 방문 이력 확인: 이름, 성별, 교급, 생년월일이 모두 같을 때만 재방문으로 간주
     const previousVisit = await db
       .prepare(`
-        SELECT p.id, p.name, p.created_at, b.name as booth_name, b.id as previous_booth_id
+        SELECT p.id, p.name, p.created_at, b.name as booth_name, b.id as previous_booth_id, b.event_id as previous_event_id
         FROM participants p
         LEFT JOIN booths b ON p.booth_id = b.id
         WHERE p.name = ? AND p.gender = ? AND p.grade = ? AND p.date_of_birth = ?
@@ -149,10 +211,22 @@ participants.post('/', async (c) => {
     let message = '방명록 작성이 완료되었습니다. 감사합니다!'
     let isRevisit = false
     let previousBoothName = ''
+    let visitScope = 'first'
+    let visitLabel = '첫방문'
 
     if (previousVisit) {
       isRevisit = true
       previousBoothName = previousVisit.booth_name as string
+      visitScope = isSameBooth
+        ? 'same_booth'
+        : String(previousVisit.previous_event_id) === String(boothResult.event_id)
+          ? 'same_event_other_booth'
+          : 'other_event'
+      visitLabel = {
+        same_booth: '같은 부스 재방문',
+        same_event_other_booth: '행사 내 타부스 방문',
+        other_event: '다른 행사 방문자',
+      }[visitScope] || '재방문'
       
       const createdAt = new Date(previousVisit.created_at as string)
       const timeDiff = Date.now() - createdAt.getTime()
@@ -171,9 +245,10 @@ participants.post('/', async (c) => {
       if (isSameBooth) {
         // 동일 부스 재방문
         message = `다시 방문해주셔서 감사합니다! 🎉\n이 부스에 ${timeMessage} 방문하셨습니다.`
+      } else if (visitScope === 'same_event_other_booth') {
+        message = `방문해주셔서 감사합니다! 🎉\n[현재 행사 내 이전 방문] ${previousBoothName} (${timeMessage})`
       } else {
-        // 다른 부스 방문
-        message = `다시 방문해주셔서 감사합니다! 🎉\n[이전 방문] ${previousBoothName} (${timeMessage})`
+        message = `방문해주셔서 감사합니다! 🎉\n[다른 행사 이전 방문] ${previousBoothName} (${timeMessage})`
       }
     }
 
@@ -181,6 +256,8 @@ participants.post('/', async (c) => {
       message,
       participant: newParticipant,
       is_revisit: isRevisit,
+      visit_scope: visitScope,
+      visit_label: visitLabel,
       previous_booth: previousBoothName || null,
       queue: queueInfo
     }, 201)
@@ -211,7 +288,8 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
       let operatorQuery = `
           SELECT p.*, b.name as booth_name, b.booth_code, b.event_id,
                  e.name as event_name,
-                 datetime(p.created_at, '+9 hours') as created_at_kst
+                 datetime(p.created_at, '+9 hours') as created_at_kst,
+                 ${visitScopeSql} as visit_scope
           FROM participants p 
           LEFT JOIN booths b ON p.booth_id = b.id 
           LEFT JOIN events e ON b.event_id = e.id
@@ -247,7 +325,7 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
         .first()
 
       return c.json({
-        participants: participantsResult.results || [],
+        participants: (participantsResult.results || []).map(withVisitLabel),
         total: countResult?.count || 0,
         limit,
         offset
@@ -259,7 +337,8 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
       let query = `
         SELECT p.*, b.name as booth_name, b.booth_code, b.event_id,
                e.name as event_name,
-               datetime(p.created_at, '+9 hours') as created_at_kst
+               datetime(p.created_at, '+9 hours') as created_at_kst,
+               ${visitScopeSql} as visit_scope
         FROM participants p 
         LEFT JOIN booths b ON p.booth_id = b.id 
         LEFT JOIN events e ON b.event_id = e.id
@@ -315,7 +394,7 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
         .first()
 
       return c.json({
-        participants: participantsResult.results || [],
+        participants: (participantsResult.results || []).map(withVisitLabel),
         total: countResult?.count || 0,
         limit,
         offset
@@ -437,7 +516,8 @@ participants.patch('/:id', authMiddleware, operatorOrAdmin, async (c) => {
       .prepare(`
         SELECT p.*, b.name as booth_name, b.booth_code, b.event_id,
                e.name as event_name,
-               datetime(p.created_at, '+9 hours') as created_at_kst
+               datetime(p.created_at, '+9 hours') as created_at_kst,
+               ${visitScopeSql} as visit_scope
         FROM participants p
         LEFT JOIN booths b ON p.booth_id = b.id
         LEFT JOIN events e ON b.event_id = e.id
@@ -448,7 +528,7 @@ participants.patch('/:id', authMiddleware, operatorOrAdmin, async (c) => {
 
     return c.json({
       message: '참가자 정보가 수정되었습니다.',
-      participant
+      participant: participant ? withVisitLabel(participant) : null
     })
   } catch (error) {
     console.error('Error updating participant:', error)

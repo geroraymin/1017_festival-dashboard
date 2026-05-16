@@ -784,8 +784,10 @@ export const operatorDashboardPage = `
                         <label for="participantVisitFilter">방문형태</label>
                         <select id="participantVisitFilter" onchange="filterOperatorParticipants()">
                             <option value="">전체</option>
-                            <option value="0">첫방문</option>
-                            <option value="1">재방문</option>
+                            <option value="first">첫방문</option>
+                            <option value="same_booth">같은 부스 재방문</option>
+                            <option value="same_event_other_booth">행사 내 타부스 방문</option>
+                            <option value="other_event">다른 행사 방문자</option>
                         </select>
                     </div>
                     <button onclick="resetOperatorParticipantFilters()" class="btn btn-secondary" style="min-height: 42px;">
@@ -1175,7 +1177,7 @@ export const operatorDashboardPage = `
             operatorFilteredParticipants = operatorParticipants.filter(participant => {
                 if (search && !String(participant.name || '').toLowerCase().includes(search)) return false
                 if (attendedFilter !== '' && String(Number(participant.attended || 0)) !== attendedFilter) return false
-                if (visitFilter !== '' && String(Number(participant.is_duplicate || 0)) !== visitFilter) return false
+                if (visitFilter !== '' && participant.visit_scope !== visitFilter) return false
                 return true
             })
 
@@ -1198,7 +1200,7 @@ export const operatorDashboardPage = `
             operatorFilteredParticipants.forEach(participant => {
                 const row = document.createElement('tr')
                 const attended = Number(participant.attended || 0) === 1
-                const visitType = Number(participant.is_duplicate || 0) === 1 ? '재방문' : '첫방문'
+                const visitType = participant.visit_label || (Number(participant.is_duplicate || 0) === 1 ? '재방문' : '첫방문')
                 row.innerHTML =
                     '<td>' +
                         '<label style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 800; cursor: pointer;">' +
@@ -1347,7 +1349,7 @@ export const operatorDashboardPage = `
                         minute: '2-digit',
                         second: '2-digit'
                     })
-                    const visitType = p.is_duplicate === 1 ? '재방문' : '첫방문'
+                    const visitType = p.visit_label || (p.is_duplicate === 1 ? '재방문' : '첫방문')
                     const attended = Number(p.attended || 0) === 1 ? '참석' : '미확인'
                     csv += \`\${p.name},\${p.gender},\${p.grade},\${p.date_of_birth},\${createdAt},\${visitType},\${attended}\\n\`
                 })
