@@ -254,6 +254,12 @@ const ParticipantsAPI = {
     method: 'DELETE'
   }),
 
+  // 참가자 정보 수정
+  update: (id, data) => request(`/participants/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data)
+  }),
+
   // 실제 참석 확인 상태 변경
   updateAttendance: (id, attended) => request(`/participants/${id}/attendance`, {
     method: 'PATCH',

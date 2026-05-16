@@ -283,9 +283,134 @@ export const operatorDashboardPage = `
             margin-bottom: 2rem;
         }
 
+        .operator-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .operator-tab-button {
+            min-height: 44px;
+            padding: 0.75rem 1rem;
+            border: 0;
+            border-bottom: 3px solid transparent;
+            background: transparent;
+            color: #6B7280;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .operator-tab-button.active {
+            color: #0A66D8;
+            border-bottom-color: #0A66D8;
+        }
+
+        .operator-tab-panel {
+            display: none;
+        }
+
+        .operator-tab-panel.active {
+            display: block;
+        }
+
+        .operator-filter-grid {
+            display: grid;
+            grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(150px, 0.6fr)) auto;
+            gap: 0.75rem;
+            align-items: end;
+        }
+
+        .operator-field label {
+            display: block;
+            margin-bottom: 0.375rem;
+            color: #374151;
+            font-size: 0.8125rem;
+            font-weight: 800;
+        }
+
+        .operator-field input,
+        .operator-field select {
+            width: 100%;
+            min-height: 42px;
+            padding: 0.625rem 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            background: #FFFFFF;
+            color: #111827;
+            font-size: 0.9375rem;
+            box-sizing: border-box;
+        }
+
+        .operator-table-wrap {
+            overflow-x: auto;
+        }
+
+        .operator-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 920px;
+        }
+
+        .operator-table th,
+        .operator-table td {
+            padding: 0.875rem;
+            border-bottom: 1px solid #E5E7EB;
+            text-align: left;
+            vertical-align: middle;
+            font-size: 0.875rem;
+        }
+
+        .operator-table th {
+            background: #F9FAFB;
+            color: #374151;
+            font-weight: 800;
+        }
+
+        .operator-inline-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .operator-status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            background: #F3F4F6;
+            color: #374151;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .operator-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(17, 24, 39, 0.55);
+            z-index: 80;
+        }
+
+        .operator-modal.active {
+            display: flex;
+        }
+
+        .operator-modal-card {
+            width: 100%;
+            max-width: 480px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 40px rgba(17, 24, 39, 0.2);
+        }
+
         @media (max-width: 820px) {
             .operator-hero,
-            .operator-secondary-actions {
+            .operator-secondary-actions,
+            .operator-filter-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -325,6 +450,16 @@ export const operatorDashboardPage = `
     </header>
 
     <main class="operator-main">
+        <nav class="operator-tabs" aria-label="운영자 화면">
+            <button type="button" class="operator-tab-button active" id="operatorOverviewTabButton" onclick="switchOperatorTab('overview')">
+                <i class="fas fa-chart-line" style="margin-right: 0.375rem;"></i>현황
+            </button>
+            <button type="button" class="operator-tab-button" id="operatorParticipantsTabButton" onclick="switchOperatorTab('participants')">
+                <i class="fas fa-users" style="margin-right: 0.375rem;"></i>참가자 관리
+            </button>
+        </nav>
+
+        <section id="operatorOverviewTab" class="operator-tab-panel active">
         <section class="operator-hero" aria-label="부스 운영 현황">
             <div class="operator-panel">
                 <div class="operator-panel-header">
@@ -603,12 +738,126 @@ export const operatorDashboardPage = `
             </h3>
             <canvas id="timeChart"></canvas>
         </div>
+        </section>
+
+        <section id="operatorParticipantsTab" class="operator-tab-panel">
+            <div class="operator-panel">
+                <div class="operator-panel-header">
+                    <div>
+                        <div class="operator-label">참가자 관리</div>
+                        <h2 class="operator-booth-name" style="font-size: 1.5rem;">부스 참가자 목록</h2>
+                    </div>
+                    <button onclick="exportBoothCSV()" class="btn btn-primary">
+                        <i class="fas fa-file-csv" style="margin-right: 0.375rem;"></i>CSV 다운로드
+                    </button>
+                </div>
+
+                <div class="operator-filter-grid" style="margin-bottom: 1rem;">
+                    <div class="operator-field">
+                        <label for="participantSearch">이름 검색</label>
+                        <input id="participantSearch" type="search" placeholder="이름 입력" oninput="filterOperatorParticipants()">
+                    </div>
+                    <div class="operator-field">
+                        <label for="participantDate">등록일</label>
+                        <input id="participantDate" type="date" onchange="loadOperatorParticipants()">
+                    </div>
+                    <div class="operator-field">
+                        <label for="participantAttendanceFilter">참석</label>
+                        <select id="participantAttendanceFilter" onchange="filterOperatorParticipants()">
+                            <option value="">전체</option>
+                            <option value="1">참석</option>
+                            <option value="0">미확인</option>
+                        </select>
+                    </div>
+                    <div class="operator-field">
+                        <label for="participantVisitFilter">방문형태</label>
+                        <select id="participantVisitFilter" onchange="filterOperatorParticipants()">
+                            <option value="">전체</option>
+                            <option value="0">첫방문</option>
+                            <option value="1">재방문</option>
+                        </select>
+                    </div>
+                    <button onclick="resetOperatorParticipantFilters()" class="btn btn-secondary" style="min-height: 42px;">
+                        <i class="fas fa-redo" style="margin-right: 0.375rem;"></i>초기화
+                    </button>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; color: #6B7280; font-size: 0.875rem; font-weight: 700;">
+                    <span>검색 결과 <strong id="operatorFilteredCount" style="color: #111827;">0</strong>명 / 전체 <strong id="operatorTotalCount" style="color: #111827;">0</strong>명</span>
+                    <button onclick="loadOperatorParticipants()" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-sync-alt" style="margin-right: 0.375rem;"></i>새로고침
+                    </button>
+                </div>
+
+                <div class="operator-table-wrap">
+                    <table class="operator-table">
+                        <thead>
+                            <tr>
+                                <th>참석</th>
+                                <th>이름</th>
+                                <th>성별</th>
+                                <th>교급</th>
+                                <th>생년월일</th>
+                                <th>등록일시</th>
+                                <th>방문형태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="operatorParticipantsBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: #6B7280; padding: 2rem;">참가자 목록을 불러오는 중...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </main>
+
+    <div id="participantEditModal" class="operator-modal" role="dialog" aria-modal="true" aria-labelledby="participantEditTitle">
+        <div class="operator-modal-card">
+            <h3 id="participantEditTitle" style="margin: 0 0 1rem; color: #111827; font-size: 1.25rem;">참가자 정보 수정</h3>
+            <form id="participantEditForm" style="display: grid; gap: 0.875rem;">
+                <input type="hidden" id="editParticipantId">
+                <div class="operator-field">
+                    <label for="editParticipantName">이름</label>
+                    <input id="editParticipantName" type="text" required>
+                </div>
+                <div class="operator-field">
+                    <label for="editParticipantGender">성별</label>
+                    <select id="editParticipantGender" required>
+                        <option value="남성">남성</option>
+                        <option value="여성">여성</option>
+                    </select>
+                </div>
+                <div class="operator-field">
+                    <label for="editParticipantGrade">교급</label>
+                    <select id="editParticipantGrade" required>
+                        <option value="유아">유아</option>
+                        <option value="초등">초등</option>
+                        <option value="중등">중등</option>
+                        <option value="고등">고등</option>
+                        <option value="성인">성인</option>
+                    </select>
+                </div>
+                <div class="operator-field">
+                    <label for="editParticipantBirth">생년월일</label>
+                    <input id="editParticipantBirth" type="date" required>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+                    <button type="button" onclick="closeParticipantEditModal()" class="btn btn-secondary">취소</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="/static/js/api.js"></script>
     <script>
         let genderChart, gradeChart, timeChart
         let boothId
+        let operatorParticipants = []
+        let operatorFilteredParticipants = []
 
         // 인증 확인
         const user = getUser()
@@ -635,6 +884,18 @@ export const operatorDashboardPage = `
         // 디스플레이 모드 열기
         function openDisplayMode() {
             window.open(\`/display?booth_id=\${boothId}\`, '_blank', 'width=1920,height=1080')
+        }
+
+        function switchOperatorTab(tabName) {
+            document.querySelectorAll('.operator-tab-panel').forEach(panel => panel.classList.remove('active'))
+            document.querySelectorAll('.operator-tab-button').forEach(button => button.classList.remove('active'))
+
+            document.getElementById(tabName === 'participants' ? 'operatorParticipantsTab' : 'operatorOverviewTab').classList.add('active')
+            document.getElementById(tabName === 'participants' ? 'operatorParticipantsTabButton' : 'operatorOverviewTabButton').classList.add('active')
+
+            if (tabName === 'participants') {
+                loadOperatorParticipants()
+            }
         }
 
         // 부스 정보 로드
@@ -706,6 +967,7 @@ export const operatorDashboardPage = `
                 
                 // 통계 새로고침
                 await loadStats()
+                await loadOperatorParticipants()
             } catch (error) {
                 console.error('명단 초기화 실패:', error)
                 alert('명단 초기화에 실패했습니다.\\n' + (error.message || '알 수 없는 오류'))
@@ -870,24 +1132,197 @@ export const operatorDashboardPage = `
             })
         }
 
+        async function loadOperatorParticipants() {
+            const tbody = document.getElementById('operatorParticipantsBody')
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #6B7280; padding: 2rem;">참가자 목록을 불러오는 중...</td></tr>'
+            }
+
+            try {
+                const params = { limit: 100000 }
+                const date = document.getElementById('participantDate')?.value
+                if (date) {
+                    params.date = date
+                }
+
+                const response = await ParticipantsAPI.getAll(params)
+                operatorParticipants = response.participants || []
+                filterOperatorParticipants()
+            } catch (error) {
+                console.error('참가자 목록 로드 실패:', error)
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #DC2626; padding: 2rem;">참가자 목록을 불러오지 못했습니다.</td></tr>'
+                }
+            }
+        }
+
+        function filterOperatorParticipants() {
+            const search = (document.getElementById('participantSearch')?.value || '').trim().toLowerCase()
+            const attendedFilter = document.getElementById('participantAttendanceFilter')?.value || ''
+            const visitFilter = document.getElementById('participantVisitFilter')?.value || ''
+
+            operatorFilteredParticipants = operatorParticipants.filter(participant => {
+                if (search && !String(participant.name || '').toLowerCase().includes(search)) return false
+                if (attendedFilter !== '' && String(Number(participant.attended || 0)) !== attendedFilter) return false
+                if (visitFilter !== '' && String(Number(participant.is_duplicate || 0)) !== visitFilter) return false
+                return true
+            })
+
+            renderOperatorParticipants()
+        }
+
+        function renderOperatorParticipants() {
+            const tbody = document.getElementById('operatorParticipantsBody')
+            if (!tbody) return
+
+            document.getElementById('operatorFilteredCount').textContent = operatorFilteredParticipants.length
+            document.getElementById('operatorTotalCount').textContent = operatorParticipants.length
+
+            if (operatorFilteredParticipants.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #6B7280; padding: 2rem;">검색 결과가 없습니다.</td></tr>'
+                return
+            }
+
+            tbody.innerHTML = ''
+            operatorFilteredParticipants.forEach(participant => {
+                const row = document.createElement('tr')
+                const attended = Number(participant.attended || 0) === 1
+                const visitType = Number(participant.is_duplicate || 0) === 1 ? '재방문' : '첫방문'
+                row.innerHTML =
+                    '<td>' +
+                        '<label style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 800; cursor: pointer;">' +
+                            '<input type="checkbox" ' + (attended ? 'checked' : '') + ' onchange="toggleOperatorAttendance(\\'' + participant.id + '\\', this.checked)" style="width: 18px; height: 18px; accent-color: #111827;">' +
+                            '<span>' + (attended ? '확인' : '미확인') + '</span>' +
+                        '</label>' +
+                    '</td>' +
+                    '<td><strong>' + escapeHtml(participant.name || '') + '</strong></td>' +
+                    '<td>' + escapeHtml(participant.gender || '') + '</td>' +
+                    '<td>' + escapeHtml(participant.grade || '') + '</td>' +
+                    '<td>' + escapeHtml(participant.date_of_birth || '') + '</td>' +
+                    '<td>' + formatOperatorDateTime(participant.created_at_kst || participant.created_at) + '</td>' +
+                    '<td><span class="operator-status-pill">' + visitType + '</span></td>' +
+                    '<td><div class="operator-inline-actions">' +
+                        '<button onclick="openParticipantEditModal(\\'' + participant.id + '\\')" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></button>' +
+                        '<button onclick="deleteOperatorParticipant(\\'' + participant.id + '\\')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>' +
+                    '</div></td>'
+                tbody.appendChild(row)
+            })
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+        }
+
+        function formatOperatorDateTime(value) {
+            if (!value) return '-'
+            return new Date(value).toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        }
+
+        async function toggleOperatorAttendance(participantId, attended) {
+            try {
+                await ParticipantsAPI.updateAttendance(participantId, attended)
+                const participant = operatorParticipants.find(item => String(item.id) === String(participantId))
+                if (participant) {
+                    participant.attended = attended ? 1 : 0
+                    participant.attended_at = attended ? new Date().toISOString() : null
+                }
+                filterOperatorParticipants()
+            } catch (error) {
+                alert('참석 상태 변경에 실패했습니다: ' + error.message)
+                await loadOperatorParticipants()
+            }
+        }
+
+        function openParticipantEditModal(participantId) {
+            const participant = operatorParticipants.find(item => String(item.id) === String(participantId))
+            if (!participant) return
+
+            document.getElementById('editParticipantId').value = participant.id
+            document.getElementById('editParticipantName').value = participant.name || ''
+            document.getElementById('editParticipantGender').value = participant.gender || '남성'
+            document.getElementById('editParticipantGrade').value = participant.grade || '초등'
+            document.getElementById('editParticipantBirth').value = participant.date_of_birth || ''
+            document.getElementById('participantEditModal').classList.add('active')
+        }
+
+        function closeParticipantEditModal() {
+            document.getElementById('participantEditModal').classList.remove('active')
+        }
+
+        document.getElementById('participantEditForm').addEventListener('submit', async (event) => {
+            event.preventDefault()
+            const participantId = document.getElementById('editParticipantId').value
+            const payload = {
+                name: document.getElementById('editParticipantName').value.trim(),
+                gender: document.getElementById('editParticipantGender').value,
+                grade: document.getElementById('editParticipantGrade').value,
+                date_of_birth: document.getElementById('editParticipantBirth').value
+            }
+
+            try {
+                await ParticipantsAPI.update(participantId, payload)
+                closeParticipantEditModal()
+                await loadOperatorParticipants()
+                await loadStats()
+            } catch (error) {
+                alert('참가자 정보 수정에 실패했습니다: ' + error.message)
+            }
+        })
+
+        async function deleteOperatorParticipant(participantId) {
+            const participant = operatorParticipants.find(item => String(item.id) === String(participantId))
+            const name = participant?.name || '참가자'
+            if (!confirm(name + ' 참가자를 삭제하시겠습니까?\\n관련 대기열 정보도 함께 삭제됩니다.')) return
+
+            try {
+                await ParticipantsAPI.delete(participantId)
+                await loadOperatorParticipants()
+                await loadStats()
+            } catch (error) {
+                alert('참가자 삭제에 실패했습니다: ' + error.message)
+            }
+        }
+
+        function resetOperatorParticipantFilters() {
+            document.getElementById('participantSearch').value = ''
+            document.getElementById('participantDate').value = ''
+            document.getElementById('participantAttendanceFilter').value = ''
+            document.getElementById('participantVisitFilter').value = ''
+            loadOperatorParticipants()
+        }
+
         // CSV 내보내기 (부스 운영자용)
         async function exportBoothCSV() {
             try {
-                // 해당 부스의 참가자 데이터 가져오기 (서버에서 이미 필터링됨)
-                const response = await ParticipantsAPI.getAll()
-                const boothParticipants = response.participants || []
-                
-                console.log('CSV Export - boothId:', boothId)
-                console.log('CSV Export - participants:', boothParticipants.length)
-                console.log('CSV Export - first participant:', boothParticipants[0])
+                let boothParticipants = operatorFilteredParticipants.length > 0 ? operatorFilteredParticipants : operatorParticipants
+                if (boothParticipants.length === 0) {
+                    const params = { limit: 100000 }
+                    const date = document.getElementById('participantDate')?.value
+                    if (date) {
+                        params.date = date
+                    }
+                    const response = await ParticipantsAPI.getAll(params)
+                    boothParticipants = response.participants || []
+                }
                 
                 if (boothParticipants.length === 0) {
                     alert('내보낼 참가자 데이터가 없습니다.')
                     return
                 }
                 
-                // CSV 헤더 (UTF-8 BOM 추가 + 중복방문 컬럼)
-                let csv = '\\uFEFF이름,성별,교급,생년월일,등록일시,방문형태\\n'
+                // CSV 헤더 (UTF-8 BOM 추가)
+                let csv = '\\uFEFF이름,성별,교급,생년월일,등록일시,방문형태,참석확인\\n'
                 
                 // CSV 데이터 (부스명 제외 - 자신의 부스니까 불필요)
                 boothParticipants.forEach(p => {
@@ -902,7 +1337,8 @@ export const operatorDashboardPage = `
                         second: '2-digit'
                     })
                     const visitType = p.is_duplicate === 1 ? '재방문' : '첫방문'
-                    csv += \`\${p.name},\${p.gender},\${p.grade},\${p.date_of_birth},\${createdAt},\${visitType}\\n\`
+                    const attended = Number(p.attended || 0) === 1 ? '참석' : '미확인'
+                    csv += \`\${p.name},\${p.gender},\${p.grade},\${p.date_of_birth},\${createdAt},\${visitType},\${attended}\\n\`
                 })
                 
                 // 다운로드

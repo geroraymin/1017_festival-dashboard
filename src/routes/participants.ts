@@ -1,9 +1,21 @@
 import { Hono } from 'hono'
 import { type Env, getAll } from '../lib/d1'
-import { authMiddleware, operatorOrAdmin, adminOnly } from '../middlewares/auth'
+import { authMiddleware, operatorOrAdmin } from '../middlewares/auth'
 import type { CreateParticipantRequest } from '../types/database'
 
 const participants = new Hono<{ Bindings: Env }>()
+
+async function getParticipantAccessRow(db: any, id: string) {
+  return db
+    .prepare('SELECT id, booth_id FROM participants WHERE id = ?')
+    .bind(id)
+    .first()
+}
+
+function canManageParticipant(user: any, participant: any) {
+  if (user.role === 'admin') return true
+  return user.role === 'operator' && String(user.booth_id) === String(participant.booth_id)
+}
 
 /**
  * POST /api/participants
@@ -321,14 +333,25 @@ participants.get('/', authMiddleware, operatorOrAdmin, async (c) => {
 
 /**
  * PATCH /api/participants/:id/attendance
- * 참가자 실제 참석 확인 상태 변경 (관리자 전용)
+ * 참가자 실제 참석 확인 상태 변경
+ * 관리자: 전체 가능, 운영자: 자기 부스 참가자만 가능
  */
-participants.patch('/:id/attendance', authMiddleware, adminOnly, async (c) => {
+participants.patch('/:id/attendance', authMiddleware, operatorOrAdmin, async (c) => {
   try {
     const id = c.req.param('id')
     const body = await c.req.json<{ attended?: boolean }>()
     const attended = body.attended ? 1 : 0
     const db = c.env.DB
+    const user = c.get('user')
+
+    const participantAccess = await getParticipantAccessRow(db, id)
+    if (!participantAccess) {
+      return c.json({ error: '참가자를 찾을 수 없습니다.' }, 404)
+    }
+
+    if (!canManageParticipant(user, participantAccess)) {
+      return c.json({ error: '권한이 없습니다.' }, 403)
+    }
 
     const result = await db
       .prepare(`
@@ -359,13 +382,106 @@ participants.patch('/:id/attendance', authMiddleware, adminOnly, async (c) => {
 })
 
 /**
- * DELETE /api/participants/:id
- * 참가자 삭제 (관리자 전용)
+ * PATCH /api/participants/:id
+ * 참가자 정보 수정
+ * 관리자: 전체 가능, 운영자: 자기 부스 참가자만 가능
  */
-participants.delete('/:id', authMiddleware, adminOnly, async (c) => {
+participants.patch('/:id', authMiddleware, operatorOrAdmin, async (c) => {
+  try {
+    const id = c.req.param('id')
+    const body = await c.req.json<{
+      name?: string
+      gender?: string
+      grade?: string
+      date_of_birth?: string
+    }>()
+    const db = c.env.DB
+    const user = c.get('user')
+
+    const participantAccess = await getParticipantAccessRow(db, id)
+    if (!participantAccess) {
+      return c.json({ error: '참가자를 찾을 수 없습니다.' }, 404)
+    }
+
+    if (!canManageParticipant(user, participantAccess)) {
+      return c.json({ error: '권한이 없습니다.' }, 403)
+    }
+
+    const name = (body.name || '').trim()
+    const { gender, grade, date_of_birth } = body
+
+    if (!name || !gender || !grade || !date_of_birth) {
+      return c.json({ error: '모든 필수 항목을 입력해주세요.' }, 400)
+    }
+
+    if (!['남성', '여성'].includes(gender)) {
+      return c.json({ error: '유효하지 않은 성별입니다.' }, 400)
+    }
+
+    if (!['유아', '초등', '중등', '고등', '성인'].includes(grade)) {
+      return c.json({ error: '유효하지 않은 교급입니다.' }, 400)
+    }
+
+    const result = await db
+      .prepare(`
+        UPDATE participants
+        SET name = ?, gender = ?, grade = ?, date_of_birth = ?
+        WHERE id = ?
+      `)
+      .bind(name, gender, grade, date_of_birth, id)
+      .run()
+
+    if (!result.success || result.meta.changes === 0) {
+      return c.json({ error: '참가자 정보 수정에 실패했습니다.' }, 500)
+    }
+
+    const participant = await db
+      .prepare(`
+        SELECT p.*, b.name as booth_name, b.booth_code, b.event_id,
+               e.name as event_name,
+               datetime(p.created_at, '+9 hours') as created_at_kst
+        FROM participants p
+        LEFT JOIN booths b ON p.booth_id = b.id
+        LEFT JOIN events e ON b.event_id = e.id
+        WHERE p.id = ?
+      `)
+      .bind(id)
+      .first()
+
+    return c.json({
+      message: '참가자 정보가 수정되었습니다.',
+      participant
+    })
+  } catch (error) {
+    console.error('Error updating participant:', error)
+    return c.json({ error: '참가자 정보 수정에 실패했습니다.' }, 500)
+  }
+})
+
+/**
+ * DELETE /api/participants/:id
+ * 참가자 삭제
+ * 관리자: 전체 가능, 운영자: 자기 부스 참가자만 가능
+ */
+participants.delete('/:id', authMiddleware, operatorOrAdmin, async (c) => {
   try {
     const id = c.req.param('id')
     const db = c.env.DB
+    const user = c.get('user')
+
+    const participantAccess = await getParticipantAccessRow(db, id)
+    if (!participantAccess) {
+      return c.json({ error: '참가자를 찾을 수 없습니다.' }, 404)
+    }
+
+    if (!canManageParticipant(user, participantAccess)) {
+      return c.json({ error: '권한이 없습니다.' }, 403)
+    }
+
+    await db
+      .prepare('DELETE FROM queue WHERE participant_id = ?')
+      .bind(id)
+      .run()
 
     const result = await db
       .prepare('DELETE FROM participants WHERE id = ?')
